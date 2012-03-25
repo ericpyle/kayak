@@ -1,0 +1,1235 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:user="urn:nowhere">
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<META name="copyright" content="Copyright 2011"/>
+<META name="author" content="Eric Pyle"/>
+<META name="description" content="build your own chiasm with ease"/>
+<link type="text/css" href="css/smoothness/jquery-ui-1.8.1.custom.css" rel="stylesheet" />
+<link rel="stylesheet" href="css/chiasms.css" type="text/css"/>
+<link type="text/css" href="css/1.2.3.outliner.css" rel="stylesheet" />
+<meta name="keywords" content="chiasm, outline" />
+<meta http-equiv="Content-Script-Type" content="text/javascript"/>  				 
+    	
+    	<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 
+    	<script type="text/javascript" src="js/jquery-ui-1.8.1.custom.min.js"></script> 
+		<script type="text/javascript" src="js/fitToContent.js"></script>
+		<script type="text/javascript" src="js/jquery-extensions-utils.js"></script>
+		<title>kayak - chiasms made easily</title>
+
+<script type="text/javascript">
+	
+	$(document).ready(function(){
+		// Tabs
+		$('.tabs').tabs(
+		{
+   			show: function(event, ui) { showTab(event, ui); }
+		});
+		$(".tabs").show();
+	});
+	
+</script>
+</head>
+<body>
+<!-- <asp:TextBox ID="TextBox1" runat="server" onkeyup="FitToContent('TextBox1','','100')"
+            Height="100" Width="400" TextMode="MultiLine" style="overflow: hidden"></asp:TextBox> -->
+<div id="tabsMain" class="tabs" style="display:none;">
+	 <ul>	 	 
+	 	 <li><a href="#kayak"><span><b>kayak</b></span></a></li>
+		 <li><a href="#Examples"><span>Outlines</span></a></li>
+	 	 <li><a href="#EditView"><span>Edit</span></a></li>
+	 	 <li><a href="#Save"><span>Save</span></a></li>
+	 </ul>
+	 <div id="kayak">
+	 </div>
+	 <div id="Examples">
+		<h3>Outlines</h3>
+		<ul class="examples">
+			<table id="exampleTable" cols="6">
+			<thead>
+				<tr><th>Type</th><th>Range</th><th>Author</th>
+					<th>Source</th><th>Submitted</th><th>Submitted By</th></tr>				
+			</thead>
+
+			<tbody id="exampleTableBody">
+				<!-- Load from Couchdb
+				<tr id="example-Mat-JBJ" class="exampleRow">
+					<td>chiasm</td>
+					<td>Matthew 1:1-28:20</td>
+					<td>James B. Jordan</td>
+					<td><a href="http://www.biblicalhorizons.com/biblical-horizons/no-94-toward-a-chiastic-understanding-of-the-gospel-according-to-matthew-part-1/">Biblical Horizons #94, Apr 2007</a></td>
+					<td>6-6-2011</td>
+					<td>Eric Pyle</td>
+				</tr> -->
+			</tbody>
+			</table>
+			
+		</ul>
+	</div>					 
+	<div id="EditView">
+		<div id="editChiasm" action="">
+			<table id="" cols="2">
+				<thead></thead>
+				<tbody id="editChiasmHead">
+					<tr>
+						<td><span class="markerEditLabel">Title</span></td>
+						<td><textarea id="edit-title-chiasm" cols="60" rows="1"></textarea></td>						
+					</tr>
+					<tr>
+						<td><span class="markerEditLabel">Scripture Range</span></td>
+						<td><textarea id="edit-chiasm-scriptureRange" cols="40" rows="1"></textarea></td>						
+					</tr>
+					<tr>
+						<td><label for="edit-outline-contentType" class="markerEditLabel">Outline Type</label></td>
+						<td>
+							<select id="edit-outline-contentType" >
+								<option value="modeChiasm">Chiasm</option>
+								<option value="modeHierarchical">Hierarchical</option>
+							</select>
+						</td>
+					</tr>
+					<tr id="edit-outline-editControl-row">
+						<td><label for="edit-outline-editControl" class="markerEditLabel">Edit Style</label></td>
+						<td>
+							<select id="edit-outline-editControl">
+								<option value="chiasmABBA">A > B > A'</option>
+								<option value="chiasmAABB">A > A'> B</option>								
+								<option value="chiasmBulk">Bulk ABA'</option>
+							</select>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<div id="outlineContainer">
+				<div id="outline">
+				</div>
+			</div>
+			<div id="controlCollection" style="display:none;">
+				<div id="bulkEditABA">
+				<b>Type</b>, or Copy and Paste chiasm below
+				<!-- <button id="btnLoadFromEditView" type="button" onclick="loadCurrentChiasmIntoTextBox('tbImport')">
+					Current Chiasm
+				</button> -->
+				<br/>
+				<textarea id="tbImport" rows="10" Cols="60"></textarea>
+				<br/>
+				<button id="btnSplit" type="button" onclick="importFromTextBoxToCurrentChiasm('tbImport')">
+					Submit
+				</button>
+				<input type="checkbox" id="stripCounting" checked="yes">Strip counting (A.B.C. or 1.2.3.)</input>
+				</div>
+				<div id="editChiasmBody">
+					<div class="chiasmEditItem">
+					<label for="edit-level-A-1" class="markerEditLabel">A. </label>
+					<textarea id="edit-level-A-1" cols="40" rows="1"></textarea>
+					</div>
+				</div>
+				<!--
+				<div id="outline">
+				</div>
+				-->
+			</div>
+			
+		</div>	
+	</div>
+	<div id="Save">
+			<table id="" cols="2">
+			<thead></thead>
+			<tbody>
+				<tr>
+					<td><span class="markerEditLabel">Title</span></td>
+					<td><span id="save-outline-title"></span></td>						
+				</tr>
+				<tr>
+					<td><span class="markerEditLabel">Scripture Range</span></td>
+					<td><span id="save-outline-scriptureRange"></span></td>
+				</tr>
+			</tbody>
+			</table>
+		<table id="save-outline-credits" style="background:#B9C9FE; padding: 8px;" cols="2">
+				<thead>
+					<tr><td colspan="3" style="background:#AABCFE;"><i>Bibliographic Information</i></td></tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><b>Author</b></td>
+						<td><a href='#'><span id="save-outline-author"></span></a></td>
+					</tr>
+					<tr>
+						<td><b>Source</b></td>
+						<td><a href='#'><span id="save-outline-source">Click to specify</span></a></td>
+					</tr>
+					<tr>
+						<td><b>Submitter</b></td>
+						<td><a href='#'><span id="save-outline-submitter"></span></a></td>
+					</tr>
+					<tr><td/><td><input id="submitterIsAuthor" type="checkbox"/><label>I am the author</label>	</td></tr>
+				</tbody>
+				<tfoot>
+					<tr><td colspan="2" style="color: darkred;">NOTE: For evaluation purposes only. <br/>(Saves will be lost when page is reloaded.)</td></tr>
+					<tr><td><button id="btnPublishOutline" type="button">Publish Outline</button></td></tr>
+							<!-- <button type="button">Save As Draft</button> -->
+				</tfoot>
+		</table>
+				
+
+		<div id="authorSpecification" style="display: none;">
+			<b>Author</b>
+			<p>
+				<input id="authorSearch" type="search" placeholder="Author"/> </br>
+				<button id="btnAuthorSearch" type="button">Search</button>
+				<button id="btnClearSearch" type="reset">Show All</button>		
+			</p>
+			<p>
+				<i id="authorHeading">Search Results</i>
+				<table id="authorResults" class="personSearchResults">
+					<thead><tr><td></td><td colspan="5" class="personName">Name</td><td colspan="2">Most Associated With</td><td></td></tr>
+						<tr><td>Select</td>
+							<td class="personName">Title</td>
+							<td class="personName">First <b>^</b></td>
+							<td class="personName">MI</td>
+							<td class="personName">Last</td>
+							<td class="personName">Suffix</td>
+							
+							<td>Name/Website</td>
+							<td>Sources</td>
+							<td>Credits</td></tr>
+					</thead>
+					<tbody></tbody>				
+					<tfoot><tr><td><button id="btnCreateNewAuthor" type="button">*</button></td><td colspan="5"><a href="#">Specify author</a></td> <td/><td/> <td/></tr>
+						<tr><td><button id="btnAuthorOk" type="button">OK</button></td><td colspan="5"><button id="btnAuthorCancel" type="button">Cancel</button></td> <td/><td/> <td/></tr>
+					</tfoot>
+				</table>
+			</p>
+		</div>
+		<div id="submitterSpecification" style="display: none;">
+			<b>Submitter</b>
+			<p>
+				<input id="submitterSearch" type="search" placeholder="Submitter"/> </br>
+				<button id="btnSubmitterSearch" type="button">Search</button>
+				<button id="btnClearSubmitterSearch" type="reset">Show All</button>		
+			</p>
+			<p>
+				<i id="submitterHeading">Search Results</i>
+				<table id="submitterProfileResults" class="personSearchResults">
+					<thead><tr><td></td><td colspan="5" class="personName">Name</td><td colspan="2">Most Associated With</td></tr>
+						<tr><td>Select</td>
+							<td class="personName">Title</td>
+							<td class="personName">First <b>^</b></td>
+							<td class="personName">MI</td>
+							<td class="personName">Last</td>
+							<td class="personName">Suffix</td>
+							
+							<td>Name/Website</td>
+							<td>Submissions</td>
+							</tr>
+					</thead>
+					<tbody></tbody>				
+					<tfoot><tr><td><button id="btnCreateNewSubmitter" type="button">*</button></td><td colspan="5"><a href="#">Specify submitter</a></td> <td/><td/></tr>
+						<tr><td><button id="btnSubmitterOk" type="button">OK</button></td><td colspan="5"><button id="btnSubmitterCancel" type="button">Cancel</button></td> <td/><td/></tr>
+					</tfoot>
+				</table>
+			</p>
+		</div>
+		<form action="#" onsubmit="return false;" name="updateAuthorProfile" style="display=none;">
+		<div id="authorDetailBlock" style="display:none;">
+			<h4>Person Name</h4>
+			<label>Title</label>
+			<select name="name.title">
+				<option>(Title)</option>
+				<option>Dr.</option>
+				<option>Prof.</option>
+				<option>Rev.</option>
+				<option>Pastor</option>
+			</select><br/>
+			<input type="hidden" name="_id"></input>
+			<input type="hidden" name="_rev"></input>
+			<label>*First*</label>
+			<input type="text" name="name.first" placeholder="First name" ></input><br/>
+			<label>Middle</label>
+			<input type="text" name="name.middle" placeholder="Middle name or initial"></input><br/>
+			<label>*Last*</label>
+			<input type="text" name="name.last"  placeholder="Last name"></input><br/>
+			<label>Suffix</label>
+			<input type="text" name="name.suffix" placeholder="Suffix (Jr, II, etc.)"></input><br/>
+			<h4>Most Associated With</h4>
+			<label>Name</label>
+			<input type="text" name="organization.name" placeholder="Publication/church..."></input><br/>
+			<label>http://</label>
+			<input type="text" name="organization.website" placeholder="Website url"></input>
+			<p>
+			<button id="btnSubmitAuthor" type="submit">Update Profile</button>
+			<button id="btnCancelSubmitAuthor" type="reset">Cancel</button>
+			</p>
+		</div>
+		</form>
+
+		<div id="sourceSpecification" style="display:none;"> <!-- style="display:none;" -->
+			<b>Source</b>
+			<p>
+				<input id="sourceSearch" type="search" placeholder="Source"/> <br/>
+				<button id="btnSourceSearch" type="button">Search</button>
+				<button id="btnClearSourceSearch" type="reset">Show All</button>
+			</p>
+			<p>
+				<i id="sourceHeading">Search Results</i>
+				<table id="sourceSearchResults" class="sourceSearchResults">
+					<thead><tr><td/><td class="sourceDetails">Source Details</td><td/></tr>
+						<tr><td>Select</td>
+							<td class="sourceDetails">Common, Specific</td>
+							<td>Author</td></tr>
+					</thead>
+					<tbody></tbody>
+					<tfoot><tr><td><button id="btnCreateNewSource" type="button">*</button></td><td><a href="#">Specify source</a></td></tr>
+						<tr><td><button id="btnAuthoredWithKayak" type="button">*</button></td><td><a href="#">I authored this outline with kayak</a></td></tr>
+						<tr><td><button id="btnSourceOk" type="button">OK</button></td><td><button id="btnSourceCancel" type="button">Cancel</button></td> <td/></tr>						
+					</tfoot>
+				</table>
+			</p>
+			<form id="sourceDetailBlock" action="#" onsubmit="return false;" name="updateSourceDetails" style="display: none;"> <!-- -->
+				<input type="hidden" name="_id"></input>
+				<div style="background-color:#AABCFE;">
+					<h4>Common : Source Info across Outlines</h4>
+					<input type="hidden" name="source._id"></input>
+					<label>Media</label>						
+					<select name="source.media">
+						<option></option>
+						<option>website</option>
+						<option>book</option>
+						<option>article</option>
+						<option>class</option>			
+						<option>sermon</option>
+						<option>email</option>
+						<option>other</option>
+					</select><br/>
+					<label>Details common across outlines, from more specific to general</label><br/>
+					<textarea type="text" name="source.details" cols="40" rows="1"></textarea><br/>
+					<label>http://</label>
+					<textarea type="text" name="source.website" cols="40" rows="1"></textarea><br/>
+					<label>Publisher Details</label>
+					<textarea type="text" name="source.publisherDetails" cols="40" rows="1"></textarea><br/>					
+				</div>
+				<div id="sourceOutlineDetails" style="background-color:#AA99FE;">
+					<h4>Specific : Source Info for this Outline</h4>
+					<label>Key details pertaining to this outline only (p. 59)</label><br/>
+					<input type="hidden" name="outline._id"></input>
+					<textarea name="outline.source.details" cols="40" rows="1"></textarea><br/>
+					<label>http://</label>
+					<textarea name="outline.source.website" cols="40" rows="1"></textarea><br/>
+					<p>
+						<button id="btnClearSourceOutlineDetails" type="reset">Clear</button>
+					</p>	
+				</div>
+				<p>
+					<button id="btnSubmitSource" type="submit">Update</button>
+					<button id="btnCancelSubmitSource" type="reset">Cancel</button>
+				</p>
+			</form>
+		</div>
+	</div>
+</div>
+<div id="tabsPreview" class="tabs" style="display:none;">
+<input type="checkbox" id="itemHighlighting" checked="yes">Highlight matching parallel</input>
+	 <ul>
+	 	 <li><a href="#Indent"><span>Indent ( &gt; )</span></a></li>
+		 <li><a href="#Flat"><span>Flat ( | )</span></a></li>
+		 <li><a href="#Table"><span>Table ( U )</span></a></li> <!-- &#8746; -->
+	 </ul>
+						 
+	<div id="Indent">
+		<h3 id="indent-title-chiasm"></h3>
+		<span id="indent-chiasm-scriptureRange"></span>
+		
+		<div id="chiasm-indent" class="chiasm"><!-- chiasm built by kayak (http://www.ericlovesallison.org/BibleTools/kayak) -->
+			<div></div>
+		</div>
+	</div>
+	<div id="Flat">
+		<h3 id="flat-title-chiasm"></h3>
+		<span id="flat-chiasm-scriptureRange"></span>
+		<div id="chiasm-flat" class="chiasm"><!-- chiasm built by kayak (http://www.ericlovesallison.org/BibleTools/kayak) -->
+			<div></div>
+		</div>
+	</div>
+	<div id="Table">
+		<table cols="4" class="tableViewAAB">
+			<thead>
+				<tr><th colspan="4" id="tableAAB-title-chiasm">Title</th></tr>
+				<tr><th colspan="4"><span id="tableAAB-chiasm-scriptureRange">ScriptureRange</span></th></tr>				
+			</thead>
+			<tbody id="tableViewAAB">
+				<tr><td>A.</td><td>This is a test</td><td>A'</td><td>a parallel</td></tr>
+				<tr><td>B.</td><td>last element</td></tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+
+<!-- input type="checkbox" id="cbScriptureLinking" checked="yes">Scripture Linking</input -->
+<p style="font-size: medium;">Have a suggestion or comment? <a href="https://spreadsheets.google.com/spreadsheet/viewform?formkey=dGVGUm1EYUxuVkF2UGo1N19kMk9qY1E6MQ">Please leave your feedback here for Eric Pyle</a>.</p>
+<!-- RefTagger from Logos. Visit http://www.logos.com/reftagger. This code should appear directly before the </body> tag. -->
+	<script type="text/javascript" src="js/kayak-outliner.js"></script>
+	<script type="text/javascript" src="js/kayak.js"></script>
+	<script type="text/javascript" src="js/kayak-importView.js"></script>
+	<script type="text/javascript" src="js/kayak-main.js"></script>
+	<script type="text/javascript" src="js/kayak-outlines-db.js"></script>
+	<script type="text/javascript" src="http://kayak.iriscouch.com/couchdb-xd/_design/couchdb-xd/couchdb.js"></script>
+	<script src="js/referencetagging.js" type="text/javascript"></script>
+	<link type="text/css" href="css/ReferenceTagging.css" rel="stylesheet" />
+	<script type="text/javascript" src="js/jsonform.js"></script>
+	<script type="text/javascript">
+
+	$(document).ready(function(){
+
+		mainOutline = createBlankOutline();
+		mainOutline.head.contentType = "chiasm";
+		LoadOutlineFromCurrentState();
+		
+		InitializeEditForm();
+		
+	});
+	
+	function showTab(event, ui)
+	{
+		//get the index from URL hash
+      	var tabSelect = ui.tab.hash;
+		if (tabSelect == "#Save")
+		{
+			if (mainOutline)
+			{
+				$("#save-outline-title").text(AorB(mainOutline.head.title, "") );
+				$("#save-outline-scriptureRange").text(AorB(mainOutline.head.ScriptureRange, ""));
+				if (!authorRows)
+					authorRows = getResponse.rows;
+				var authorProfile = collectProfileDocs("personProfile", authorRows, matchAuthorByCurrentOutline, true);
+				stageSelectedAuthorProfile(authorProfile, true);
+				var submitterProfile = collectProfileDocs("personProfile", authorRows, matchSubmitterByCurrentOutline, true);
+				stageSelectedSubmitterProfile(submitterProfile, true);				
+				//LoadPersonProfileSearchResultsFromOutline(authorProfile, submitterProfile);
+				var sourceProfile = fetchSourceProfile(mainOutline._id + "_source");
+				stageSelectedSourceProfile(sourceProfile);
+			}
+		}
+	}
+	
+	// not sure why typeof(Couch) doesn't work
+	try
+	{
+		Couch.init(function() {
+			var server = new Couch.Server('http://kayak.iriscouch.com', '', '');
+			dbMain = new Couch.Database(server, 'outlines');
+			dbMain = null; // DEBUG: just run from local db.
+			InitializeDbStuff();		
+		});
+	}
+	catch(err)
+	{
+		// DEBUG
+		InitializeDbStuff();
+	}
+	
+	/*
+	 * Utility
+	 */
+	function AorB(a, b)
+	{
+		return a ? a : b; 
+	}
+
+	function InitializeDbStuff()
+	{
+		// /_design/outlines/_view
+		// /_design/personalProfiles/_view
+		$("#submitterIsAuthor").click(function(event) {
+			var fSubmitterIsAuthor = $("#submitterIsAuthor").attr("checked");
+			if (fSubmitterIsAuthor)
+			{
+				var submitterProfile = $("#save-outline-submitter").data('profile-submitter');
+		    	if (submitterProfile)
+		    		stageSelectedAuthorProfile(submitterProfile, true);
+			    else
+			    {
+    			    var authorProfile = $("#save-outline-author").data('profile-author');
+				    if (authorProfile)
+				    	stageSelectedSubmitterProfile(authorProfile, true);	
+			    }
+			} 
+			return true;
+		});
+		
+		$("#btnAuthorSearch").click(function(event) {
+								LoadAuthorResults();
+				  				return false;
+							});
+
+		$("#btnClearSearch").click(function(event) {
+								$("#authorSearch").val("");
+								LoadAuthorResults();
+				  				return false;
+							});
+		$("#btnCreateNewAuthor, #btnCreateNewSubmitter, #btnCreateNewSource").click(function(event) {
+								$("#sourceDetailBlock").data("edit-mode", "editProfile");
+								LoadNewProfileForm();
+				  				return false;
+							});
+		$("#btnCreateNewAuthor, #btnCreateNewSubmitter, #btnCreateNewSource").parent("td").parent("tr").find("a").click(function(event) {
+								$("#sourceDetailBlock").data("edit-mode", "editProfile");
+								LoadNewProfileForm();
+				  				return false;
+							});
+		
+		$("#sourceDetailBlock div textarea").keyup(function(event) 
+					{											
+  						FitToContent(event.target,'','100');
+					});
+					
+		$("#btnClearSourceOutlineDetails").click(function(event) 
+		{
+			// load current form data into JSON
+			var sourceDetails = $("[name='updateSourceDetails']").getJSON();
+			//alert(JSON.stringify(sourceDetails));
+			sourceDetails.outline.source.details = "";
+			sourceDetails.outline.source.website = "";
+			// write back to the form
+			$("[name='updateSourceDetails']").populate(sourceDetails);
+			// run fit to content.
+			$("[name='updateSourceDetails']").find("textarea").each( function(index) 
+							{
+								FitToContent(this,'','100');
+							});
+			return false;
+		});
+		
+		$("#btnSubmitterSearch").click(function(event) {
+						LoadSubmitterResults();
+		  				return false;
+					});
+		$("#btnClearSubmitterSearch").click(function(event) {
+						$("#submitterSearch").val("");
+						LoadSubmitterResults();
+		  				return false;
+					});
+
+
+		$("#btnClearSourceSearch").click(function(event) {
+						$("#sourceSearch").val("");
+						LoadSourceResults();
+		  				return false;
+					});
+		
+		
+		function createTimeStampArray(dateNow)
+		{
+			var sdate = stringifyDateNow(dateNow);
+			var time = sdate.split("T")[1];
+			return [dateNow.getFullYear(), dateNow.getMonth() + 1, dateNow.getDate(), 
+					time];
+		}
+		
+		function setOrReset(stagedProfile, objToSetOrReset, propertyToSet, setFunc)
+		{
+			if (!stagedProfile || !stagedProfile._id || stagedProfile._id.length == 0)
+			{
+				if (objToSetOrReset[propertyToSet])
+					delete objToSetOrReset[propertyToSet];
+			}
+			else
+			{
+				if (!objToSetOrReset[propertyToSet])
+					objToSetOrReset[propertyToSet] = {};
+				setFunc(objToSetOrReset, propertyToSet, stagedProfile);
+			}
+		}
+		
+		function publishOutline(event)
+		{
+
+
+			// disable clicking of publishing outline until
+			// at minimum, the following has been specified:
+			// 1) An outline with more than 0 concepts
+			// or 2) Author Specified
+			// or 3) Source Specified
+			// or 4) Submitter Specified
+			var authorProfileStaged = $("#save-outline-author").data('profile-author');
+			var submitterProfileStaged = $("#save-outline-submitter").data('profile-submitter');
+			var sourceStaged = $("#save-outline-source").data('profile-source');
+			var fIsNewOutline = !mainOutline._id;			
+			var fCanPublish = (mainOutline.body.concepts.length > 0 || 
+				authorProfileStaged && authorProfileStaged._id ||
+				submitterProfileStaged && submitterProfileStaged._id ||
+				sourceStaged && sourceStaged._id);
+			if (!fCanPublish)
+			{			
+				alert("Cannot publish an empty outline without specifying author, source, or submitter");
+				return false;
+			}
+		
+			// next see if any changes need to be made
+			setOrReset(authorProfileStaged, mainOutline.head, "author", function(objToSetOrReset, propertyToSet, stagedProfile) 
+			{
+				objToSetOrReset[propertyToSet].guid = stagedProfile._id;
+			});			
+			setOrReset(submitterProfileStaged, mainOutline.head, "submittedBy", function(objToSetOrReset, propertyToSet, stagedProfile) 
+			{
+				objToSetOrReset[propertyToSet].guid = stagedProfile._id;
+			});
+			// we want to save the guid of the common outline, not our outline.
+			setOrReset(sourceStaged, mainOutline.head, "source", function(objToSetOrReset, propertyToSet, stagedProfile) 
+			{
+				objToSetOrReset[propertyToSet] = stagedProfile.outline.source;
+				objToSetOrReset[propertyToSet].guid = stagedProfile.source._id;
+			});
+
+			var mainOutlineJSON_current = JSON.stringify(mainOutline);
+			var mainOutlineJSON_orig = $("body").data("mainOutlineJSON-orig");
+			if (!fIsNewOutline && mainOutlineJSON_current == mainOutlineJSON_orig)
+			{
+				alert("No changes have been made that need to be saved.")
+				return false;	
+			}
+			
+			else
+			{
+				$(this).unbind(event);
+				/* NOTE: need to fill in the following
+				
+					"submissionTimestamp": [\
+						2011,\
+						6,\
+						6,\
+						"10:30:00.000Z"\
+				// bcvRange
+				// authorShortname				
+				
+				**/
+				
+				var dateNow = new Date();
+				if (fIsNewOutline)
+				{
+					var newId = createIDFromDateNow(dateNow);
+					mainOutline._id = newId;
+					mainOutline.head.submissionTimestamp = createTimeStampArray(dateNow);
+				}
+				else
+				{
+					// detect if any data has changed.
+					mainOutline.head.modifiedTimestamp = createTimeStampArray(dateNow);
+				}
+				if (authorProfileStaged)
+				{
+					var authorProfile = authorProfileStaged;
+					mainOutline.head.author.authorShortname = 
+						authorProfile.name.first[0].toLowerCase() + 
+						EmptyIfNull(EmptyIfNull(authorProfile.name.middle)[0]).toLowerCase() + 
+						authorProfile.name.last.toLowerCase();
+				}
+				
+				if (dbMain)
+				{
+					dbMain.put(mainOutline._id, mainOutline, function(resp) {
+				        alert("Remember to check for ok: " + JSON.stringify(resp));
+				        loadDataSet(true);
+						$("#btnPublishOutline").click(publishOutline);
+				    });
+				}					
+			    else // DEBUG
+			    {
+			    	
+			    	var rowId = mainOutline._id;
+			    	var newRow = {"id" : rowId, "key" : [rowId, 1], "value" : mainOutline};
+			    	if (!replaceRow(getResponse.rows, newRow.id, newRow))
+			    	{
+			    		getResponse.rows.push(newRow);
+			    		getResponse.total_rows += 1;
+			    	}			    	
+			    	
+			    	loadDataSet(true);
+			 		$(this).click(publishOutline);   	
+			    }
+					
+			}
+			alert("Changes have been published");
+			return false;
+		}
+		
+		$("#btnPublishOutline").click(publishOutline);
+		
+		$("#save-outline-author").click(function(event){
+			$("#save-outline-credits").data("edit-mode", "save-outline-author");
+			// show search
+			var stagedProfile = $("#save-outline-author").data("profile-author");
+			switchToSearchResultsOnProfile(stagedProfile);
+			$("#submitterSpecification").hide();
+			$("#sourceSpecification").hide();
+			$("#authorSpecification").show();
+			return false;
+		});
+		
+		$("#save-outline-submitter").click(function(event){
+			$("#save-outline-credits").data("edit-mode", "save-outline-submitter");
+			// show search
+			var stagedProfile = $("#save-outline-submitter").data("profile-submitter");
+			switchToSearchResultsOnProfile(stagedProfile);
+			$("#authorSpecification").hide();
+			$("#sourceSpecification").hide();
+			$("#submitterSpecification").show();
+			return false;
+		});
+		$("#save-outline-source").click(function(event){
+			$("#save-outline-credits").data("edit-mode", "save-outline-source");
+			// show search
+			var stagedProfile = $("#save-outline-source").data("profile-source");
+			switchToSearchResultsOnProfile(stagedProfile);
+			$("#submitterSpecification").hide();
+			$("#authorSpecification").hide();
+			$("#sourceSpecification").show();
+			return false;
+		});
+		
+		$("#btnAuthorCancel").click(function(event) {
+			$("#authorSpecification").hide();
+			ClearEditMode();
+			return false;
+		});
+		
+		$("#btnAuthorOk").click(function(event) {
+			var selectedRow = $(".creditRowSelected");
+			var profile = getSelectedPersonProfile(selectedRow);
+			stageSelectedAuthorProfile(profile);
+			//alert("btnAuthorOk : "+ profile.name.middle);
+			$("#authorSpecification").hide();
+			return false;
+		});
+		
+		$("#btnSubmitterOk").click(function(event) {
+			var selectedRow = $(".creditRowSelected");
+			var profile = getSelectedPersonProfile(selectedRow);
+			stageSelectedSubmitterProfile(profile);
+			$("#submitterSpecification").hide();
+			return false;
+		});
+		$("#btnSourceOk").click(function(event) {
+			var selectedRow = $(".creditRowSelected");
+			var profile = getSelectedSourceProfile(selectedRow);
+			stageSelectedSourceProfile(profile);
+			$("#sourceSpecification").hide();
+			return false;
+		});
+		
+		$("#btnAuthoredWithKayak").click(function(event)
+		{
+			stageKayakAsSource();
+			return false;
+		});
+		
+		$("#btnAuthoredWithKayak").parent("td").parent("tr").find("a").click(function(event) {
+			stageKayakAsSource();
+			return false;
+		});
+		
+		function stageKayakAsSource()
+		{
+			var profile = fetchSourceProfile("s0_source");
+			stageSelectedSourceProfile(profile);
+			$("#sourceSpecification").hide();
+		}
+		
+		$("#btnSubmitterCancel").click(function(event) {
+			$("#submitterSpecification").hide();
+			ClearEditMode();
+			return false;
+		});
+		
+		$("#btnSourceCancel").click(function(event) {
+			$("#sourceSpecification").hide();
+			ClearEditMode();
+			return false;
+		});
+		
+		function ClearEditMode()
+		{
+			$("#save-outline-credits").data("edit-mode", "");
+		}
+		
+		function getSelectedPersonProfile(selectedRow)
+		{
+			if (selectedRow && selectedRow.length != 0)
+			{
+				var personProfileId = $(selectedRow).attr("id");		
+				return collectProfileDocs("personProfile", authorRows, function(rowDoc){
+						if (rowDoc._id == personProfileId)
+					    		return true;
+					    	return false;
+					}, true );
+			}
+			return null;
+		}
+		
+		function getSelectedSourceProfile(selectedRow)
+		{
+			if (selectedRow && selectedRow.length != 0)
+			{
+				var sourceProfileId = $(selectedRow).attr("id");
+				var sourceProfile = fetchSourceProfile(sourceProfileId);		
+				return sourceProfile;
+			}
+			return null;
+		}
+		
+		$("#btnCancelSubmitAuthor").click(function(event) {
+			var editMode = $("#save-outline-credits").data("edit-mode");
+			if (editMode == "save-outline-author")
+				SwitchToAuthorProfileSearchResults();
+			else if (editMode == "save-outline-submitter")
+				SwitchToSubmitterProfileSearchResults();
+			//var profile = $(jq(editMode)).data("profile-" + (editMode == "save-outline-author" ? "author" : "submitter"));
+			//switchToSearchResultsOnProfile(profile);
+			return false;
+		});
+		
+		$("#btnCancelSubmitSource").click(function(event) {
+			var editMode = $("#save-outline-credits").data("edit-mode");
+			if (editMode == "save-outline-author")
+				SwitchToAuthorProfileSearchResults();
+			else if (editMode == "save-outline-submitter")
+				SwitchToSubmitterProfileSearchResults();
+			else if (editMode == "save-outline-source")
+				SwitchToSourceProfileSearchResults();
+			//var profile = $(jq(editMode)).data("profile-" + (editMode == "save-outline-author" ? "author" : "submitter"));
+			//switchToSearchResultsOnProfile(profile);
+			return false;
+		});
+		
+		$("#btnSubmitSource").click(function(event) {
+			
+			return false;
+		});
+		
+		$("#btnSubmitAuthor").click(submitAuthor);
+		
+		$("#btnSubmitSource").click(submitSource);
+
+		LoadPersonsAndAuthoredOutlines();
+	}
+	
+	function stringifyDateNow(dateNow)
+	{
+		if (!dateNow)
+			dateNow = new Date();
+		var sdate = JSON.stringify(dateNow);
+		return sdate.substr(1, sdate.length - 2);
+	}
+		
+	function createIDFromDateNow(dateNow)
+	{
+		if (!dateNow)
+			dateNow = new Date();
+		var newId = stringifyDateNow(dateNow);
+		newId = "kyk:" + newId;
+		return newId;
+	}
+	
+	function clone(obj)
+	{
+		return jQuery.parseJSON(JSON.stringify(obj));
+	}
+	
+	function submitSource(event)
+	{
+		$(this).unbind(event); // TODO: use on/off
+		
+		var profileOriginal =  $("#sourceDetailBlock").data("profile-original");
+	    var editMode = $("#sourceDetailBlock").data("edit-mode"); // editProfile / editCommon / copyToNewProfile
+	    var updatedProfile = $("[name='updateSourceDetails']").getJSON();
+	    //alert(JSON.stringify(updatedProfile));
+	    if (editMode == "editProfile" || editMode == "editCommon")
+	    {
+	    	if (dbMain){
+				// dbMain.put(personProfile._id, personProfile, function(resp) {		       
+			    // });
+		    }
+		    else  // Debug
+		    {	
+		    	// first save any changes to the common source details.
+		    	var commonSourceId = "";
+		    	if (profileOriginal.source._id.length > 0)
+		    	{
+		    		commonSourceId = profileOriginal.source._id;
+		    		var newRow = {"id" : commonSourceId, "key" : [commonSourceId, 0], "value" : clone(updatedProfile.source) };
+		    		newRow.value["head"] = { "contentType": "sourceProfile" };
+		    		//alert(JSON.stringify(newRow));
+		    		replaceRow(exampleRows, commonSourceId, newRow, true);
+		    	}
+		    	if (editMode == "editProfile" && profileOriginal.outline._id.length > 0)
+		    	{
+		    		if (commonSourceId.length > 0)
+		    			updatedProfile.outline.source["guid"] = commonSourceId;
+
+		    		graftSource(exampleRows, profileOriginal.outline._id, updatedProfile.outline.source);
+		    	}
+		    	updateStagedProfilesIfNeeded(updatedProfile);
+		    	switchToSearchResultsOnProfile(updatedProfile);
+		    }	
+	    }
+	    else if (editMode == "copyToNewProfile")
+	    {
+	    	var profileSwitchTo = clone(updatedProfile);
+	    	var newGuid = "";
+	    	if (updatedProfile.source.details.length > 0 || 
+	    		updatedProfile.source.website.length > 0 || 
+	    		updatedProfile.source.publisherDetails.length > 0 ||
+	    		updatedProfile.source.media.length > 0)
+	    	{
+	    		if (updatedProfile.source.details != profileOriginal.source.details || 
+	    			updatedProfile.source.website != profileOriginal.source.website ||
+	    			updatedProfile.source.publisherDetails != profileOriginal.source.publisherDetails ||
+	    			updatedProfile.source.media != profileOriginal.source.media)
+    			{
+    				// something has changed, so create a new common
+			    	newGuid = createIDFromDateNow();
+			    	var newRow = {"id" : newGuid, "key" : [newGuid, 0], "value" : clone(updatedProfile.source) };
+			        newRow.value._id = newGuid;
+		    		newRow.value["head"] = { "contentType": "sourceProfile" };				
+		    		// replace authorRow with new profile
+		    		exampleRows.splice(0, 0, newRow);
+	    		}
+	    		else
+	    		{
+	    			newGuid = updatedProfile.source._id;
+	    		}
+	    		profileSwitchTo._id = newGuid;
+    		}
+    		
+    		var outlineSource = updatedProfile.outline.source;
+    		if (outlineSource.details.length > 0 ||
+    			outlineSource.website.length > 0)
+	    	{		    		
+	    		var newOutlineSource = clone(outlineSource);
+	    		if (newGuid.length > 0)
+	    			newOutlineSource["guid"] = newGuid;
+	    		
+	    		var guidNewOutlineStub = "newOutlineStub";
+	    		var newOutlineStub;
+	    		if (!findAndDo(exampleRows, guidNewOutlineStub, function(rows, indexFound) { 
+	    				newOutlineStub = rows[indexFound].value;
+	    			}))
+				{
+					newOutlineStub = createBlankOutline();
+	    			newOutlineStub._id = guidNewOutlineStub;
+	    			var newRow = {"id" : guidNewOutlineStub, "key" : [guidNewOutlineStub, 0], "value" : newOutlineStub };
+	    			exampleRows.splice(0, 0, newRow);
+				}
+		
+				//alert(JSON.stringify(outlineSource));
+				newOutlineStub.head.source = newOutlineSource;
+				profileSwitchTo._id = guidNewOutlineStub;
+	    	}
+		    updateStagedProfilesIfNeeded(profileSwitchTo);
+		    switchToSearchResultsOnProfile(profileSwitchTo);
+	    }
+		
+		$(this).click(submitSource);
+		return false;
+		
+	}
+	
+	function submitAuthor(event)
+	{
+		// TODO: replace with on/off?
+		$(this).unbind(event);
+		// first do some checking (don't create blank profile)
+		// submit new profile
+		var personProfile = $("[name='updateAuthorProfile']").getJSON();
+		//alert(JSON.stringify(personProfile));	
+		if (personProfile.name.first.length == 0)
+		{
+			alert("Form requires First name");
+			return false;
+		}
+		if (personProfile.name.last.length == 0)
+		{
+			alert("Form requires Last name");
+			return false;
+		}
+
+		// use a timestamp as the guid.
+		
+		
+		personProfile.head = {"contentType" : "personProfile"};
+		
+		// only add interesting title. Not the default.fpu
+		if (personProfile.name.title == "(Title)")
+		{
+			personProfile.name.title = "";
+		}
+
+		var queryResults = $("[name='updateAuthorProfile']").find("[name='_id']");
+		var personProfileId = queryResults ? queryResults[0].value : null;
+		var fIsNewProfile = !personProfileId || personProfileId.length == 0;
+		//alert(personProfileId);
+		if (fIsNewProfile)
+		{
+			// check that identical entry doesn't exist already
+			var matchingDoc = collectProfileDocs("personProfile", authorRows, matchByNewAuthorFormFields, true);
+			if (matchingDoc)
+			{
+				alert("Warning: A matching person profile already exists.");
+			}
+			
+			var newId = createIDFromDateNow();
+			// add head information
+			personProfile._id = newId;
+		}
+		else
+		{
+			var matchingDocs = collectProfileDocs("personProfile", authorRows, matchByNewAuthorFormFields, false);
+			if (matchingDocs.length > 0)
+			{
+				for (var i=0; i < matchingDocs.length; i++) {
+				  if (matchingDocs[i]._id == personProfileId)
+				  	switchToSearchResultsOnProfile(personProfile);
+				  	$(this).click(submitAuthor);
+				  	return true; // no changes.
+				};
+				alert("Warning: A matching person profile already exists.");
+			}
+			var personProfileRev = $("[name='updateAuthorProfile']").find("[name='_rev']");
+			
+			// verify some overlap in profiles?
+			/*
+			var oldProfile = collectProfileDocs("personProfile", authorRows, function(rowDoc){
+					if (rowDoc._id == personProfileId)
+				    		return true;
+				    	return false;
+				}, true );
+			*/
+			
+			// verify that record with this Id/Rev matches some information?
+			// Make sure the record in memory matches this Rev.
+		}
+		
+		// now post to server.
+		//alert(JSON.stringify(personProfile));
+		if (dbMain)
+			dbMain.put(personProfile._id, personProfile, function(resp) {
+		        alert("Remember to check for ok: " + JSON.stringify(resp));
+		        // update selected author if it matches
+		        updateStagedProfilesIfNeeded(personProfile);
+		        loadDataSet(false);
+				// now load results
+				switchToSearchResultsOnProfile(personProfile);
+				$("#btnSubmitAuthor").click(submitAuthor);
+		    });
+	    else  // Debug
+	    {
+	    	updateStagedProfilesIfNeeded(personProfile);
+	    	var newRow = {"id" : personProfile._id, "key" : [personProfile._id, 0], "value" : personProfile};				
+	    	if (fIsNewProfile)
+	    	{
+
+				//alert(JSON.stringify(newRow));					
+				// append to our getResponse until we can replace it with the server response
+				getResponse.total_rows += 1;
+				getResponse.rows.push(newRow);
+	    	}
+	    	else
+	    	{
+	    		// replace authorRow with new profile
+	    		replaceRow(authorRows, personProfile._id, newRow);
+	    	}
+	    	switchToSearchResultsOnProfile(personProfile);
+	    }
+	    $(this).click(submitAuthor);
+		//alert("btnSubmitAuthor : "+ profile.name.middle);
+		return false;
+	}
+	
+	function replaceRow(rows, targetId, newRow)
+	{
+
+		return findAndDo(rows, targetId, function(rows, indexToReplace)
+		{
+			rows.splice(indexToReplace, 1, newRow);
+		});
+	}
+	
+	function graftSource(rows, targetId, outlineSource)
+	{
+
+		findAndDo(rows, targetId, function(rows, indexToReplace)
+		{
+			var outline = rows[indexToReplace].value;
+			
+			//alert(JSON.stringify(outlineSource));
+			outline.head.source = outlineSource;
+			//alert(JSON.stringify(outline));
+		});
+	}
+	
+	function findAndDo(rows, targetId, doSomething)
+	{
+		var indexToReplace = -1;
+		for (var i=0; i < rows.length; i++) {
+		  	if (rows[i].value._id == targetId)
+		  	{
+		  		indexToReplace = i;
+		  		break;
+		  	}
+		};
+		if (indexToReplace >= 0)
+		{
+			doSomething(rows, indexToReplace);
+			return true;
+		}
+		return false;
+	}
+	
+	function stageSelectedAuthorProfile(profile, fIgnoreSubmitterIsAuthor)
+	{
+		$("#save-outline-author")
+			.text(formatName(profile, "Click to specify"))
+			.data('profile-author', profile);
+		var fSubmitterIsAuthor = $("#submitterIsAuthor").attr("checked");
+		if (fSubmitterIsAuthor && !fIgnoreSubmitterIsAuthor)
+		{
+			$("#save-outline-submitter")
+				.text(formatName(profile, "Click to specify"))
+				.data('profile-submitter', profile);
+		}
+		//alert("stageSelected : "+ profile.name.middle);	
+	}
+	
+	function stageSelectedSubmitterProfile(profile, fIgnoreSubmitterIsAuthor)
+	{
+		$("#save-outline-submitter")
+			.text(formatName(profile, "Click to specify"))
+			.data('profile-submitter', profile);
+		var fSubmitterIsAuthor = $("#submitterIsAuthor").attr("checked");
+		if (fSubmitterIsAuthor && !fIgnoreSubmitterIsAuthor)
+		{
+			$("#save-outline-author")
+				.text(formatName(profile, "Click to specify"))
+				.data('profile-author', profile);
+		}
+		//alert("stageSelected : "+ profile.name.middle);	
+	}
+	
+	function stageSelectedSourceProfile(profile)
+	{
+		$("#save-outline-source")
+			.text(formatCombinedSource(profile, "Click to specify"))
+			.data('profile-source', profile);	
+	}
+	
+	function updateStagedProfilesIfNeeded(profile)
+	{
+		var authorProfileStaged = $("#save-outline-author").data('profile-author');
+        if (authorProfileStaged && authorProfileStaged._id == profile._id)
+        {
+        	stageSelectedAuthorProfile(profile, true);
+        }
+        var submitterProfileStaged = $("#save-outline-submitter").data('profile-submitter');
+        if (submitterProfileStaged && submitterProfileStaged._id == profile._id)
+        {
+        	stageSelectedSubmitterProfile(profile, true);
+        }
+        var sourceProfileStaged = $("#save-outline-source").data('profile-source');
+        if (sourceProfileStaged && sourceProfileStaged._id == profile._id)
+        {
+        	stageSelectedSourceProfile(profile);
+        }
+	}
+		
+	function switchToSearchResultsOnProfile(profile)
+	{
+					// create new search string based on updated profile
+			var keywords = "";
+			var editMode = $("#save-outline-credits").data("edit-mode");
+			if (profile)
+			{
+				if (editMode == "save-outline-submitter" || editMode == "save-outline-author")
+				{
+					keywords = convertToKeywordString(
+						[profile.name.first,
+						profile.name.middle,
+						profile.name.last]);
+					if (profile.organization)
+					{
+						var keywords2 = convertToKeywordString( 
+							[profile.organization.name,
+							profile.organization.website]);
+						keywords += " " + keywords2;
+					}
+				}
+				else
+				{
+					keywords = convertToKeywordString(
+						[profile.source.details,
+						profile.source.website,
+						profile.outline.source.details,
+						profile.outline.source.website]);
+				}
+				// TODO: calculate keywords for sources
+			}			
+			if (editMode == "save-outline-submitter")
+			{
+				$("#submitterSearch").val(keywords);
+			} 
+			else if (editMode == "save-outline-author")
+			{
+				$("#authorSearch").val(keywords);
+			}
+			else if (editMode == "save-outline-source")
+			{
+				$("#sourceSearch").val(keywords);
+				LoadSourceResultsCallback(getResponse);
+				if (profile)
+				{
+					var parentRow = $(jq(profile._id + "_source"));
+					selectCreditRow(parentRow, fetchSourceProfile, "[name='updateSourceDetails']");
+				}
+			}
+
+			if (editMode == "save-outline-submitter" || editMode == "save-outline-author")
+			{
+				LoadAuthorResultsCallback(getResponse, editMode == "save-outline-submitter");
+				// now highlight the new row.
+				if (profile)
+				{
+					var parentRow = $(jq(profile._id));
+					selectCreditRow(parentRow, fetchPersonProfile, "[name='updateAuthorProfile']");
+				}
+				$("[name='updateAuthorProfile']").find("[name='_id']").val(""); // reset id, to make sure we don't accidentally use an old id.
+				$("[name='updateAuthorProfile']").find("[name='_rev']").val("");
+			}
+		
+	}
+	
+	function convertToKeywordString(list)
+	{
+		var keywords = "";
+		for (var i=0; i < list.length; i++) {
+			var word = list[i];
+		   if (word && word.search(/[a-zA-Z]/) != -1)
+		   {
+		   		if (i > 0)
+		   			keywords += " ";
+		   		keywords += word;
+		   }
+
+		};
+		return keywords;
+	}
+	
+    Logos.ReferenceTagging.lbsBibleVersion = "ESV";
+    Logos.ReferenceTagging.lbsLinksOpenNewWindow = true;
+    Logos.ReferenceTagging.lbsLogosLinkIcon = "dark";
+    Logos.ReferenceTagging.lbsNoSearchTagNames = [  ];
+    Logos.ReferenceTagging.lbsTargetSite = "biblia";
+    //Logos.ReferenceTagging.tag();
+
+</script>
+</body>
+</html>

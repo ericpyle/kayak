@@ -1,0 +1,5 @@
+/*	.edit-state { background-color: #E6E6FA /* Lavender ; } */
+	.ghost { background-color: #FFF4B8;  }
+	.concept label, .concept textarea { vertical-align: top; }
+
+	#head-editBoxControls, #tail-editBoxControls { margin-left: 10px;} /* try using jquery UI/API/1.8/Position */
