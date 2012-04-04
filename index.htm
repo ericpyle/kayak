@@ -5,14 +5,18 @@
 <META name="copyright" content="Copyright 2011"/>
 <META name="author" content="Eric Pyle"/>
 <META name="description" content="build your own chiasm with ease"/>
-<link type="text/css" href="css/smoothness/jquery-ui-1.8.1.custom.css" rel="stylesheet" />
+<style type="text/css" title="currentStyle">
+			@import "css/demo_table_jui.css";
+			@import "css/smoothness/jquery-ui-1.8.4.custom.css";
+</style>
 <link rel="stylesheet" href="css/chiasms.css" type="text/css"/>
 <link type="text/css" href="css/1.2.3.outliner.css" rel="stylesheet" />
 <meta name="keywords" content="chiasm, outline" />
 <meta http-equiv="Content-Script-Type" content="text/javascript"/>  				 
     	
-    	<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script> 
+    	<script type="text/javascript" src="js/jquery.js"></script> 
     	<script type="text/javascript" src="js/jquery-ui-1.8.1.custom.min.js"></script> 
+    	<script type="text/javascript" src="js/jquery.dataTables.min.js"></script> 
 		<script type="text/javascript" src="js/fitToContent.js"></script>
 		<script type="text/javascript" src="js/jquery-extensions-utils.js"></script>
 		<title>kayak - chiasms made easily</title>
@@ -26,6 +30,10 @@
    			show: function(event, ui) { showTab(event, ui); }
 		});
 		$(".tabs").show();
+		$('#exampleTable').dataTable({
+	        "bJQueryUI": true,
+	        "sPaginationType": "full_numbers"
+	    });
 	});
 	
 </script>
