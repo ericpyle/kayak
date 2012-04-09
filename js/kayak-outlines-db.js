@@ -449,20 +449,20 @@
 		
 		function matchByAuthorKeywords(doc)
 		{
-			var keywords = removeMalformedWords($("#authorSearch").val().split(" "));
-			return matchByKeywords(doc, keywords, QueryByAuthorMatches);
+			//var keywords = removeMalformedWords($("#authorResults_filter input").val().split(" "));
+			return matchByKeywords(doc, null, QueryByAuthorMatches);
 		}
 		
 		function matchBySubmitterKeywords(doc)
 		{
-			var keywords = removeMalformedWords($("#submitterSearch").val().split(" "));
-			return matchByKeywords(doc, keywords, QueryByAuthorMatches);
+			//var keywords = removeMalformedWords($("#submitterProfileResults_filter input").val().split(" "));
+			return matchByKeywords(doc, null, QueryByAuthorMatches);
 		}
 		
 		function matchBySourceKeywords(doc)
 		{
-			var keywords = removeMalformedWords($("#sourceSearch").val().split(" "));
-			return matchByKeywords(doc, keywords, QueryByAuthorMatches);
+			//var keywords = removeMalformedWords($("#sourceSearchResults_filter input").val().split(" "));
+			return matchByKeywords(doc, null, QueryByAuthorMatches);
 		}
 		
 		function matchByKeywords(doc, keywords, query)
@@ -600,6 +600,7 @@
 				        "bJQueryUI": true,
 				        "sPaginationType": "full_numbers"
 				    });
+				    injectSearchButton("submitterProfileResults_filter", "btnSearchSubmitters", "Submitter keywords");
 			} 
 			else if (!fSubmitter && $('#authorResults_wrapper').length == 0)
 			{
@@ -607,6 +608,7 @@
 			        "bJQueryUI": true,
 			        "sPaginationType": "full_numbers"
 			    });
+			    injectSearchButton("authorResults_filter", "btnSearchAuthors", "Author keywords");
 			}			
 
 		};
@@ -956,7 +958,9 @@
 			        "bJQueryUI": true,
 			        "sPaginationType": "full_numbers"
 			    });
-			} 
+			    injectSearchButton("sourceSearchResults_filter", "btnSearchSources", "Source keywords");
+			}
+
 		}		
 
 /**

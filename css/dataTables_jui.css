@@ -126,13 +126,17 @@ table.display thead th div.DataTables_sort_wrapper span {
 	padding: 2px 0;
 }
 
-.dataTables_length {
-	width: 40%;
+.dataTables_filter  {
+	width: 60%;
 	float: left;
 }
 
-.dataTables_filter {
-	width: 50%;
+.dataTables_filter  input {
+	width: 300px;
+}
+
+.dataTables_length {
+	width: 40%;
 	float: right;
 	text-align: right;
 }

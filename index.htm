@@ -34,7 +34,26 @@
 	        "bJQueryUI": true,
 	        "sPaginationType": "full_numbers"
 	    });
+		// inject search button
+		injectSearchButton("exampleTable_filter", "btnSearchOutlines", "Outline keywords"); 
+	    //$('#exampleTable_filter label').text()
 	});
+	
+	function injectSearchButton(idDtFilter, idbtnSearch, placeholder)
+	{
+		
+		$(jq(idDtFilter + ' label input')).appendTo(jq(idDtFilter));
+		if (placeholder)
+			$(jq(idDtFilter + ' input')).attr("placeholder", placeholder);
+	    $(jq(idDtFilter + '  label')).remove();
+	    $(jq(idDtFilter)).append('<br/><button id="'+ idbtnSearch +'" type="button">Search</button>')
+	    $(jq(idbtnSearch)).click(function(event)
+	    {
+	    	var btn = event.target;
+	    	$(btn).siblings(".dataTables_filter input").val("ok").keyup();
+	    	return false;
+	    });
+	}
 	
 </script>
 </head>
@@ -184,12 +203,6 @@
 		<div id="authorSpecification" style="display: none;">
 			<b>Author</b>
 			<p>
-				<input id="authorSearch" type="search" placeholder="Author"/> </br>
-				<button id="btnAuthorSearch" type="button">Search</button>
-				<button id="btnClearSearch" type="reset">Show All</button>		
-			</p>
-			<p>
-				<i id="authorHeading">Search Results</i>
 				<table id="authorResults" class="personSearchResults" width="100%">
 					<thead><tr><td colspan="5" class="personName">Name</td><td colspan="2">Most Associated With</td><td></td></tr>
 						<tr>
@@ -213,12 +226,6 @@
 		<div id="submitterSpecification" style="display: none;">
 			<b>Submitter</b>
 			<p>
-				<input id="submitterSearch" type="search" placeholder="Submitter"/> </br>
-				<button id="btnSubmitterSearch" type="button">Search</button>
-				<button id="btnClearSubmitterSearch" type="reset">Show All</button>		
-			</p>
-			<p>
-				<i id="submitterHeading">Search Results</i>
 				<table id="submitterProfileResults" class="personSearchResults" width="100%">
 					<thead><tr><td colspan="5" class="personName">Name</td><td colspan="2">Most Associated With</td></tr>
 						<tr>
@@ -275,12 +282,6 @@
 		<div id="sourceSpecification" style="display:none;"> <!-- style="display:none;" -->
 			<b>Source</b>
 			<p>
-				<input id="sourceSearch" type="search" placeholder="Source"/> <br/>
-				<button id="btnSourceSearch" type="button">Search</button>
-				<button id="btnClearSourceSearch" type="reset">Show All</button>
-			</p>
-			<p>
-				<i id="sourceHeading">Search Results</i>
 				<table id="sourceSearchResults" class="sourceSearchResults" width="100%">
 					<thead><td class="sourceDetails">Source Details</td><td/></tr>
 						<tr>
@@ -467,27 +468,12 @@
 			return true;
 		});
 		
-		$("#btnAuthorSearch").click(function(event) {
-								LoadAuthorResults();
-				  				return false;
-							});
-
-		$("#btnClearSearch").click(function(event) {
-								$("#authorSearch").val("");
-								LoadAuthorResults();
-				  				return false;
-							});
 		$("#btnCreateNewAuthor, #btnCreateNewSubmitter, #btnCreateNewSource").click(function(event) {
 								$("#sourceDetailBlock").data("edit-mode", "editProfile");
 								LoadNewProfileForm();
 				  				return false;
 							});
-		$("#btnCreateNewAuthor, #btnCreateNewSubmitter, #btnCreateNewSource").parent("td").parent("tr").find("a").click(function(event) {
-								$("#sourceDetailBlock").data("edit-mode", "editProfile");
-								LoadNewProfileForm();
-				  				return false;
-							});
-		
+									
 		$("#sourceDetailBlock div textarea").keyup(function(event) 
 					{											
   						FitToContent(event.target,'','100');
@@ -1184,15 +1170,15 @@
 			}			
 			if (editMode == "save-outline-submitter")
 			{
-				$("#submitterSearch").val(keywords);
+				$("#submitterProfileResults_filter input").val(keywords);
 			} 
 			else if (editMode == "save-outline-author")
 			{
-				$("#authorSearch").val(keywords);
+				$("#authorResults_filter input").val(keywords);
 			}
 			else if (editMode == "save-outline-source")
 			{
-				$("#sourceSearch").val(keywords);
+				$("#sourceSearchResults_filter input").val(keywords);
 				LoadSourceResultsCallback(getResponse);
 				if (profile)
 				{
