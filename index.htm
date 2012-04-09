@@ -6,7 +6,7 @@
 <META name="author" content="Eric Pyle"/>
 <META name="description" content="build your own chiasm with ease"/>
 <style type="text/css" title="currentStyle">
-			@import "css/demo_table_jui.css";
+			@import "css/dataTables_jui.css";
 			@import "css/smoothness/jquery-ui-1.8.4.custom.css";
 </style>
 <link rel="stylesheet" href="css/chiasms.css" type="text/css"/>
@@ -53,7 +53,7 @@
 	 <div id="Examples">
 		<h3>Outlines</h3>
 		<ul class="examples">
-			<table id="exampleTable" cols="6">
+			<table id="exampleTable" cols="6" width="100%">
 			<thead>
 				<tr><th>Type</th><th>Range</th><th>Author</th>
 					<th>Source</th><th>Submitted</th><th>Submitted By</th></tr>				
@@ -190,11 +190,11 @@
 			</p>
 			<p>
 				<i id="authorHeading">Search Results</i>
-				<table id="authorResults" class="personSearchResults">
-					<thead><tr><td></td><td colspan="5" class="personName">Name</td><td colspan="2">Most Associated With</td><td></td></tr>
-						<tr><td>Select</td>
+				<table id="authorResults" class="personSearchResults" width="100%">
+					<thead><tr><td colspan="5" class="personName">Name</td><td colspan="2">Most Associated With</td><td></td></tr>
+						<tr>
 							<td class="personName">Title</td>
-							<td class="personName">First <b>^</b></td>
+							<td class="personName">First</td>
 							<td class="personName">MI</td>
 							<td class="personName">Last</td>
 							<td class="personName">Suffix</td>
@@ -204,8 +204,8 @@
 							<td>Credits</td></tr>
 					</thead>
 					<tbody></tbody>				
-					<tfoot><tr><td><button id="btnCreateNewAuthor" type="button">*</button></td><td colspan="5"><a href="#">Specify author</a></td> <td/><td/> <td/></tr>
-						<tr><td><button id="btnAuthorOk" type="button">OK</button></td><td colspan="5"><button id="btnAuthorCancel" type="button">Cancel</button></td> <td/><td/> <td/></tr>
+					<tfoot><tr><td colspan="8"><a id="btnCreateNewAuthor" href="#">Specify author</a></td></tr>
+						<tr><td colspan="8"><button id="btnAuthorOk" type="button">OK</button> <button id="btnAuthorCancel" type="button">Cancel</button></td></tr>
 					</tfoot>
 				</table>
 			</p>
@@ -219,11 +219,11 @@
 			</p>
 			<p>
 				<i id="submitterHeading">Search Results</i>
-				<table id="submitterProfileResults" class="personSearchResults">
-					<thead><tr><td></td><td colspan="5" class="personName">Name</td><td colspan="2">Most Associated With</td></tr>
-						<tr><td>Select</td>
+				<table id="submitterProfileResults" class="personSearchResults" width="100%">
+					<thead><tr><td colspan="5" class="personName">Name</td><td colspan="2">Most Associated With</td></tr>
+						<tr>
 							<td class="personName">Title</td>
-							<td class="personName">First <b>^</b></td>
+							<td class="personName">First</td>
 							<td class="personName">MI</td>
 							<td class="personName">Last</td>
 							<td class="personName">Suffix</td>
@@ -233,8 +233,8 @@
 							</tr>
 					</thead>
 					<tbody></tbody>				
-					<tfoot><tr><td><button id="btnCreateNewSubmitter" type="button">*</button></td><td colspan="5"><a href="#">Specify submitter</a></td> <td/><td/></tr>
-						<tr><td><button id="btnSubmitterOk" type="button">OK</button></td><td colspan="5"><button id="btnSubmitterCancel" type="button">Cancel</button></td> <td/><td/></tr>
+					<tfoot><tr><td colspan="7"><a id="btnCreateNewSubmitter" href="#">Specify submitter</a></td></tr>
+						<tr><td colspan="7"><button id="btnSubmitterOk" type="button">OK</button> <button id="btnSubmitterCancel" type="button">Cancel</button></td></tr>
 					</tfoot>
 				</table>
 			</p>
@@ -281,16 +281,17 @@
 			</p>
 			<p>
 				<i id="sourceHeading">Search Results</i>
-				<table id="sourceSearchResults" class="sourceSearchResults">
-					<thead><tr><td/><td class="sourceDetails">Source Details</td><td/></tr>
-						<tr><td>Select</td>
+				<table id="sourceSearchResults" class="sourceSearchResults" width="100%">
+					<thead><td class="sourceDetails">Source Details</td><td/></tr>
+						<tr>
 							<td class="sourceDetails">Common, Specific</td>
-							<td>Author</td></tr>
+							<td>Author</td>
+						</tr>
 					</thead>
 					<tbody></tbody>
-					<tfoot><tr><td><button id="btnCreateNewSource" type="button">*</button></td><td><a href="#">Specify source</a></td></tr>
-						<tr><td><button id="btnAuthoredWithKayak" type="button">*</button></td><td><a href="#">I authored this outline with kayak</a></td></tr>
-						<tr><td><button id="btnSourceOk" type="button">OK</button></td><td><button id="btnSourceCancel" type="button">Cancel</button></td> <td/></tr>						
+					<tfoot><tr><td colspan="2"><a id="btnCreateNewSource" href="#">Specify source</a></td></tr>
+						<tr><td colspan="2"><a id="btnAuthoredWithKayak" href="#">I authored this outline with kayak</a></td></tr>
+						<tr><td colspan="2"><button id="btnSourceOk" type="button">OK</button> <button id="btnSourceCancel" type="button">Cancel</button></td></tr>						
 					</tfoot>
 				</table>
 			</p>

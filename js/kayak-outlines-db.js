@@ -570,7 +570,6 @@
 				$("<tr></tr>")
 					.attr("id", profile._id)
 					.addClass("creditRow")
-					.append("<td><button type='button'>*</button></td>")
 					.append("<td class='personName'>" + authorColumns(profile, "name.title") + "</td>")
 					.append("<td class='personName'>" + authorColumns(profile, "name.first") + "</td>")
 					.append("<td class='personName'>" + authorColumns(profile, "name.middle") + "</td>")
@@ -595,6 +594,20 @@
 						selectCreditRow(parentRow, fetchPersonProfile, "[name='updateAuthorProfile']");
 		  				return false;
 					});
+			if (fSubmitter && $('#submitterProfileResults_wrapper').length == 0)
+			{
+					$('#submitterProfileResults').dataTable({
+				        "bJQueryUI": true,
+				        "sPaginationType": "full_numbers"
+				    });
+			} 
+			else if (!fSubmitter && $('#authorResults_wrapper').length == 0)
+			{
+				$('#authorResults').dataTable({
+			        "bJQueryUI": true,
+			        "sPaginationType": "full_numbers"
+			    });
+			}			
 
 		};
 		
@@ -711,7 +724,7 @@
 				if (editMode == "save-outline-submitter" || editMode == "save-outline-author")
 				{
 					var editLink = '<a href="#" id="'+ editModeId +'">'+ editModeText +'</a>';
-					rowHtml = '<tr id="creditRowSelectedOptions"><td><button id="btnCreditOk" type="button">OK</button></td><td>' + editLink + '</td><td colspan="3"/></tr>';
+					rowHtml = '<tr id="creditRowSelectedOptions"><td colspan="7"><button id="btnCreditOk" type="button">OK</button> ' + editLink + '</td></tr>';
 					
 				}
 				else if (editMode == "save-outline-source")
@@ -730,9 +743,9 @@
 					var editLink = '<a href="#" id="'+ editModeId +'">'+ editModeText +'</a>';
 					var copyLink = '<a id="copyToNewProfile" href="#">Copy to New</a>';
 					if (idProfile == "s0_source")
-						rowHtml = '<tr id="creditRowSelectedOptions"><td><button id="btnCreditOk" type="button">OK</button></td></tr>';
+						rowHtml = '<tr id="creditRowSelectedOptions"><td colspan="2"><button id="btnCreditOk" type="button">OK</button></td></tr>';
 					else
-						rowHtml = '<tr id="creditRowSelectedOptions"><td><button id="btnCreditOk" type="button">OK</button></td><td>' + editLink  + " | " + copyLink + '</td><td/></tr>';						
+						rowHtml = '<tr id="creditRowSelectedOptions"><td colspan="2"><button id="btnCreditOk" type="button">OK</button> ' + editLink  + " | " + copyLink + '</td></tr>';						
 				}
 				// add some extra options
 				$(creditRow).after(rowHtml);							
@@ -921,7 +934,6 @@
 				$("<tr></tr>")
 					.attr("id", rowId + "_source")
 					.addClass("creditRow")
-					.append("<td><button type='button'>*</button></td>")
 					.append("<td class='sourceDetails'>" + sourceDetails + "</td>")
 					.append("<td>" + authorDetails + "</td>")
 					.appendTo('#sourceSearchResults tbody')
@@ -938,6 +950,13 @@
 						selectCreditRow(parentRow, fetchSourceProfile, "[name='updateSourceDetails']");
 		  				return false;
 					});
+			if ($('#sourceSearchResults_wrapper').length == 0)
+			{
+				$('#sourceSearchResults').dataTable({
+			        "bJQueryUI": true,
+			        "sPaginationType": "full_numbers"
+			    });
+			} 
 		}		
 
 /**
