@@ -30,12 +30,6 @@
    			show: function(event, ui) { showTab(event, ui); }
 		});
 		$(".tabs").show();
-		$('#exampleTable').dataTable({
-	        "bJQueryUI": true,
-	        "sPaginationType": "full_numbers"
-	    });
-		// inject search button
-		injectSearchButton("exampleTable_filter", "btnSearchOutlines", "Outline keywords"); 
 	    //$('#exampleTable_filter label').text()
 	});
 	
@@ -392,12 +386,46 @@
 
 	$(document).ready(function(){
 
+		var dataTable = $('#exampleTable').dataTable({
+		        "bJQueryUI": true,
+		        "sPaginationType": "full_numbers"
+		    });
+
+		$("#exampleTable").data("dataTable", dataTable);
+		// inject search buttons
+		injectSearchButton("exampleTable_filter", "btnSearchOutlines", "Outline keywords"); 
+
+		// not sure why typeof(Couch) doesn't work
+		try
+		{
+			Couch.init(function() {
+				var server = new Couch.Server('http://kayak.iriscouch.com', '', '');
+				dbMain = new Couch.Database(server, 'outlines');
+				dbMain = null; // DEBUG: just run from local db.
+				InitializeDbStuff();		
+			});
+		}
+		catch(err)
+		{
+			// DEBUG
+			InitializeDbStuff();
+		}
+
 		mainOutline = createBlankOutline();
 		mainOutline.head.contentType = "chiasm";
+		
+	Logos.ReferenceTagging.lbsBibleVersion = "ESV";
+    Logos.ReferenceTagging.lbsLinksOpenNewWindow = true;
+    Logos.ReferenceTagging.lbsLogosLinkIcon = "dark";
+    Logos.ReferenceTagging.lbsNoSearchTagNames = [  ];
+    Logos.ReferenceTagging.lbsTargetSite = "biblia";
+	
 		LoadOutlineFromCurrentState();
 		
 		InitializeEditForm();
 		
+    //Logos.ReferenceTagging.tag();
+
 	});
 	
 	function showTab(event, ui)
@@ -422,23 +450,6 @@
 			}
 		}
 	}
-	
-	// not sure why typeof(Couch) doesn't work
-	try
-	{
-		Couch.init(function() {
-			var server = new Couch.Server('http://kayak.iriscouch.com', '', '');
-			dbMain = new Couch.Database(server, 'outlines');
-			dbMain = null; // DEBUG: just run from local db.
-			InitializeDbStuff();		
-		});
-	}
-	catch(err)
-	{
-		// DEBUG
-		InitializeDbStuff();
-	}
-	
 	/*
 	 * Utility
 	 */
@@ -1217,14 +1228,6 @@
 		};
 		return keywords;
 	}
-	
-    Logos.ReferenceTagging.lbsBibleVersion = "ESV";
-    Logos.ReferenceTagging.lbsLinksOpenNewWindow = true;
-    Logos.ReferenceTagging.lbsLogosLinkIcon = "dark";
-    Logos.ReferenceTagging.lbsNoSearchTagNames = [  ];
-    Logos.ReferenceTagging.lbsTargetSite = "biblia";
-    //Logos.ReferenceTagging.tag();
-
 </script>
 </body>
 </html>

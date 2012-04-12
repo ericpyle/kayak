@@ -101,33 +101,37 @@
 						    		return true;
 						    	return false;
 						}, true );
-				$("<tr></tr>")
-					.attr("id", exampleRows[i].id)
+				
+				var dataTable1 = $("#exampleTable").data("dataTable");
+				var iSettings = dataTable1.fnAddData(
+					[	doc.head.contentType, 
+						formatBCVRange(doc.head.bcvRange, ""), 
+						formatName(authorProfile, ""), 
+						formatSource(doc, ""), 
+						formatSubmissionTimestamp(doc.head.submissionTimestamp), 
+						formatName(submitterProfile, "")]
+				);
+				var drow = dataTable1.fnSettings().aoData[iSettings[0]];
+				$(drow.nTr)
 					.addClass("exampleRow")
-					.append("<td>" + doc.head.contentType + "</td>")
-					.append("<td>" + formatBCVRange(doc.head.bcvRange, "") + "</td>")
-					.append("<td>" + formatName(authorProfile, "") + "</td>")
-					.append("<td>" + formatSource(doc, "") + "</td>")
-					.append("<td>" + formatSubmissionTimestamp(doc.head.submissionTimestamp) + "</td>")
-					.append("<td>" + formatName(submitterProfile, "") + "</td>")
-					.appendTo('#exampleTableBody')
+					.attr("id", exampleRows[i].id)
 					.click(function(event) {
-						var rowId = $(this).attr("id");
-						//alert(rowId);									
-						var docToLoad; 
-						for(var irow=0; irow<exampleRows.length; ++irow)
-						{
-							if (exampleRows[irow].id == rowId)
+							var rowId = $(this).attr("id");
+							//alert(rowId);									
+							var docToLoad; 
+							for(var irow=0; irow<exampleRows.length; ++irow)
 							{
-								docToLoad = exampleRows[irow].value;
-								break;
+								if (exampleRows[irow].id == rowId)
+								{
+									docToLoad = exampleRows[irow].value;
+									break;
+								}
 							}
-						}
-						if (docToLoad)
-							loadJSONToOutline(docToLoad); 
-		  				return false;
-					});
-			};
+							if (docToLoad)
+								loadJSONToOutline(docToLoad); 
+			  				return false;
+						});
+			};			
 		}
 		
 		function formatBCVRange(range, sdefault)
