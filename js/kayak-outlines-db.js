@@ -519,13 +519,13 @@
 					continue;
 				// now get the docs authored by this person.
 				var countAuthored = 0;
-				for (var inext=i+1; inext < authorRows.length; inext++) {					
+				for (var inext=0; inext < authorRows.length; inext++) {					
 					var nextDoc = authorRows[inext].value;
-					if (nextDoc && nextDoc.head.contentType != "personProfile" && 
+					if (nextDoc && (nextDoc.head.contentType == "chiasm" || nextDoc.head.contentType == "outline" ) && 
 						nextDoc.head.author && nextDoc.head.author.guid == personProfile._id)
 						authoredDocs.push(nextDoc);
 					else
-						break;
+						continue;
 				};
 			};
 			return authoredDocs;
