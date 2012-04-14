@@ -385,10 +385,20 @@
 
 	$(document).ready(function(){
 
-		initializeTable("exampleTable", "btnSearchOutlines", "Outline keywords");
-		initializeTable("authorResults", "btnSearchAuthors", "Author keywords");
-		initializeTable("submitterProfileResults", "btnSearchSubmitters", "Submitter keywords");
-		initializeTable("sourceSearchResults", "btnSearchSources", "Source keywords");
+		var tableOptions1 = {
+	        "bJQueryUI": true,
+	        "sPaginationType": "full_numbers"
+	    };
+	    var tableOptionsSortByDate = clone(tableOptions1);
+	    tableOptionsSortByDate["aaSorting"] = [[ 4, "desc" ]];
+	    var tableOptionsSortByFirstName = clone(tableOptions1);
+	    tableOptionsSortByFirstName["aaSorting"] = [[ 1, "asc" ]];
+	    var tableOptionsSortBySource = clone(tableOptions1);
+	    tableOptionsSortBySource["aaSorting"] = [[ 0, "asc" ]];  
+		initializeTable("exampleTable", tableOptionsSortByDate, "btnSearchOutlines", "Outline keywords");
+		initializeTable("authorResults", tableOptionsSortByFirstName, "btnSearchAuthors", "Author keywords");
+		initializeTable("submitterProfileResults", tableOptionsSortByFirstName, "btnSearchSubmitters", "Submitter keywords");
+		initializeTable("sourceSearchResults", tableOptionsSortBySource, "btnSearchSources", "Source keywords");
 
 		// not sure why typeof(Couch) doesn't work
 		try
@@ -423,12 +433,9 @@
 
 	});
 	
-	function initializeTable(idTable, idSearchButton, txtPlaceholder)
+	function initializeTable(idTable, tableOptions, idSearchButton, txtPlaceholder)
 	{
-		var dataTable1 = $(jq(idTable)).dataTable({
-	        "bJQueryUI": true,
-	        "sPaginationType": "full_numbers"
-	    });
+		var dataTable1 = $(jq(idTable)).dataTable(tableOptions);
 		injectSearchButton(idTable + "_filter", idSearchButton, txtPlaceholder);
 		$(jq(idTable)).data("dataTable", dataTable1);
 
