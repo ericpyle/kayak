@@ -614,53 +614,8 @@
 				$((cells)[2]).addClass("personName");
 				$((cells)[3]).addClass("personName");
 				$((cells)[4]).addClass("personName");
-				dataTable1.fnDraw();			
-				/*				
-				$("<tr></tr>")
-					.attr("id", profile._id)
-					.addClass("creditRow")
-					.append("<td class='personName'>" + authorColumns(profile, "name.title") + "</td>")
-					.append("<td class='personName'>" + authorColumns(profile, "name.first") + "</td>")
-					.append("<td class='personName'>" + authorColumns(profile, "name.middle") + "</td>")
-					.append("<td class='personName'>" + authorColumns(profile, "name.last") + "</td>")
-					.append("<td class='personName'>" + authorColumns(profile, "name.suffix") + "</td>")
-					.append("<td>" + authorColumns(profile, "organization.name") + "</br>" +
-									 authorColumns(profile, "organization.website") + "</td>")
-					.append(fSubmitter ? "" : "<td>" + "" + "</td>")
-					.append("<td>" + 
-						(fSubmitter ? DocsSubmitted(profile, authorRows).length : DocsAuthored(profile, authorRows).length) + "</td>")
-					.appendTo(fSubmitter ? "#submitterProfileResults tbody" : "#authorResults tbody")
-					.click(function(event) {
-						// first turn off any other selected Row.
-						var parentRow = $(event.target).parent("tr");
-						selectCreditRow(parentRow, fetchPersonProfile, "[name='updateAuthorProfile']");
-		  				return false;
-					});
-					*/
+				dataTable1.fnDraw();
 			}
-			$(".creditRow td button").click(function(event) {
-						// first turn off any other selected Row.
-						var parentRow = $(event.target).parent("td").parent("tr");
-						selectCreditRow(parentRow, fetchPersonProfile, "[name='updateAuthorProfile']");
-		  				return false;
-					});
-			if (fSubmitter && $('#submitterProfileResults_wrapper').length == 0)
-			{
-					$('#submitterProfileResults').dataTable({
-				        "bJQueryUI": true,
-				        "sPaginationType": "full_numbers"
-				    });
-				    injectSearchButton("submitterProfileResults_filter", "btnSearchSubmitters", "Submitter keywords");
-			} 
-			else if (!fSubmitter && $('#authorResults_wrapper').length == 0)
-			{
-				$('#authorResults').dataTable({
-			        "bJQueryUI": true,
-			        "sPaginationType": "full_numbers"
-			    });
-			    injectSearchButton("authorResults_filter", "btnSearchAuthors", "Author keywords");
-			}			
-
 		};
 		
 		function fetchPersonProfile(idProfile)
@@ -1004,36 +959,7 @@
 				var cells = $(drow.nTr).children("td");				
 				$((cells)[0]).addClass("sourceDetails");
 				dataTable1.fnDraw();
-				/*
-				$("<tr></tr>")
-					.attr("id", rowId + "_source")
-					.addClass("creditRow")
-					.append("<td class='sourceDetails'>" + sourceDetails + "</td>")
-					.append("<td>" + authorDetails + "</td>")
-					.appendTo('#sourceSearchResults tbody')
-					.click(function(event) {
-						// first turn off any other selected Row.
-						var parentRow = $(event.target).parent("tr");
-						selectCreditRow(parentRow, fetchSourceProfile, "[name='updateSourceDetails']");
-		  				return false;
-					});
-					*/
 			};
-			$(".creditRow td button").click(function(event) {
-						// first turn off any other selected Row.
-						var parentRow = $(event.target).parent("td").parent("tr");
-						selectCreditRow(parentRow, fetchSourceProfile, "[name='updateSourceDetails']");
-		  				return false;
-					});
-			if ($('#sourceSearchResults_wrapper').length == 0)
-			{
-				$('#sourceSearchResults').dataTable({
-			        "bJQueryUI": true,
-			        "sPaginationType": "full_numbers"
-			    });
-			    injectSearchButton("sourceSearchResults_filter", "btnSearchSources", "Source keywords");
-			}
-
 		}		
 
 /**
