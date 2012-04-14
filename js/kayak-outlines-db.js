@@ -588,7 +588,7 @@
 						authorColumns(profile, "name.middle"), 
 						authorColumns(profile, "name.last"), 
 						authorColumns(profile, "name.suffix"), 
-						authorColumns(profile, "organization.name"),
+						authorColumns(profile, "organization.name") + "<br/>" + authorColumns(profile, "organization.website"),
 						fSubmitter ? DocsSubmitted(profile, authorRows).length : DocsAuthored(profile, authorRows).length],
 						false /* don't redraw */
 				);
@@ -607,8 +607,6 @@
 				var cells = $(drow.nTr).children("td");
 				var cellOrg = $(cells)[5];
 				var txtCell = $(cellOrg).html();
-				$(cellOrg).html(txtCell + "<br/>" + authorColumns(profile, "organization.website"));
-				
 				$((cells)[0]).addClass("personName");
 				$((cells)[1]).addClass("personName");
 				$((cells)[2]).addClass("personName");
