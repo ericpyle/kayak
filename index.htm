@@ -198,7 +198,7 @@
 			<b>Author</b>
 			<p>
 				<table id="authorResults" class="personSearchResults" width="100%">
-					<thead><tr><td colspan="5" class="personName">Name</td><td colspan="2">Most Associated With</td><td></td></tr>
+					<thead><tr><td colspan="5" class="personName">Name</td><td colspan="2">Most Associated With</td></tr>
 						<tr>
 							<td class="personName">Title</td>
 							<td class="personName">First</td>
@@ -207,12 +207,11 @@
 							<td class="personName">Suffix</td>
 							
 							<td>Name/Website</td>
-							<td>Sources</td>
 							<td>Credits</td></tr>
 					</thead>
 					<tbody></tbody>				
-					<tfoot><tr><td colspan="8"><a id="btnCreateNewAuthor" href="#">Specify author</a></td></tr>
-						<tr><td colspan="8"><button id="btnAuthorOk" type="button">OK</button> <button id="btnAuthorCancel" type="button">Cancel</button></td></tr>
+					<tfoot><tr><td colspan="7"><a id="btnCreateNewAuthor" href="#">Specify author</a></td></tr>
+						<tr><td colspan="7"><button id="btnAuthorOk" type="button">OK</button> <button id="btnAuthorCancel" type="button">Cancel</button></td></tr>
 					</tfoot>
 				</table>
 			</p>
@@ -386,14 +385,10 @@
 
 	$(document).ready(function(){
 
-		var dataTable = $('#exampleTable').dataTable({
-		        "bJQueryUI": true,
-		        "sPaginationType": "full_numbers"
-		    });
-
-		$("#exampleTable").data("dataTable", dataTable);
-		// inject search buttons
-		injectSearchButton("exampleTable_filter", "btnSearchOutlines", "Outline keywords"); 
+		initializeTable("exampleTable", "btnSearchOutlines", "Outline keywords");
+		initializeTable("authorResults", "btnSearchAuthors", "Author keywords");
+		initializeTable("submitterProfileResults", "btnSearchSubmitters", "Submitter keywords");
+		initializeTable("sourceSearchResults", "btnSearchSources", "Source keywords");
 
 		// not sure why typeof(Couch) doesn't work
 		try
@@ -427,6 +422,17 @@
     //Logos.ReferenceTagging.tag();
 
 	});
+	
+	function initializeTable(idTable, idSearchButton, txtPlaceholder)
+	{
+		var dataTable1 = $(jq(idTable)).dataTable({
+	        "bJQueryUI": true,
+	        "sPaginationType": "full_numbers"
+	    });
+		injectSearchButton(idTable + "_filter", idSearchButton, txtPlaceholder);
+		$(jq(idTable)).data("dataTable", dataTable1);
+
+	}
 	
 	function showTab(event, ui)
 	{

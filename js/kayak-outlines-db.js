@@ -83,7 +83,8 @@
 		
 		function LoadExamplesToTableCallback(resp)
 		{
-			$('#exampleTableBody tr').remove();
+			var dataTable1 = $("#exampleTable").data("dataTable");
+			dataTable1.fnClearTable(false);
 			exampleRows = resp.rows;
 			for (var i=0; i < exampleRows.length; ++i) {
 				var doc = exampleRows[i].value;
@@ -109,7 +110,8 @@
 						formatName(authorProfile, ""), 
 						formatSource(doc, ""), 
 						formatSubmissionTimestamp(doc.head.submissionTimestamp), 
-						formatName(submitterProfile, "")]
+						formatName(submitterProfile, "")],
+						false /* don't redraw */
 				);
 				var drow = dataTable1.fnSettings().aoData[iSettings[0]];
 				$(drow.nTr)
@@ -131,6 +133,7 @@
 								loadJSONToOutline(docToLoad); 
 			  				return false;
 						});
+				dataTable1.fnDraw();
 			};			
 		}
 		
@@ -331,7 +334,8 @@
 		
 		function PrepareNewAuthorSearchResults()
 		{
-			$('#authorResults tbody tr').remove();
+			var dataTable1 = $("#authorResults").data("dataTable");
+			dataTable1.fnClearTable(false);
 			SwitchToAuthorProfileSearchResults();
 		}
 		
@@ -347,7 +351,8 @@
 		function ClearSubmitterResults()
 		{
 			$("#submitterProfileResults").hide();
-			$('#submitterProfileResults tbody tr').remove();
+			var dataTable1 = $("#submitterProfileResults").data("dataTable");
+			dataTable1.fnClearTable(false);
 			$("#authorDetailBlock").hide();
 		}
 		
@@ -360,7 +365,8 @@
 		
 		function PrepareNewSubmitterSearchResults()
 		{
-			$('#submitterProfileResults tbody tr').remove();
+			var dataTable1 = $("#submitterProfileResults").data("dataTable");
+			dataTable1.fnClearTable(false);
 			SwitchToSubmitterProfileSearchResults();
 		}
 		
@@ -377,12 +383,14 @@
 		{
 			$("#authorDetailBlock").hide();
 			$("#authorResults").hide();
-			$('#authorResults tbody tr').remove();
+			var dataTable1 = $("#authorResults").data("dataTable");
+			dataTable1.fnClearTable(false);
 		}
 		
 		function PrepareNewSourceSearchResults()
 		{
-			$('#sourceSearchResults tbody tr').remove();
+			var dataTable1 = $("#sourceSearchResults").data("dataTable");
+			dataTable1.fnClearTable(false);
 			SwitchToSourceProfileSearchResults();
 		}
 		
@@ -399,7 +407,8 @@
 		{
 			$("#sourceDetailBlock").hide();
 			$(".sourceSearchResults").hide();
-			$('.sourceSearchResults tbody tr').remove();
+			var dataTable1 = $("#sourceSearchResults").data("dataTable");
+			dataTable1.fnClearTable(false);
 		}
 		
 		/*
@@ -571,6 +580,42 @@
 			for (var idoc=0; idoc < peopleDocs.length; ++idoc)
 			{
 				var profile = peopleDocs[idoc];
+				
+				var dataTable1 = $(fSubmitter ? "#submitterProfileResults" : "#authorResults").data("dataTable");
+				var iSettings = dataTable1.fnAddData(
+					[	authorColumns(profile, "name.title"), 
+						authorColumns(profile, "name.first"), 
+						authorColumns(profile, "name.middle"), 
+						authorColumns(profile, "name.last"), 
+						authorColumns(profile, "name.suffix"), 
+						authorColumns(profile, "organization.name"),
+						fSubmitter ? DocsSubmitted(profile, authorRows).length : DocsAuthored(profile, authorRows).length],
+						false /* don't redraw */
+				);
+				var drow = dataTable1.fnSettings().aoData[iSettings[0]];
+				$(drow.nTr)
+					.attr("id", profile._id)
+					.addClass("creditRow")
+					.click(function(event) {
+						// first turn off any other selected Row.
+						var parentRow = $(event.target).parent("tr");
+						selectCreditRow(parentRow, fetchPersonProfile, "[name='updateAuthorProfile']");
+		  				return false;
+					});
+				
+				// Add some special markup
+				var cells = $(drow.nTr).children("td");
+				var cellOrg = $(cells)[5];
+				var txtCell = $(cellOrg).html();
+				$(cellOrg).html(txtCell + "<br/>" + authorColumns(profile, "organization.website"));
+				
+				$((cells)[0]).addClass("personName");
+				$((cells)[1]).addClass("personName");
+				$((cells)[2]).addClass("personName");
+				$((cells)[3]).addClass("personName");
+				$((cells)[4]).addClass("personName");
+				dataTable1.fnDraw();			
+				/*				
 				$("<tr></tr>")
 					.attr("id", profile._id)
 					.addClass("creditRow")
@@ -591,6 +636,7 @@
 						selectCreditRow(parentRow, fetchPersonProfile, "[name='updateAuthorProfile']");
 		  				return false;
 					});
+					*/
 			}
 			$(".creditRow td button").click(function(event) {
 						// first turn off any other selected Row.
@@ -937,6 +983,28 @@
 				// skip blank source
 				if (sourceDetails.length == 0)
 					continue;
+				var dataTable1 = $("#sourceSearchResults").data("dataTable");
+				var iSettings = dataTable1.fnAddData(
+					[	sourceDetails, 
+						authorDetails ],
+						false /* don't redraw */
+				);
+				var drow = dataTable1.fnSettings().aoData[iSettings[0]];
+				$(drow.nTr)
+					.attr("id", rowId + "_source")
+					.addClass("creditRow")
+					.click(function(event) {
+						// first turn off any other selected Row.
+						var parentRow = $(event.target).parent("tr");
+						selectCreditRow(parentRow, fetchSourceProfile, "[name='updateSourceDetails']");
+		  				return false;
+					});
+				
+				// Add some special markup
+				var cells = $(drow.nTr).children("td");				
+				$((cells)[0]).addClass("sourceDetails");
+				dataTable1.fnDraw();
+				/*
 				$("<tr></tr>")
 					.attr("id", rowId + "_source")
 					.addClass("creditRow")
@@ -949,6 +1017,7 @@
 						selectCreditRow(parentRow, fetchSourceProfile, "[name='updateSourceDetails']");
 		  				return false;
 					});
+					*/
 			};
 			$(".creditRow td button").click(function(event) {
 						// first turn off any other selected Row.
