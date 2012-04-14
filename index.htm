@@ -44,7 +44,7 @@
 	    $(jq(idbtnSearch)).click(function(event)
 	    {
 	    	var btn = event.target;
-	    	$(btn).siblings(".dataTables_filter input").val("ok").keyup();
+	    	$(btn).siblings(".dataTables_filter input").keyup();
 	    	return false;
 	    });
 	}
