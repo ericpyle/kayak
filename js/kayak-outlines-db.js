@@ -748,9 +748,9 @@
 					var editLink = '<a href="#" id="'+ editModeId +'">'+ editModeText +'</a>';
 					var copyLink = '<a id="copyToNewProfile" href="#">Copy to New</a>';
 					if (idProfile == "s0_source")
-						rowHtml = '<tr id="creditRowSelectedOptions"><td colspan="2"><button id="btnCreditOk" type="button">OK</button></td></tr>';
+						rowHtml = '<tr id="creditRowSelectedOptions"><td colspan="3"><button id="btnCreditOk" type="button">OK</button></td></tr>';
 					else
-						rowHtml = '<tr id="creditRowSelectedOptions"><td colspan="2"><button id="btnCreditOk" type="button">OK</button> ' + editLink  + " | " + copyLink + '</td></tr>';						
+						rowHtml = '<tr id="creditRowSelectedOptions"><td colspan="3"><button id="btnCreditOk" type="button">OK</button> ' + editLink  + " | " + copyLink + '</td></tr>';						
 				}
 				// add some extra options
 				$(creditRow).after(rowHtml);							
@@ -937,8 +937,10 @@
 				if (sourceDetails.length == 0)
 					continue;
 				var dataTable1 = $("#sourceSearchResults").data("dataTable");
+				var profile = fetchSourceProfile(doc._id + "_source");
 				var iSettings = dataTable1.fnAddData(
-					[	sourceDetails, 
+					[	EmptyIfNull(profile.source.details), 
+						EmptyIfNull(profile.outline.source.details), 
 						authorDetails ],
 						false /* don't redraw */
 				);
@@ -956,6 +958,7 @@
 				// Add some special markup
 				var cells = $(drow.nTr).children("td");				
 				$((cells)[0]).addClass("sourceDetails");
+				$((cells)[1]).addClass("sourceDetails");
 				dataTable1.fnDraw();
 			};
 		}		
