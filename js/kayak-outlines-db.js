@@ -190,15 +190,20 @@
 				return source;
 		}
 		
-		function formatName(personProfile, sdefault)
+		function formatName(personProfile, sdefault, fNameOnly)
 		{
 			if (!personProfile)
 				return sdefault;
-			return (AorB(personProfile.name.title, "")) + 
-				(personProfile.name.first ? " " + personProfile.name.first : "") + 
-				(personProfile.name.middle? " " + personProfile.name.middle : "") + 
-				(personProfile.name.last? " " + personProfile.name.last : "") + 
-				(personProfile.organization && personProfile.organization.name ? ", " + personProfile.organization.name : "");
+			var title = AorB(personProfile.name.title, "");
+			var first = AorB(personProfile.name.first, "");
+			var middle = AorB(personProfile.name.middle, "");
+			var last = AorB(personProfile.name.last, "");
+			var first2 = (first.length > 0 ? ((title.length > 0 ? " " : "") + first) : "");
+			var middle2 = (middle.length > 0 ? ((first2.length > 0 ? " " : "") + middle) : "");
+			var combined1 = title + first2 + middle2; 
+			var last2 = (last.length > 0 ? ((combined1.length > 0 ? " " : "") + last) : "");
+			return title + first2 + middle2 + last2 +
+				(!fNameOnly && personProfile.organization && personProfile.organization.name ? ", " + personProfile.organization.name : "");
 		}
 		
 		function formatSubmissionTimestamp(timestamp)
@@ -894,6 +899,16 @@
 			return profiles;			
 		}
 		
+		function fetchAuthorProfileByOutline(outlineDoc)
+		{
+			return collectProfileDocs("personProfile", exampleRows, function(rowDoc){
+							if (rowDoc.head.contentType == "personProfile" && 
+			    				outlineDoc.head.author && rowDoc._id == outlineDoc.head.author.guid)
+						    		return true;
+						    	return false;
+						}, true );
+		}
+		
 		function LoadSourceResultsCallback(resp)
 		{
 			PrepareNewSourceSearchResults();
@@ -910,12 +925,7 @@
 				var rowId = "";
 				if (doc.head.contentType == "chiasm" || doc.head.contentType == "outline")
 				{
-					var authorProfile = collectProfileDocs("personProfile", exampleRows, function(rowDoc){
-							if (rowDoc.head.contentType == "personProfile" && 
-			    				doc.head.author && rowDoc._id == doc.head.author.guid )
-						    		return true;
-						    	return false;
-						}, true );
+					var authorProfile = fetchAuthorProfileByOutline(doc);
 					authorDetails = formatName(authorProfile, "");
 					sourceDetails = formatSource(doc, "");
 					rowId = doc._id;
@@ -1122,12 +1132,10 @@ var authorsAndOutlinesResponse = {
 					},
 					"source": {
 						"guid": "s2",
-						"name": "Biblical Horizons",
-						"location": "#94",
-						"date": "Apr 2007",
+						"details": "#94, Apr 1997",
 						"website": "http://www.biblicalhorizons.com/biblical-horizons/no-94-toward-a-chiastic-understanding-of-the-gospel-according-to-matthew-part-1/"
 					},
-					"title": "James B. Jordan, Biblical Horizons #94, April 1997",
+					"title": "",
 					"ScriptureRange": "Matthew 1:1-28:20",
 					"contentType": "chiasm",
 					"scripture-version": ""
@@ -1247,10 +1255,9 @@ var authorsAndOutlinesResponse = {
 					},
 					"source": {
 						"guid": "s1",
-						"name": "Covenant Sequence In Leviticus and Deuteronomy",
-						"location": "p. 57"
+						"details": "p. 57"
 					},
-					"title": "Covenant/Re-creation Pattern by James Jordan in Covenant Sequence in Leviticus and Deuteronomy, p. 57",
+					"title": "Covenant/Re-creation Pattern",
 					"ScriptureRange": "Deuteronomy 1:1-34:12",
 					"contentType": "outline"
 				},
@@ -1315,10 +1322,9 @@ var authorsAndOutlinesResponse = {
 					},
 					"source": {
 						"guid": "s1",
-						"name": "Covenant Sequence In Leviticus and Deuteronomy",
-						"location": "p. 59"
+						"details": "p. 59"
 					},
-					"title": "Covenant Breakdown and Renewal by James B. Jordan in Covenant Sequence in Leviticus and Deuteronomy, p. 59",
+					"title": "Covenant Breakdown and Renewal",
 					"ScriptureRange": "Deuteronomy 1:6-4:43",
 					"contentType": "outline"
 				},
@@ -1454,9 +1460,7 @@ var authorsAndOutlinesResponse = {
 					},
 					"source": {
 						"guid": "s3",
-						"name": "Greek Class",
-						"location": "Dallas, TX",
-						"date": "1999"
+						"details": "1999"
 					},
 					"title": "Prof. Elliott Greene, WTS",
 					"ScriptureRange": "Matthew 7:6",
@@ -1536,10 +1540,9 @@ var authorsAndOutlinesResponse = {
 						"last": "Pyle"
 					},
 					"source": {
-						"guid": "s4",
-						"name": "Biblical Horizons List"
+						"guid": "s4"
 					},
-					"title": "Thomas Hilleke - The Names of God in Jonah",
+					"title": "The Names of God in Jonah",
 					"contentType": "chiasm",
 					"scripture-version": "",
 					"ScriptureRange": "Jonah 1:1-4:11"

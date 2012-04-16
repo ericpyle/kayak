@@ -662,21 +662,44 @@
 						var chiasmElementId = textAreaId.substr("edit".length);
 						var newValue = $(this).val();
 						if (chiasmElementId.indexOf("-title-") != -1)
+						{
 							mainOutline.head.title = newValue;
+							var combinedTitle = CombineTitleAuthorAndSource();
+							updateViewsChiasmContent(chiasmElementId, combinedTitle);
+						}
 						else if (chiasmElementId.indexOf("-scriptureRange") != -1)
+						{
 							mainOutline.head.ScriptureRange = newValue;
-						updateViewsChiasmContent(chiasmElementId, newValue);
+							updateViewsChiasmContent(chiasmElementId, newValue);							
+						}
+
 						// adjust text box
   						FitToContent(textAreaId,'','100');
 					})
 				;		
 	}
 	
+	function CombineTitleAuthorAndSource()
+	{
+		var author = fetchAuthorProfileByOutline(mainOutline);
+		var title = EmptyIfNull(mainOutline.head.title);
+		var authorName = formatName(author, "", title.length > 0);
+		var combinedTitle1 = (title.length > 0 && authorName.length > 0) ? (title + " by " + authorName) : 
+			((title.length > 0) ? title : authorName);
+			
+		var combinedSource = fetchSourceProfile(mainOutline._id + "_source");
+		var sourceDetails = formatCombinedSource(combinedSource, "");
+		return (combinedTitle1.length > 0 && sourceDetails.length > 0) ? (combinedTitle1 + " in " + sourceDetails) :
+			((combinedTitle.length > 0) ? combinedTitle : sourceDetails);
+	}
+	
 	function JSONToPreviewPanel() {
 		$("#tableViewAAB tr").remove();
 		$(".chiasm div").remove();
 		$(".chiasm ol").remove();  // outline
-		updateViewsChiasmContent("-title-chiasm", mainOutline.head.title);
+		
+		var combinedTitle = CombineTitleAuthorAndSource();
+		updateViewsChiasmContent("-title-chiasm", combinedTitle);
 		updateViewsChiasmContent("-chiasm-scriptureRange", mainOutline.head.ScriptureRange);
 	
 		var count = mainOutline.body.concepts.length;
