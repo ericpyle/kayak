@@ -1462,7 +1462,7 @@ var authorsAndOutlinesResponse = {
 						"guid": "s3",
 						"details": "1999"
 					},
-					"title": "Prof. Elliott Greene, WTS",
+					"title": "",
 					"ScriptureRange": "Matthew 7:6",
 					"contentType": "chiasm",
 					"scripture-version": ""

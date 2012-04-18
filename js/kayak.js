@@ -681,16 +681,19 @@
 	
 	function CombineTitleAuthorAndSource()
 	{
-		var author = fetchAuthorProfileByOutline(mainOutline);
-		var title = EmptyIfNull(mainOutline.head.title);
-		var authorName = formatName(author, "", title.length > 0);
-		var combinedTitle1 = (title.length > 0 && authorName.length > 0) ? (title + " by " + authorName) : 
-			((title.length > 0) ? title : authorName);
-			
 		var combinedSource = fetchSourceProfile(mainOutline._id + "_source");
 		var sourceDetails = formatCombinedSource(combinedSource, "");
-		return (combinedTitle1.length > 0 && sourceDetails.length > 0) ? (combinedTitle1 + " in " + sourceDetails) :
-			((combinedTitle.length > 0) ? combinedTitle : sourceDetails);
+		var author = fetchAuthorProfileByOutline(mainOutline);
+		var title = EmptyIfNull(mainOutline.head.title);
+		var titleCss = title.length > 0 ? '<div class="preview-outline-titleBlock-title">' + title + '</div>' : "";
+		var authorName = formatName(author, "", (title.length > 0 || sourceDetails.length > 0));
+		var authorNameCss = authorName.length > 0 ? '<div class="preview-outline-titleBlock-author">' + "by " + authorName + '</div>' : "";
+		var combinedTitle1 = (title.length > 0 && authorName.length > 0) ? (titleCss + authorNameCss) : 
+			((title.length > 0) ? titleCss : authorNameCss);
+			
+
+		return (combinedTitle1.length > 0 && sourceDetails.length > 0) ? (combinedTitle1 + "<div class='preview-outline-titleBlock-source'> &nbsp;(" + sourceDetails + ")</div>") :
+			((combinedTitle1.length > 0) ? combinedTitle1 : sourceDetails);
 	}
 	
 	function JSONToPreviewPanel() {
