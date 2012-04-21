@@ -119,36 +119,65 @@
 					.attr("id", exampleRows[i].id)
 					.click(function(event) 
 					{
-						var rowId = $(this).attr("id");
-						var hadSelection = $(jq(rowId)).hasClass("outlineRowSelected");
-						$(".outlineRowSelected").removeClass("outlineRowSelected");
-						var docToLoad; 
-						if (!hadSelection)
-						{
-							// load the selected outline
-							$(jq(rowId)).addClass("outlineRowSelected");
-							//alert(rowId);									
-							for(var irow=0; irow<exampleRows.length; ++irow)
-							{
-								if (exampleRows[irow].id == rowId)
-								{
-									docToLoad = exampleRows[irow].value;
-									break;
-								}
-							}
-						} 
-						else
-						{
-							// load a blank outline
-							docToLoad = createBlankOutline("chiasm");
-						}
-						
-						if (docToLoad)
-							loadJSONToOutline(docToLoad); 
+						selectOutlineRow($(this)); 
 		  				return false;
 					});
 				dataTable1.fnDraw();
 			};			
+		}
+		
+		function fetchOutline(rowId)
+		{
+			for(var irow=0; irow<exampleRows.length; ++irow)
+			{
+				if (exampleRows[irow].id == rowId)
+				{
+					return exampleRows[irow].value;
+				}
+			}
+			return null;
+		}
+		
+		function selectOutlineRow(outlineRow)
+		{
+			var rowId = $(outlineRow).attr("id");
+			var hadSelection = $(outlineRow).hasClass("outlineRowSelected");
+			$(".outlineRowSelected").removeClass("outlineRowSelected");
+			$("#outlineSelectedOptions").remove();
+			var docToLoad; 
+			if (!hadSelection)
+			{
+				// load the selected outline
+				$(outlineRow).addClass("outlineRowSelected");
+				//alert(rowId);									
+				docToLoad = fetchOutline(rowId);
+			} 
+			else
+			{
+				// load a blank outline
+				docToLoad = createBlankOutline("chiasm");
+			}
+			
+			if ($(outlineRow).hasClass("outlineRowSelected"))
+			{
+				var editText = "Edit Outline";
+				var rowHtml = "";
+				var editLink = '<a href="#" id="btnJumpToEditTab">'+ editText +'</a>';
+				rowHtml = '<tr id="outlineSelectedOptions"><td colspan="6"><button id="btnJumpToViewTab" type="button">View</button> ' + editLink + '</td></tr>';
+				// add some extra options
+				$(outlineRow).after(rowHtml);
+				$("#btnJumpToViewTab").click(function(event){
+					$(".tabs").tabs('select',"#View");
+					return false;
+				});
+				$("#btnJumpToEditTab").click(function(event){
+					$(".tabs").tabs('select',"#EditView");
+					return false;
+				});
+			}
+			
+			if (docToLoad)
+				loadJSONToOutline(docToLoad);
 		}
 		
 		function formatBCVRange(range, sdefault)

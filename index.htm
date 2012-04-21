@@ -25,10 +25,11 @@
 	
 	$(document).ready(function(){
 		// Tabs
-		$('.tabs').tabs(
+		$('#tabsMain').tabs(
 		{
    			show: function(event, ui) { showTab(event, ui); }
 		});
+		$('#tabsPreview').tabs();
 		$(".tabs").show();
 	    //$('#exampleTable_filter label').text()
 	});
@@ -59,6 +60,7 @@
 	 	 <li><a href="#kayak"><span><b>kayak</b></span></a></li>
 		 <li><a href="#Examples"><span>Outlines</span></a></li>
 	 	 <li><a href="#EditView"><span>Edit</span></a></li>
+	 	 <li><a href="#View"><span>View</span></a></li>
 	 	 <li><a href="#Save"><span>Save</span></a></li>
 	 </ul>
 	 <div id="kayak">
@@ -148,6 +150,8 @@
 			</div>
 			
 		</div>	
+	</div>
+	<div id="View">
 	</div>
 	<div id="Save">
 			<table id="" cols="2">
