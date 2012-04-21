@@ -152,12 +152,14 @@ table.sourceSearchResults tbody tr td.sourceDetails {
 	cursor: pointer;
 }
 
+#exampleTableBody .outlineRowSelected,
 table.personSearchResults tbody tr.creditRowSelected, table.personSearchResults tbody tr.creditRowSelected td.personName,
 table.sourceSearchResults tbody tr.creditRowSelected, table.sourceSearchResults tbody tr.creditRowSelected td.sourceDetails 
 {
 	background: #FE8;
 }
 
+#exampleTableBody .outlineRowSelected,
 table.personSearchResults tbody tr.creditRowSelected,
 table.sourceSearchResults tbody tr.creditRowSelected
 {

@@ -745,7 +745,8 @@
 		//mainOutline.body.concepts.splice(0, mainOutline.body.concepts.length);
 	    // search for chiasm to determine how many text boxes we need to display
 		// Display in pairs: AA' BB' C
-		doCreateEditBoxes(mainOutline.body.concepts);
+		if (doCreateEditBoxes)
+			doCreateEditBoxes(mainOutline.body.concepts);
 		refreshAllLabels();
 		publishOutlineToReadOnlyViews();
 	}

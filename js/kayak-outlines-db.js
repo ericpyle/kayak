@@ -117,10 +117,17 @@
 				$(drow.nTr)
 					.addClass("exampleRow")
 					.attr("id", exampleRows[i].id)
-					.click(function(event) {
-							var rowId = $(this).attr("id");
+					.click(function(event) 
+					{
+						var rowId = $(this).attr("id");
+						var hadSelection = $(jq(rowId)).hasClass("outlineRowSelected");
+						$(".outlineRowSelected").removeClass("outlineRowSelected");
+						var docToLoad; 
+						if (!hadSelection)
+						{
+							// load the selected outline
+							$(jq(rowId)).addClass("outlineRowSelected");
 							//alert(rowId);									
-							var docToLoad; 
 							for(var irow=0; irow<exampleRows.length; ++irow)
 							{
 								if (exampleRows[irow].id == rowId)
@@ -129,10 +136,17 @@
 									break;
 								}
 							}
-							if (docToLoad)
-								loadJSONToOutline(docToLoad); 
-			  				return false;
-						});
+						} 
+						else
+						{
+							// load a blank outline
+							docToLoad = createBlankOutline("chiasm");
+						}
+						
+						if (docToLoad)
+							loadJSONToOutline(docToLoad); 
+		  				return false;
+					});
 				dataTable1.fnDraw();
 			};			
 		}

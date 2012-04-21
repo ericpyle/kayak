@@ -6,9 +6,20 @@
 	    {
 	    	//mainOutline = jQuery.parseJSON( jsonText );
 	    	mainOutline = doc;
+	    	LoadContentTypeModeFromOutline();
 	    	LoadOutlineFromCurrentState();
 	    	return false;
 	    };
+	    
+	    function LoadContentTypeModeFromOutline()
+	    {
+	    	var contentTypeMode = "modeChiasm";
+	    	if (mainOutline.head.contentType == "outline")
+	    		contentTypeMode = "modeHierarchical";
+	    	else if (mainOutline.head.contentType == "chiasm")
+	    		contentTypeMode = "modeChiasm";
+	    	$("#edit-outline-contentType").val(contentTypeMode);
+	    }
 	    
 		publishConceptInsertionElsewhere = function(concepts, iconceptInserted, head)
 	    {
@@ -45,7 +56,6 @@
 	    
 	    function LoadOutlineFromCurrentState()
 	    {
-	    	var contentType = $("#edit-outline-contentType").val();
 	    	var editControl = $("#edit-outline-editControl").val();
 	    	//alert(editControl + "<>" +  mainOutline.head.contentType);
 	    	if (mainOutline.head.contentType == undefined)
@@ -54,6 +64,7 @@
   			{
   				$("#edit-outline-editControl-row").removeAttr('style');
   				switchOutlineMode("Chiasm");
+  				$("#edit-outline-contentType").val("Chiasm");
 	  			if (editControl == "chiasmABBA")
 	  			{
 	  				$("#outlineContainer").empty();  				
@@ -61,13 +72,13 @@
 	  				if (mainOutline.body.concepts.length == 1 && mainOutline.body.concepts[0].content == "")
 	  				{
 	  					mainOutline = createBlankOutline("chiasm");
+	  					LoadAllViewsFromCurrentObj();
 	  					initializeEmptyView();
-	  					InitializeHeaderInputBoxes();
 	  				}
 	  				else if (mainOutline.body.concepts.length == 0)
 	  				{
-	  					initializeEmptyView();
-	  					InitializeHeaderInputBoxes();
+	  					LoadAllViewsFromCurrentObj();
+	  					initializeEmptyView();	  					
 	  				}	  					
 	  				else
 	  					LoadAllViewsFromCurrentObj(createEditBoxesForOutline);
@@ -176,6 +187,16 @@
 	    	return false;
 	    }
 		
+		function onChangeOutlineContentType()
+		{
+			var contentType = $("#edit-outline-contentType").val();
+			if (contentType == "modeChiasm")
+				mainOutline.head.contentType = "chiasm";
+			else if (contentType == "modeHierarchical")
+				mainOutline.head.contentType = "outline";
+  			return LoadOutlineFromCurrentState();
+		}
+		
 		function InitializeEditForm()
 		{
 			$("#itemHighlighting").click(function() {
@@ -187,15 +208,7 @@
 	  			return true;
 			});
 			
-			$("#edit-outline-contentType").change(function() {
-				var contentType = $("#edit-outline-contentType").val();
-				if (contentType == "modeChiasm")
-					mainOutline.head.contentType = "chiasm";
-				else if (contentType == "modeHierarchical")
-					mainOutline.head.contentType = "outline";
-				
-	  			return LoadOutlineFromCurrentState();  			
-			});
+			$("#edit-outline-contentType").change(onChangeOutlineContentType);
 			
 			$("#edit-outline-editControl").change(function() {
 	  			return LoadOutlineFromCurrentState();  		

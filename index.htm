@@ -64,28 +64,24 @@
 	 <div id="kayak">
 	 </div>
 	 <div id="Examples">
-		<h3>Outlines</h3>
-		<ul class="examples">
-			<table id="exampleTable" cols="6" width="100%">
-			<thead>
-				<tr><th>Type</th><th>Range</th><th>Author</th>
-					<th>Source</th><th>Submitted</th><th>Submitted By</th></tr>				
-			</thead>
+		<table id="exampleTable" cols="6" width="100%">
+		<thead>
+			<tr><th>Type</th><th>Range</th><th>Author</th>
+				<th>Source</th><th>Submitted</th><th>Submitted By</th></tr>				
+		</thead>
 
-			<tbody id="exampleTableBody">
-				<!-- Load from Couchdb
-				<tr id="example-Mat-JBJ" class="exampleRow">
-					<td>chiasm</td>
-					<td>Matthew 1:1-28:20</td>
-					<td>James B. Jordan</td>
-					<td><a href="http://www.biblicalhorizons.com/biblical-horizons/no-94-toward-a-chiastic-understanding-of-the-gospel-according-to-matthew-part-1/">Biblical Horizons #94, Apr 2007</a></td>
-					<td>6-6-2011</td>
-					<td>Eric Pyle</td>
-				</tr> -->
-			</tbody>
-			</table>
-			
-		</ul>
+		<tbody id="exampleTableBody">
+			<!-- Load from Couchdb
+			<tr id="example-Mat-JBJ" class="exampleRow">
+				<td>chiasm</td>
+				<td>Matthew 1:1-28:20</td>
+				<td>James B. Jordan</td>
+				<td><a href="http://www.biblicalhorizons.com/biblical-horizons/no-94-toward-a-chiastic-understanding-of-the-gospel-according-to-matthew-part-1/">Biblical Horizons #94, Apr 2007</a></td>
+				<td>6-6-2011</td>
+				<td>Eric Pyle</td>
+			</tr> -->
+		</tbody>
+		</table>
 	</div>					 
 	<div id="EditView">
 		<div id="editChiasm" action="">
@@ -93,12 +89,12 @@
 				<thead></thead>
 				<tbody id="editChiasmHead">
 					<tr>
-						<td><span class="markerEditLabel">Title</span></td>
-						<td><textarea id="edit-title-chiasm" cols="60" rows="1"></textarea></td>						
-					</tr>
-					<tr>
 						<td><span class="markerEditLabel">Scripture Range</span></td>
 						<td><textarea id="edit-chiasm-scriptureRange" cols="40" rows="1"></textarea></td>						
+					</tr>
+					<tr>
+						<td><span class="markerEditLabel">Title</span></td>
+						<td><textarea id="edit-title-chiasm" cols="60" rows="1"></textarea></td>						
 					</tr>
 					<tr>
 						<td><label for="edit-outline-contentType" class="markerEditLabel">Outline Type</label></td>
@@ -158,12 +154,12 @@
 			<thead></thead>
 			<tbody>
 				<tr>
-					<td><span class="markerEditLabel">Title</span></td>
-					<td><span id="save-outline-title"></span></td>						
-				</tr>
-				<tr>
 					<td><span class="markerEditLabel">Scripture Range</span></td>
 					<td><span id="save-outline-scriptureRange"></span></td>
+				</tr>
+				<tr>
+					<td><span class="markerEditLabel">Title</span></td>
+					<td><span id="save-outline-title"></span></td>						
 				</tr>
 			</tbody>
 			</table>
