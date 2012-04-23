@@ -163,7 +163,7 @@
 				var editText = "Edit Outline";
 				var rowHtml = "";
 				var editLink = '<a href="#" id="btnJumpToEditTab">'+ editText +'</a>';
-				rowHtml = '<tr id="outlineSelectedOptions"><td colspan="6"><button id="btnJumpToViewTab" type="button">View</button> ' + editLink + '</td></tr>';
+				rowHtml = '<tr id="outlineSelectedOptions" class="selectedRowOptions"><td colspan="6"><button id="btnJumpToViewTab" type="button">View</button> ' + editLink + '</td></tr>';
 				// add some extra options
 				$(outlineRow).after(rowHtml);
 				$("#btnJumpToViewTab").click(function(event){
@@ -777,7 +777,7 @@
 				if (editMode == "save-outline-submitter" || editMode == "save-outline-author")
 				{
 					var editLink = '<a href="#" id="'+ editModeId +'">'+ editModeText +'</a>';
-					rowHtml = '<tr id="creditRowSelectedOptions"><td colspan="7"><button id="btnCreditOk" type="button">OK</button> ' + editLink + '</td></tr>';
+					rowHtml = '<tr id="creditRowSelectedOptions" class="selectedRowOptions"><td colspan="7"><button id="btnCreditOk" type="button">OK</button> ' + editLink + '</td></tr>';
 					
 				}
 				else if (editMode == "save-outline-source")
@@ -796,9 +796,9 @@
 					var editLink = '<a href="#" id="'+ editModeId +'">'+ editModeText +'</a>';
 					var copyLink = '<a id="copyToNewProfile" href="#">Copy to New</a>';
 					if (idProfile == "s0_source")
-						rowHtml = '<tr id="creditRowSelectedOptions"><td colspan="3"><button id="btnCreditOk" type="button">OK</button></td></tr>';
+						rowHtml = '<tr id="creditRowSelectedOptions" class="selectedRowOptions"><td colspan="3"><button id="btnCreditOk" type="button">OK</button></td></tr>';
 					else
-						rowHtml = '<tr id="creditRowSelectedOptions"><td colspan="3"><button id="btnCreditOk" type="button">OK</button> ' + editLink  + " | " + copyLink + '</td></tr>';						
+						rowHtml = '<tr id="creditRowSelectedOptions" class="selectedRowOptions"><td colspan="3"><button id="btnCreditOk" type="button">OK</button> ' + editLink  + " | " + copyLink + '</td></tr>';						
 				}
 				// add some extra options
 				$(creditRow).after(rowHtml);							
