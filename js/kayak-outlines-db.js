@@ -105,8 +105,9 @@
 				
 				var dataTable1 = $("#exampleTable").data("dataTable");
 				var iSettings = dataTable1.fnAddData(
-					[	doc.head.contentType, 
-						formatBCVRange(doc.head.bcvRange, ""), 
+					[	
+						formatBCVRange(doc.head.bcvRange, "") + "<br/>" + doc.head.contentType, 
+						doc.head.title,
 						formatName(authorProfile, ""), 
 						formatSource(doc, ""), 
 						formatSubmissionTimestamp(doc.head.submissionTimestamp), 
