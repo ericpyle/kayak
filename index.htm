@@ -11,6 +11,7 @@
 </style>
 <link rel="stylesheet" href="css/chiasms.css" type="text/css"/>
 <link type="text/css" href="css/1.2.3.outliner.css" rel="stylesheet" />
+<link type="text/css" href="css/ReferenceTagging.css" rel="stylesheet" />
 <meta name="keywords" content="chiasm, outline" />
 <meta http-equiv="Content-Script-Type" content="text/javascript"/>  				 
     	
@@ -20,37 +21,6 @@
 		<script type="text/javascript" src="js/fitToContent.js"></script>
 		<script type="text/javascript" src="js/jquery-extensions-utils.js"></script>
 		<title>kayak - chiasms made easily</title>
-
-<script type="text/javascript">
-	
-	$(document).ready(function(){
-		// Tabs
-		$('#tabsMain').tabs(
-		{
-   			show: function(event, ui) { showTab(event, ui); }
-		});
-		$('#tabsPreview').tabs();
-		$(".tabs").show();
-	    //$('#exampleTable_filter label').text()
-	});
-	
-	function injectSearchButton(idDtFilter, idbtnSearch, placeholder)
-	{
-		
-		$(jq(idDtFilter + ' label input')).appendTo(jq(idDtFilter));
-		if (placeholder)
-			$(jq(idDtFilter + ' input')).attr("placeholder", placeholder);
-	    $(jq(idDtFilter + '  label')).remove();
-	    $(jq(idDtFilter)).append('<br/><button id="'+ idbtnSearch +'" type="button">Search</button>')
-	    $(jq(idbtnSearch)).click(function(event)
-	    {
-	    	var btn = event.target;
-	    	$(btn).siblings(".dataTables_filter input").keyup();
-	    	return false;
-	    });
-	}
-	
-</script>
 </head>
 <body>
 <!-- <asp:TextBox ID="TextBox1" runat="server" onkeyup="FitToContent('TextBox1','','100')"
@@ -381,11 +351,34 @@
 	<script type="text/javascript" src="js/kayak-outlines-db.js"></script>
 	<script type="text/javascript" src="http://kayak.iriscouch.com/couchdb-xd/_design/couchdb-xd/couchdb.js"></script>
 	<script src="js/referencetagging.js" type="text/javascript"></script>
-	<link type="text/css" href="css/ReferenceTagging.css" rel="stylesheet" />
 	<script type="text/javascript" src="js/jsonform.js"></script>
 	<script type="text/javascript">
 
+	function injectSearchButton(idDtFilter, idbtnSearch, placeholder)
+	{
+		
+		$(jq(idDtFilter + ' label input')).appendTo(jq(idDtFilter));
+		if (placeholder)
+			$(jq(idDtFilter + ' input')).attr("placeholder", placeholder);
+	    $(jq(idDtFilter + '  label')).remove();
+	    $(jq(idDtFilter)).append('<br/><button id="'+ idbtnSearch +'" type="button">Search</button>')
+	    $(jq(idbtnSearch)).click(function(event)
+	    {
+	    	var btn = event.target;
+	    	$(btn).siblings(".dataTables_filter input").keyup();
+	    	return false;
+	    });
+	}
+
 	$(document).ready(function(){
+		// Tabs
+		$('#tabsMain').tabs(
+		{
+   			show: function(event, ui) { showTab(event, ui); }
+		});
+		$('#tabsPreview').tabs();
+		$(".tabs").show();
+
 
 		var tableOptions1 = {
 	        "bJQueryUI": true,

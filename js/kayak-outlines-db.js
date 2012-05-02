@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @author Pyle
  */
 
@@ -168,11 +168,11 @@
 				// add some extra options
 				$(outlineRow).after(rowHtml);
 				$("#btnJumpToViewTab").click(function(event){
-					$(".tabs").tabs('select',"#View");
+					$("#tabsMain").tabs('select',"#View");
 					return false;
 				});
 				$("#btnJumpToEditTab").click(function(event){
-					$(".tabs").tabs('select',"#EditView");
+					$("#tabsMain").tabs('select',"#EditView");
 					return false;
 				});
 			}
