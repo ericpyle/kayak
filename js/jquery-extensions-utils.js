@@ -3,6 +3,27 @@
  */
 
 	/*
+	 * Utility
+	 */
+	function AorB(a, b)
+	{
+		return a ? a : b; 
+	}
+	
+	/*
+	 * Utility
+	 */
+	function clone(obj)
+	{
+		return jQuery.parseJSON(JSON.stringify(obj));
+	}
+	
+	function EmptyIfNull(s)
+	{
+		return s ? s : "";
+	}
+
+	/*
 	 * http://sirdarckcat.blogspot.com/2007/07/passing-reference-to-javascript.html
 	 */
 	function modifyVar(obj,val){

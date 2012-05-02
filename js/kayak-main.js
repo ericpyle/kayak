@@ -214,3 +214,26 @@
 	  			return LoadOutlineFromCurrentState();  		
 			});
 		}
+		
+	function showTab(event, ui)
+	{
+		//get the index from URL hash
+      	var tabSelect = ui.tab.hash;
+		if (tabSelect == "#Save")
+		{
+			if (mainOutline)
+			{
+				$("#save-outline-title").text(AorB(mainOutline.head.title, "") );
+				$("#save-outline-scriptureRange").text(AorB(mainOutline.head.ScriptureRange, ""));
+				if (!authorRows)
+					authorRows = getResponse.rows;
+				var authorProfile = collectProfileDocs("personProfile", authorRows, matchAuthorByCurrentOutline, true);
+				stageSelectedAuthorProfile(authorProfile, true);
+				var submitterProfile = collectProfileDocs("personProfile", authorRows, matchSubmitterByCurrentOutline, true);
+				stageSelectedSubmitterProfile(submitterProfile, true);				
+				//LoadPersonProfileSearchResultsFromOutline(authorProfile, submitterProfile);
+				var sourceProfile = fetchSourceProfile(mainOutline._id + "_source");
+				stageSelectedSourceProfile(sourceProfile);
+			}
+		}
+	}
