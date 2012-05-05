@@ -428,7 +428,7 @@
 			$("#authorDetailBlock").hide();
 			$("#authorResults").hide();
 			var dataTable1 = $("#authorResults").data("dataTable");
-			dataTable1.fnClearTable(false);
+			dataTable1.fnClearTable(true);
 		}
 		
 		function PrepareNewSourceSearchResults()
@@ -452,7 +452,7 @@
 			$("#sourceDetailBlock").hide();
 			$(".sourceSearchResults").hide();
 			var dataTable1 = $("#sourceSearchResults").data("dataTable");
-			dataTable1.fnClearTable(false);
+			dataTable1.fnClearTable(true);
 		}
 		
 		/*
