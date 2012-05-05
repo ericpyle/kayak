@@ -791,7 +791,7 @@
 					}
 					var editLink = '<a href="#" id="'+ editModeId +'">'+ editModeText +'</a>';
 					var copyLink = '<a id="copyToNewProfile" href="#">Copy to New</a>';
-					if (idProfile == "s0_source")
+					if (idProfile == "56e905abc996fa0a1b824d411800044e_source")
 						rowHtml = '<tr id="creditRowSelectedOptions" class="selectedRowOptions"><td colspan="3"><button id="btnCreditOk" type="button">OK</button></td></tr>';
 					else
 						rowHtml = '<tr id="creditRowSelectedOptions" class="selectedRowOptions"><td colspan="3"><button id="btnCreditOk" type="button">OK</button> ' + editLink  + " | " + copyLink + '</td></tr>';						
@@ -1179,7 +1179,7 @@
 		
 		function stageKayakAsSource()
 		{
-			var profile = fetchSourceProfile("s0_source");
+			var profile = fetchSourceProfile("56e905abc996fa0a1b824d411800044e_source");
 			stageSelectedSourceProfile(profile);
 			$("#sourceSpecification").hide();
 		}
@@ -1807,15 +1807,15 @@
  * Find \n Replace: \\\n
  */
 var authorsAndOutlinesResponse = {
-	"total_rows": 9,
+	"total_rows": 16,
 	"offset": 0,
 	"rows": [
 		{
-			"id": "s0",
-			"key": [ "s0", 0 ],
+			"id": "56e905abc996fa0a1b824d411800044e",
+			"key": [ "56e905abc996fa0a1b824d411800044e", 0 ],
 			"value" : 
 			{
-				"_id": "s0",
+				"_id": "56e905abc996fa0a1b824d411800044e",
 				"_rev":"",
 				"head": { "contentType": "sourceProfile" },
 				"media": "website",
@@ -1825,11 +1825,11 @@ var authorsAndOutlinesResponse = {
 			}
 		},
 		{
-			"id": "s1",
-			"key": [ "s1", 0 ],
+			"id": "56e905abc996fa0a1b824d4118000762",
+			"key": [ "56e905abc996fa0a1b824d4118000762", 0 ],
 			"value" : 
 			{
-				"_id": "s1",
+				"_id": "56e905abc996fa0a1b824d4118000762",
 				"_rev":"",
 				"head": { "contentType": "sourceProfile" },
 				"media": "book",
@@ -1839,11 +1839,11 @@ var authorsAndOutlinesResponse = {
 			}
 		},
 		{
-			"id": "s2",
-			"key": [ "s2", 0 ],
+			"id": "56e905abc996fa0a1b824d4118000c10",
+			"key": [ "56e905abc996fa0a1b824d4118000c10", 0 ],
 			"value" :
 			{
-				"_id": "s2",
+				"_id": "56e905abc996fa0a1b824d4118000c10",
 				"_rev":"",
 				"head": { "contentType": "sourceProfile" },
 				"media": "website",
@@ -1853,11 +1853,11 @@ var authorsAndOutlinesResponse = {
 			}
 		},
 		{
-			"id": "s3",
-			"key": [ "s3", 0 ],
+			"id": "56e905abc996fa0a1b824d41180014e4",
+			"key": [ "56e905abc996fa0a1b824d41180014e4", 0 ],
 			"value" :
 			{
-				"_id": "s3",
+				"_id": "56e905abc996fa0a1b824d41180014e4",
 				"_rev":"",
 				"head": { "contentType": "sourceProfile" },
 				"media": "class",
@@ -1867,11 +1867,11 @@ var authorsAndOutlinesResponse = {
 			}
 		},
 		{
-			"id": "s4",
-			"key": [ "s4", 0 ],
+			"id": "56e905abc996fa0a1b824d41180018ba",
+			"key": [ "56e905abc996fa0a1b824d41180018ba", 0 ],
 			"value" :
 			{
-				"_id": "s4",
+				"_id": "56e905abc996fa0a1b824d41180018ba",
 				"_rev":"",
 				"head": { "contentType": "sourceProfile" },
 				"media": "email",
@@ -1881,11 +1881,11 @@ var authorsAndOutlinesResponse = {
 			}
 		},
 		{
-			"id": "s5",
-			"key": [ "s5", 0 ],
+			"id": "56e905abc996fa0a1b824d4118002410",
+			"key": [ "56e905abc996fa0a1b824d4118002410", 0 ],
 			"value" :
 			{
-				"_id": "s5",
+				"_id": "56e905abc996fa0a1b824d4118002410",
 				"_rev":"",
 				"head": { "contentType": "sourceProfile" },
 				"media": "book",
@@ -1948,26 +1948,19 @@ var authorsAndOutlinesResponse = {
 					"authorShortname": "jbjordan",
 					"author": {
 						"guid": "4d43cfb36ad257f3746df55c48000d42",
-						"shortname": "jbjordan",
-						"first": "James",
-						"last": "Jordan",
-						"middle": "B.",
-						"organization": "Biblical Horizons"
+						"shortname": "jbjordan"
 					},
 					"submittedBy": {
-						"guid": "4d43cfb36ad257f3746df55c48002968",
-						"first": "Eric",
-						"last": "Pyle"
+						"guid": "4d43cfb36ad257f3746df55c48002968"
 					},
 					"source": {
-						"guid": "s2",
+						"guid": "56e905abc996fa0a1b824d4118000c10",
 						"details": "#94, Apr 1997",
 						"website": "http://www.biblicalhorizons.com/biblical-horizons/no-94-toward-a-chiastic-understanding-of-the-gospel-according-to-matthew-part-1/"
 					},
 					"title": "",
 					"ScriptureRange": "Matthew 1:1-28:20",
-					"contentType": "chiasm",
-					"scripture-version": ""
+					"contentType": "chiasm"
 				},
 				"body": {
 					"concepts": [
@@ -2071,19 +2064,13 @@ var authorsAndOutlinesResponse = {
 					],
 					"authorShortname": "jbjordan",
 					"author": {
-						"guid": "4d43cfb36ad257f3746df55c48000d42",
-						"last": "Jordan",
-						"first": "James",
-						"middle": "B.",
-						"organization": "Biblical Horizons"
+						"guid": "4d43cfb36ad257f3746df55c48000d42"
 					},
 					"submittedBy": {
-						"guid": "4d43cfb36ad257f3746df55c48002968",
-						"first": "Eric",
-						"last": "Pyle"
+						"guid": "4d43cfb36ad257f3746df55c48002968"
 					},
 					"source": {
-						"guid": "s1",
+						"guid": "56e905abc996fa0a1b824d4118000762",
 						"details": "p. 57"
 					},
 					"title": "Covenant/Re-creation Pattern",
@@ -2138,19 +2125,13 @@ var authorsAndOutlinesResponse = {
 					],
 					"authorShortname": "jbjordan",
 					"author": {
-						"guid": "4d43cfb36ad257f3746df55c48000d42",
-						"last": "Jordan",
-						"first": "James",
-						"middle": "B.",
-						"organization": "Biblical Horizons"
+						"guid": "4d43cfb36ad257f3746df55c48000d42"
 					},
 					"submittedBy": {
-						"guid": "4d43cfb36ad257f3746df55c48002968",
-						"first": "Eric",
-						"last": "Pyle"
+						"guid": "4d43cfb36ad257f3746df55c48002968"
 					},
 					"source": {
-						"guid": "s1",
+						"guid": "56e905abc996fa0a1b824d4118000762",
 						"details": "p. 59"
 					},
 					"title": "Covenant Breakdown and Renewal",
@@ -2275,26 +2256,18 @@ var authorsAndOutlinesResponse = {
 					],
 					"authorShortname": "egreene",
 					"author": {
-						"guid": "4d43cfb36ad257f3746df55c48000e6d",
-						"title": "Prof.",
-						"last": "Greene",
-						"first": "Elliott",
-						"middle": "",
-						"organization": "WTS"
+						"guid": "4d43cfb36ad257f3746df55c48000e6d"
 					},
 					"submittedBy": {
-						"guid": "4d43cfb36ad257f3746df55c48002968",
-						"first": "Eric",
-						"last": "Pyle"
+						"guid": "4d43cfb36ad257f3746df55c48002968"
 					},
 					"source": {
-						"guid": "s3",
+						"guid": "56e905abc996fa0a1b824d41180014e4",
 						"details": "1999"
 					},
 					"title": "",
 					"ScriptureRange": "Matthew 7:6",
-					"contentType": "chiasm",
-					"scripture-version": ""
+					"contentType": "chiasm"
 				},
 				"body": {
 					"concepts": [
@@ -2359,21 +2332,16 @@ var authorsAndOutlinesResponse = {
 					],
 					"authorShortname": "thilleke",
 					"author": {
-						"guid": "4d43cfb36ad257f3746df55c48001cbd",
-						"last": "Hilleke",
-						"first": "Thomas"
+						"guid": "4d43cfb36ad257f3746df55c48001cbd"
 					},
 					"submittedBy": {
-						"guid": "4d43cfb36ad257f3746df55c48002968",
-						"first": "Eric",
-						"last": "Pyle"
+						"guid": "4d43cfb36ad257f3746df55c48002968"
 					},
 					"source": {
-						"guid": "s4"
+						"guid": "56e905abc996fa0a1b824d41180018ba"
 					},
 					"title": "The Names of God in Jonah",
 					"contentType": "chiasm",
-					"scripture-version": "",
 					"ScriptureRange": "Jonah 1:1-4:11"
 				},
 				"body": {
@@ -2466,8 +2434,7 @@ var authorsAndOutlinesResponse = {
 			       ],
 			       "title": "testing",
 			       "ScriptureRange": "",
-			       "contentType": "chiasm",
-			       "scripture-version": ""
+			       "contentType": "chiasm"
 			   },
 			   "body": {
 			       "concepts": [
