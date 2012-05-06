@@ -47,7 +47,8 @@
 		{
 			if (dbMain)
 			{
-				dbMain.get('_design/personProfiles/_view/personsAndOutlinesAuthored', 
+				//_design/personProfiles/_view/personsAndOutlinesAuthored
+				dbMain.get('_design/everything/_view/byDocId', 
 		      			function(resp) {
 		      				getResponse = resp;
 		      				//$("body").data("personsAndOutlinesAuthored", getResponse);
@@ -75,7 +76,8 @@
 		function LoadExamplesToTable()
 		{
 			if (dbMain)
-			dbMain.get('_design/outlines/_view/all', 
+			// _design/outlines/_view/all
+			dbMain.get('_design/everything/_view/byDocId', 
 	      			function(resp) {
 	      				LoadExamplesToTableCallback(resp);
 			      	});
@@ -1351,7 +1353,12 @@
 			var dateNow = new Date();
 			if (fIsNewOutline)
 			{
-				var newId = createIDFromDateNow(dateNow);
+				var suffix = "";
+				if (mainOutline.head.contentType == "chiasm")
+					suffix = ":oc";
+				else if (mainOutline.head.contentType == "outline")
+					suffix = ":oh";
+				var newId = createIDFromDateNow(dateNow, suffix);
 				mainOutline._id = newId;
 				mainOutline.head.submissionTimestamp = createTimeStampArray(dateNow);
 			}
@@ -1374,6 +1381,7 @@
 				dbMain.put(mainOutline._id, mainOutline, function(resp) {
 			        alert("Remember to check for ok: " + JSON.stringify(resp));
 			        loadDataSet(true);
+			        selectOutlineRow(jq(mainOutline._id));
 					$("#btnPublishOutline").click(publishOutline);
 			    });
 			}					
@@ -1389,6 +1397,7 @@
 		    	}			    	
 		    	
 		    	loadDataSet(true);
+		    	selectOutlineRow(jq(mainOutline._id));
 		 		$(this).click(publishOutline);   	
 		    }
 				
@@ -1398,6 +1407,9 @@
 	}
 
 	
+	/*
+	 * Return date Now in the format of "2012-05-06T12:41:44.546Z" (24chars)
+	 */
 	function stringifyDateNow(dateNow)
 	{
 		if (!dateNow)
@@ -1405,13 +1417,16 @@
 		var sdate = JSON.stringify(dateNow);
 		return sdate.substr(1, sdate.length - 2);
 	}
-		
-	function createIDFromDateNow(dateNow)
+	
+	/*
+	 * "kyk:2012-05-06T12:41:44.546Z" (28 chars) . (p[rofile] s[ource] p[erson]) (o[utline] c[hiasm], h[ierchical])
+	 */
+	function createIDFromDateNow(dateNow, suffix)
 	{
 		if (!dateNow)
 			dateNow = new Date();
 		var newId = stringifyDateNow(dateNow);
-		newId = "kyk:" + newId;
+		newId = "kyk:" + newId + EmptyIfNull(suffix);
 		return newId;
 	}
 	
