@@ -56,6 +56,7 @@
 		      				if (fNeedRenderToPage)
 		      				{
 			      				LoadExamplesToTableCallback(getResponse);
+			      				InitializeAfterDbSetup();
 		      					//LoadAuthorResultsCallback(getResponse);	
 		      				}		      				
 				      	});
@@ -66,21 +67,11 @@
 				if (!getResponse)
 					getResponse = authorsAndOutlinesResponse;
 				if (fNeedRenderToPage)
-				{
+				{					
 					LoadExamplesToTableCallback(getResponse);
 	      			//LoadAuthorResultsCallback(getResponse);
 				}								
 			}
-		}
-		
-		function LoadExamplesToTable()
-		{
-			if (dbMain)
-			// _design/outlines/_view/all
-			dbMain.get('_design/everything/_view/byDocId', 
-	      			function(resp) {
-	      				LoadExamplesToTableCallback(resp);
-			      	});
 		}
 		
 		function LoadExamplesToTableCallback(resp)
@@ -1038,8 +1029,9 @@
 
 	}
 	
-		function InitializeDbStuff()
+	function InitializeDbStuff()
 	{
+		LoadPersonsAndAuthoredOutlines();
 		// /_design/outlines/_view
 		// /_design/personalProfiles/_view
 		$("#submitterIsAuthor").click(function(event) {
@@ -1260,8 +1252,6 @@
 		$("#btnSubmitAuthor").click(submitAuthor);
 		
 		$("#btnSubmitSource").click(submitSource);
-
-		LoadPersonsAndAuthoredOutlines();
 	}
 	
 		function createTimeStampArray(dateNow)
@@ -1355,9 +1345,9 @@
 			{
 				var suffix = "";
 				if (mainOutline.head.contentType == "chiasm")
-					suffix = ":oc";
+					suffix = ":o";
 				else if (mainOutline.head.contentType == "outline")
-					suffix = ":oh";
+					suffix = ":o";
 				var newId = createIDFromDateNow(dateNow, suffix);
 				mainOutline._id = newId;
 				mainOutline.head.submissionTimestamp = createTimeStampArray(dateNow);

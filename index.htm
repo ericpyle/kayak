@@ -385,32 +385,42 @@
 			Couch.init(function() {
 				var server = new Couch.Server('http://kayak.iriscouch.com', '', '');
 				dbMain = new Couch.Database(server, 'outlines');
-				dbMain = null; // DEBUG: just run from local db.
+				//dbMain = null; // DEBUG: just run from local db.
 				InitializeDbStuff();		
 			});
 		}
 		catch(err)
 		{
-			// DEBUG
-			InitializeDbStuff();
+			
 		}
 
 		mainOutline = createBlankOutline();
 		mainOutline.head.contentType = "chiasm";
 		
-	Logos.ReferenceTagging.lbsBibleVersion = "ESV";
-    Logos.ReferenceTagging.lbsLinksOpenNewWindow = true;
-    Logos.ReferenceTagging.lbsLogosLinkIcon = "dark";
-    Logos.ReferenceTagging.lbsNoSearchTagNames = [  ];
-    Logos.ReferenceTagging.lbsTargetSite = "biblia";
-	
-		LoadOutlineFromCurrentState();
-		
-		InitializeEditForm();
-		
-    //Logos.ReferenceTagging.tag();
+		Logos.ReferenceTagging.lbsBibleVersion = "ESV";
+	    Logos.ReferenceTagging.lbsLinksOpenNewWindow = true;
+	    Logos.ReferenceTagging.lbsLogosLinkIcon = "dark";
+	    Logos.ReferenceTagging.lbsNoSearchTagNames = [  ];
+	    Logos.ReferenceTagging.lbsTargetSite = "biblia";
+
+		// DEBUG	    
+	    if (!dbMain)
+	    {
+	    	InitializeDbStuff();
+	    	InitializeAfterDbSetup();
+	    }
 
 	});
+	
+	var fInitialized = false;
+	function InitializeAfterDbSetup()
+	{
+		if (fInitialized)
+			return;
+		LoadOutlineFromCurrentState();
+		InitializeEditForm();
+		fInitialized = true;
+	}
 
 </script>
 </body>
