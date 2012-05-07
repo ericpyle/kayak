@@ -34,7 +34,6 @@
 			var fNeedRenderToPage = true;
 			if (getResponse)
 			{
-				alert("here already?");
 				LoadExamplesToTableCallback(getResponse);				
 	      		//LoadAuthorResultsCallback(getResponse);
 	      		fNeedRenderToPage = false;
