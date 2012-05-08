@@ -1336,12 +1336,7 @@
 			var dateNow = new Date();
 			if (fIsNewOutline)
 			{
-				var suffix = "";
-				if (mainOutline.head.contentType == "chiasm")
-					suffix = ":o";
-				else if (mainOutline.head.contentType == "outline")
-					suffix = ":o";
-				var newId = createIDFromDateNow(dateNow, suffix);
+				var newId = createIDFromDate(dateNow, ":ol");
 				mainOutline._id = newId;
 				mainOutline.head.submissionTimestamp = createTimeStampArray(dateNow);
 			}
@@ -1402,9 +1397,14 @@
 	}
 	
 	/*
-	 * "kyk:2012-05-06T12:41:44.546Z" (28 chars) . (p[rofile] s[ource] p[erson]) (o[utline] c[hiasm], h[ierchical])
+	 * "kyk:2012-05-06T12:41:44.546Z" (28 chars) . (sr [source] ps [person]) (ol [outline])
 	 */
-	function createIDFromDateNow(dateNow, suffix)
+	function createIDFromDateNow(suffix)
+	{
+		return createIDFromDate(null, suffix);
+	}
+	
+	function createIDFromDate(dateNow, suffix)
 	{
 		if (!dateNow)
 			dateNow = new Date();
@@ -1465,7 +1465,7 @@
 	    			updatedProfile.source.media != profileOriginal.source.media)
     			{
     				// something has changed, so create a new common
-			    	newGuid = createIDFromDateNow();
+			    	newGuid = createIDFromDateNow(":sr");
 			    	var newRow = {"id" : newGuid, "key" : [newGuid, 0], "value" : clone(updatedProfile.source) };
 			        newRow.value._id = newGuid;
 		    		newRow.value["head"] = { "contentType": "sourceProfile" };				
@@ -1555,7 +1555,7 @@
 				alert("Warning: A matching person profile already exists.");
 			}
 			
-			var newId = createIDFromDateNow(new Date(), ":p");
+			var newId = createIDFromDateNow(":ps");
 			// add head information
 			personProfile._id = newId;
 			// remove revision since this is a new object.
