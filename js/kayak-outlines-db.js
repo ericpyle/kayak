@@ -1025,7 +1025,6 @@
 		var dataTable1 = $(jq(idTable)).dataTable(tableOptions);
 		injectSearchButton(idTable + "_filter", idSearchButton, txtPlaceholder);
 		$(jq(idTable)).data("dataTable", dataTable1);
-
 	}
 	
 	function InitializeDbStuff()
@@ -1240,11 +1239,6 @@
 				SwitchToSourceProfileSearchResults();
 			//var profile = $(jq(editMode)).data("profile-" + (editMode == "save-outline-author" ? "author" : "submitter"));
 			//switchToSearchResultsOnProfile(profile);
-			return false;
-		});
-		
-		$("#btnSubmitSource").click(function(event) {
-			
 			return false;
 		});
 		
@@ -1561,9 +1555,11 @@
 				alert("Warning: A matching person profile already exists.");
 			}
 			
-			var newId = createIDFromDateNow();
+			var newId = createIDFromDateNow(new Date(), ":p");
 			// add head information
 			personProfile._id = newId;
+			// remove revision since this is a new object.
+			delete personProfile._rev;
 		}
 		else
 		{

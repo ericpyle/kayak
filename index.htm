@@ -380,6 +380,7 @@
 		initializeTable("sourceSearchResults", tableOptionsSortBySource, "btnSearchSources", "Source keywords");
 
 		// not sure why typeof(Couch) doesn't work
+		var fInitCouchDbBegun = false;
 		try
 		{
 			Couch.init(function() {
@@ -388,6 +389,7 @@
 				//dbMain = null; // DEBUG: just run from local db.
 				InitializeDbStuff();		
 			});
+			fInitCouchDbBegun = true;
 		}
 		catch(err)
 		{
@@ -404,7 +406,7 @@
 	    Logos.ReferenceTagging.lbsTargetSite = "biblia";
 
 		// DEBUG	    
-	    if (!dbMain)
+	    if (!fInitCouchDbBegun)
 	    {
 	    	InitializeDbStuff();
 	    	InitializeAfterDbSetup();
