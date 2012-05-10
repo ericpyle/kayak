@@ -28,13 +28,12 @@
 		var putResponse;
 		var getResponse;
 		var dbMain;
-		var exampleRows;
 		function LoadPersonsAndAuthoredOutlines()
 		{
 			var fNeedRenderToPage = true;
 			if (getResponse)
 			{
-				LoadExamplesToTableCallback(getResponse);				
+				LoadExamplesToTableCallback(getResponse.rows);				
 	      		//LoadAuthorResultsCallback(getResponse);
 	      		fNeedRenderToPage = false;
 			}
@@ -42,7 +41,7 @@
 			loadDataSet(fNeedRenderToPage);
 		}
 		
-		function loadDataSet(fNeedRenderToPage)
+		function loadDataSet(fNeedRenderToPage, doSomethingAfterLoad)
 		{
 			if (dbMain)
 			{
@@ -54,10 +53,12 @@
 		      				
 		      				if (fNeedRenderToPage)
 		      				{
-			      				LoadExamplesToTableCallback(getResponse);
+			      				LoadExamplesToTableCallback(getResponse.rows);
 			      				InitializeAfterDbSetup();
 		      					//LoadAuthorResultsCallback(getResponse);	
-		      				}		      				
+		      				}
+		      				if (doSomethingAfterLoad)
+		      					doSomethingAfterLoad();
 				      	});
 			}
 			/* DEBUG ONLY */
@@ -67,17 +68,18 @@
 					getResponse = authorsAndOutlinesResponse;
 				if (fNeedRenderToPage)
 				{					
-					LoadExamplesToTableCallback(getResponse);
+					LoadExamplesToTableCallback(getResponse.rows);
 	      			//LoadAuthorResultsCallback(getResponse);
-				}								
+				}
+				if (doSomethingAfterLoad)
+  					doSomethingAfterLoad();		
 			}
 		}
 		
-		function LoadExamplesToTableCallback(resp)
+		function LoadExamplesToTableCallback(exampleRows)
 		{
 			var dataTable1 = $("#exampleTable").data("dataTable");
 			dataTable1.fnClearTable(false);
-			exampleRows = resp.rows;
 			for (var i=0; i < exampleRows.length; ++i) {
 				var doc = exampleRows[i].value;
 				if (!doc || (doc.head.contentType != "chiasm" && doc.head.contentType != "outline"))
@@ -121,6 +123,7 @@
 		
 		function fetchOutline(rowId)
 		{
+			var exampleRows = getResponse.rows;
 			for(var irow=0; irow<exampleRows.length; ++irow)
 			{
 				if (exampleRows[irow].id == rowId)
@@ -280,13 +283,12 @@
 			return "";		
 		}
 		
-		var authorRows;
 		function LoadAuthorResults()
 		{
 			var fNeedRenderToPage = true;
 			if (getResponse)
 			{				
-	      		LoadAuthorResultsCallback(getResponse);
+	      		LoadAuthorResultsCallback(getResponse.rows);
 	      		fNeedRenderToPage = false;
 			}
 			
@@ -528,8 +530,6 @@
 		function collectProfileDocs(matchContentType, authorRows, matchesCondition, fFindFirstOnly)
 		{
 			var profileDocs = [];
-			if (matchContentType == "personProfile" && !authorRows)
-				authorRows = getResponse.rows;
 			for (var i=0; i < authorRows.length; ++i) {
 				var doc = authorRows[i].value;
 				if (doc && doc.head.contentType == matchContentType)
@@ -588,7 +588,7 @@
    			return '#' + myid.replace(/(:|\.)/g,'\\$1');
  		}
 
-		function LoadAuthorResultsCallback(resp, fSubmitter)
+		function LoadAuthorResultsCallback(authorRows, fSubmitter)
 		{
 			//alert("loadAuthorResultsCallback");
 			// first clear current results
@@ -600,7 +600,6 @@
 			{
 				PrepareNewAuthorSearchResults();
 			}
-			authorRows = resp.rows;
 			var peopleDocs = [];
 			try {
 			 	peopleDocs = collectProfileDocs("personProfile", authorRows, 
@@ -654,7 +653,7 @@
 		
 		function fetchPersonProfile(idProfile)
 		{
-			var authorProfile = collectProfileDocs("personProfile", exampleRows, function(rowDoc){
+			var authorProfile = collectProfileDocs("personProfile", getResponse.rows, function(rowDoc){
 				if (rowDoc._id == idProfile)
 			    		return true;
 			    	return false;
@@ -664,6 +663,7 @@
 		
 		function fetchSourceProfile(idProfile)
 		{
+			var exampleRows = getResponse.rows;
 			for (var i=0; i < exampleRows.length; ++i) {
 				var doc = exampleRows[i].value;
 				if (!doc)
@@ -863,7 +863,7 @@
 			var fNeedRenderToPage = true;
 			if (getResponse)
 			{	
-	      		LoadAuthorResultsCallback(getResponse, true);
+	      		LoadAuthorResultsCallback(getResponse.rows, true);
 	      		fNeedRenderToPage = false;
 			}
 			
@@ -875,7 +875,7 @@
 			var fNeedRenderToPage = true;
 			if (getResponse)
 			{	
-	      		LoadSourceResultsCallback(getResponse);
+	      		LoadSourceResultsCallback(getResponse.rows);
 	      		fNeedRenderToPage = false;
 			}
 			
@@ -932,6 +932,7 @@
 		
 		function fetchAuthorProfileByOutline(outlineDoc)
 		{
+			var exampleRows = getResponse.rows;
 			return collectProfileDocs("personProfile", exampleRows, function(rowDoc){
 							if (rowDoc.head.contentType == "personProfile" && 
 			    				outlineDoc.head.author && rowDoc._id == outlineDoc.head.author.guid)
@@ -940,11 +941,9 @@
 						}, true );
 		}
 		
-		function LoadSourceResultsCallback(resp)
+		function LoadSourceResultsCallback(exampleRows)
 		{
 			PrepareNewSourceSearchResults();
-			if (!exampleRows)
-				exampleRows = resp.rows;
 			// TODO: factor in the search keywords here
 			// but for now just show all
 			// TODO: Add sort as well
@@ -1195,6 +1194,7 @@
 		
 		function getSelectedPersonProfile(selectedRow)
 		{
+			var authorRows = getResponse.rows;
 			if (selectedRow && selectedRow.length != 0)
 			{
 				var personProfileId = $(selectedRow).attr("id");		
@@ -1357,33 +1357,41 @@
 			if (dbMain)
 			{
 				dbMain.put(mainOutline._id, mainOutline, function(resp) {
-			        alert("Remember to check for ok: " + JSON.stringify(resp));
-			        loadDataSet(true);
-			        selectOutlineRow(jq(mainOutline._id));
+					
+					if (resp.ok)
+			        {
+			        	mainOutline["_rev"] = resp.rev;
+			        	publishOutlineChangesToTableView(mainOutline);
+			        }
+			        //alert("Remember to check for ok: " + JSON.stringify(resp));
 					$("#btnPublishOutline").click(publishOutline);
 			    });
-			}					
+			}								
 		    else // DEBUG
-		    {
-		    	
-		    	var rowId = mainOutline._id;
-		    	var newRow = {"id" : rowId, "key" : [rowId, 1], "value" : mainOutline};
-		    	if (!replaceRow(getResponse.rows, newRow.id, newRow))
-		    	{
-		    		getResponse.rows.push(newRow);
-		    		getResponse.total_rows += 1;
-		    	}			    	
-		    	
-		    	loadDataSet(true);
-		    	selectOutlineRow(jq(mainOutline._id));
+		    {		    	
+		    	publishOutlineChangesToTableView(mainOutline);
 		 		$(this).click(publishOutline);   	
 		    }
 				
 		}
-		alert("Changes have been published");
+		
 		return false;
 	}
 
+	function publishOutlineChangesToTableView(outline)
+	{
+		var rowId = outline._id;
+    	var newRow = {"id" : rowId, "key" : [rowId, 1], "value" : outline};
+    	if (!replaceRow(getResponse.rows, newRow.id, newRow))
+    	{
+    		getResponse.rows.push(newRow);
+    		getResponse.total_rows += 1;
+    	}			    	
+    	
+    	loadDataSet(true);
+    	selectOutlineRow(jq(outline._id));
+    	alert("Changes have been published");
+	}
 	
 	/*
 	 * Return date Now in the format of "2012-05-06T12:41:44.546Z" (24chars)
@@ -1416,7 +1424,7 @@
 	function submitSource(event)
 	{
 		$(this).unbind(event); // TODO: use on/off
-		
+		var exampleRows = getResponse.rows;
 		var profileOriginal =  $("#sourceDetailBlock").data("profile-original");
 	    var editMode = $("#sourceDetailBlock").data("edit-mode"); // editProfile / editCommon / copyToNewProfile
 	    var updatedProfile = $("[name='updateSourceDetails']").getJSON();
@@ -1514,6 +1522,7 @@
 	
 	function submitAuthor(event)
 	{
+		var authorRows = getResponse.rows;
 		// TODO: replace with on/off?
 		$(this).unbind(event);
 		// first do some checking (don't create blank profile)
@@ -1593,36 +1602,37 @@
 		//alert(JSON.stringify(personProfile));
 		if (dbMain)
 			dbMain.put(personProfile._id, personProfile, function(resp) {
-		        alert("Remember to check for ok: " + JSON.stringify(resp));
-		        // update selected author if it matches
-		        updateStagedProfilesIfNeeded(personProfile);
-		        loadDataSet(false);
-				// now load results
-				switchToSearchResultsOnProfile(personProfile);
+		        if (resp.ok)
+		        {
+		        	personProfile["_rev"] = resp.rev;
+		        	alert("Person Profile Published."); // Debug: " + JSON.stringify(resp));
+				    updateStagedProfilesIfNeeded(personProfile);
+				    publishPersonProfileChangesToTableView(personProfile);
+		        	loadDataSet(false);		        	
+		        }
 				$("#btnSubmitAuthor").click(submitAuthor);
 		    });
 	    else  // Debug
 	    {
 	    	updateStagedProfilesIfNeeded(personProfile);
-	    	var newRow = {"id" : personProfile._id, "key" : [personProfile._id, 0], "value" : personProfile};				
-	    	if (fIsNewProfile)
-	    	{
-
-				//alert(JSON.stringify(newRow));					
-				// append to our getResponse until we can replace it with the server response
-				getResponse.total_rows += 1;
-				getResponse.rows.push(newRow);
-	    	}
-	    	else
-	    	{
-	    		// replace authorRow with new profile
-	    		replaceRow(authorRows, personProfile._id, newRow);
-	    	}
-	    	switchToSearchResultsOnProfile(personProfile);
+	    	publishPersonProfileChangesToTableView(personProfile);
+	    	$(this).click(submitAuthor);
 	    }
-	    $(this).click(submitAuthor);
+	    
 		//alert("btnSubmitAuthor : "+ profile.name.middle);
 		return false;
+	}
+	
+	function publishPersonProfileChangesToTableView(personProfile)
+	{
+		var newRow = {"id" : personProfile._id, "key" : [personProfile._id, 0], "value" : personProfile};
+		if (!replaceRow(getResponse.rows, newRow.id, newRow))
+    	{
+    		getResponse.rows.push(newRow);
+    		getResponse.total_rows += 1;
+    	}
+	    // TODO: lookup _rev version later
+	    switchToSearchResultsOnProfile(personProfile);
 	}
 	
 	function replaceRow(rows, targetId, newRow)
@@ -1763,7 +1773,7 @@
 			else if (editMode == "save-outline-source")
 			{
 				$("#sourceSearchResults_filter input").val(keywords);
-				LoadSourceResultsCallback(getResponse);
+				LoadSourceResultsCallback(getResponse.rows);
 				if (profile)
 				{
 					var parentRow = $(jq(profile._id + "_source"));
@@ -1773,7 +1783,7 @@
 
 			if (editMode == "save-outline-submitter" || editMode == "save-outline-author")
 			{
-				LoadAuthorResultsCallback(getResponse, editMode == "save-outline-submitter");
+				LoadAuthorResultsCallback(getResponse.rows, editMode == "save-outline-submitter");
 				// now highlight the new row.
 				if (profile)
 				{
