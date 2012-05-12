@@ -384,10 +384,17 @@
 		try
 		{
 			Couch.init(function() {
-				var server = new Couch.Server('http://kayak.iriscouch.com', '', '');
-				dbMain = new Couch.Database(server, 'outlines');
-				//dbMain = null; // DEBUG: just run from local db.
-				InitializeDbStuff();		
+				try
+				{
+					var server = new Couch.Server('http://kayak.iriscouch.com', '', '');
+					dbMain = new Couch.Database(server, 'outlines');
+					//dbMain = null; // DEBUG: just run from local db.
+					InitializeDbStuff();
+				}
+				catch (err)
+				{
+					
+				}		
 			});
 			fInitCouchDbBegun = true;
 		}

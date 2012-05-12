@@ -223,7 +223,7 @@
 		{
 			if (mainOutline)
 			{
-				var authorRows = getResponse.rows;
+				var authorRows = getDbRows();
 				$("#save-outline-title").text(AorB(mainOutline.head.title, "") );
 				$("#save-outline-scriptureRange").text(AorB(mainOutline.head.ScriptureRange, ""));
 				var authorProfile = collectProfileDocs("personProfile", authorRows, matchAuthorByCurrentOutline, true);

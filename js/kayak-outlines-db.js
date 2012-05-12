@@ -26,10 +26,10 @@
 		      	*/
 
 		var putResponse;
-		var getResponse;
 		var dbMain;
 		function LoadPersonsAndAuthoredOutlines()
 		{
+			var getResponse = getDb();
 			var fNeedRenderToPage = true;
 			if (getResponse)
 			{
@@ -43,37 +43,71 @@
 		
 		function loadDataSet(fNeedRenderToPage, doSomethingAfterLoad)
 		{
+			var getResponse = null;
 			if (dbMain)
 			{
 				//_design/personProfiles/_view/personsAndOutlinesAuthored
-				dbMain.get('_design/everything/_view/byDocId', 
+				try
+				{
+					dbMain.get('_design/everything/_view/byDocId', 
 		      			function(resp) {
-		      				getResponse = resp;
-		      				//$("body").data("personsAndOutlinesAuthored", getResponse);
-		      				
-		      				if (fNeedRenderToPage)
+		      				if (resp)
 		      				{
-			      				LoadExamplesToTableCallback(getResponse.rows);
-			      				InitializeAfterDbSetup();
-		      					//LoadAuthorResultsCallback(getResponse);	
-		      				}
-		      				if (doSomethingAfterLoad)
-		      					doSomethingAfterLoad();
-				      	});
+			      				cacheDbInDom(resp);
+			      				getResponse = resp;			      				
+			      				//$("body").data("personsAndOutlinesAuthored", getResponse);
+			      				
+			      				if (fNeedRenderToPage)
+			      				{
+				      				LoadExamplesToTableCallback(getResponse.rows);
+				      				InitializeAfterDbSetup();
+			      					//LoadAuthorResultsCallback(getResponse);	
+			      				}
+			      				if (doSomethingAfterLoad)
+			      					doSomethingAfterLoad();			      				
+			      			}
+			      			else
+			      			{			      				
+			      				alert("error: " + JSON.stringify(resp));
+			      			}
+			      			
+				      	});	
+				}
+				catch(err)
+				{
+					alert("error loading database." + JSON.stringify(err));
+				}
+
 			}
-			/* DEBUG ONLY */
-			else 
+			else
+			//if (!getResponse)
 			{
-				if (!getResponse)
-					getResponse = authorsAndOutlinesResponse;
+				alert("loading temporary tables from webpage");
+				getResponse = cacheDbInDom(authorsAndOutlinesResponse);
 				if (fNeedRenderToPage)
 				{					
 					LoadExamplesToTableCallback(getResponse.rows);
 	      			//LoadAuthorResultsCallback(getResponse);
 				}
 				if (doSomethingAfterLoad)
-  					doSomethingAfterLoad();		
+  					doSomethingAfterLoad();
 			}
+		}
+		
+		function cacheDbInDom(resp)
+		{
+			$("body").data("getResponse", resp);
+			return resp;	
+		}
+		
+		function getDb()
+		{
+			return $("body").data("getResponse");
+		}
+		
+		function getDbRows()
+		{
+			return getDb().rows;
 		}
 		
 		function LoadExamplesToTableCallback(exampleRows)
@@ -123,7 +157,7 @@
 		
 		function fetchOutline(rowId)
 		{
-			var exampleRows = getResponse.rows;
+			var exampleRows = getDbRows();
 			for(var irow=0; irow<exampleRows.length; ++irow)
 			{
 				if (exampleRows[irow].id == rowId)
@@ -288,7 +322,7 @@
 			var fNeedRenderToPage = true;
 			if (getResponse)
 			{				
-	      		LoadAuthorResultsCallback(getResponse.rows);
+	      		LoadAuthorResultsCallback(getDbRows());
 	      		fNeedRenderToPage = false;
 			}
 			
@@ -653,7 +687,7 @@
 		
 		function fetchPersonProfile(idProfile)
 		{
-			var authorProfile = collectProfileDocs("personProfile", getResponse.rows, function(rowDoc){
+			var authorProfile = collectProfileDocs("personProfile", getDbRows(), function(rowDoc){
 				if (rowDoc._id == idProfile)
 			    		return true;
 			    	return false;
@@ -663,7 +697,7 @@
 		
 		function fetchSourceProfile(idProfile)
 		{
-			var exampleRows = getResponse.rows;
+			var exampleRows = getDbRows();
 			for (var i=0; i < exampleRows.length; ++i) {
 				var doc = exampleRows[i].value;
 				if (!doc)
@@ -863,7 +897,7 @@
 			var fNeedRenderToPage = true;
 			if (getResponse)
 			{	
-	      		LoadAuthorResultsCallback(getResponse.rows, true);
+	      		LoadAuthorResultsCallback(getDbRows(), true);
 	      		fNeedRenderToPage = false;
 			}
 			
@@ -875,7 +909,7 @@
 			var fNeedRenderToPage = true;
 			if (getResponse)
 			{	
-	      		LoadSourceResultsCallback(getResponse.rows);
+	      		LoadSourceResultsCallback(getDbRows());
 	      		fNeedRenderToPage = false;
 			}
 			
@@ -932,7 +966,7 @@
 		
 		function fetchAuthorProfileByOutline(outlineDoc)
 		{
-			var exampleRows = getResponse.rows;
+			var exampleRows = getDbRows();
 			return collectProfileDocs("personProfile", exampleRows, function(rowDoc){
 							if (rowDoc.head.contentType == "personProfile" && 
 			    				outlineDoc.head.author && rowDoc._id == outlineDoc.head.author.guid)
@@ -1194,7 +1228,7 @@
 		
 		function getSelectedPersonProfile(selectedRow)
 		{
-			var authorRows = getResponse.rows;
+			var authorRows = getDbRows();
 			if (selectedRow && selectedRow.length != 0)
 			{
 				var personProfileId = $(selectedRow).attr("id");		
@@ -1382,11 +1416,13 @@
 	{
 		var rowId = outline._id;
     	var newRow = {"id" : rowId, "key" : [rowId, 1], "value" : outline};
+    	var getResponse = getDb();
     	if (!replaceRow(getResponse.rows, newRow.id, newRow))
     	{
     		getResponse.rows.push(newRow);
     		getResponse.total_rows += 1;
     	}			    	
+    	cacheDbInDom(getResponse);
     	
     	loadDataSet(true);
     	selectOutlineRow(jq(outline._id));
@@ -1424,7 +1460,7 @@
 	function submitSource(event)
 	{
 		$(this).unbind(event); // TODO: use on/off
-		var exampleRows = getResponse.rows;
+		var exampleRows = getDbRows();
 		var profileOriginal =  $("#sourceDetailBlock").data("profile-original");
 	    var editMode = $("#sourceDetailBlock").data("edit-mode"); // editProfile / editCommon / copyToNewProfile
 	    var updatedProfile = $("[name='updateSourceDetails']").getJSON();
@@ -1522,7 +1558,7 @@
 	
 	function submitAuthor(event)
 	{
-		var authorRows = getResponse.rows;
+		var authorRows = getDbRows();
 		// TODO: replace with on/off?
 		$(this).unbind(event);
 		// first do some checking (don't create blank profile)
@@ -1626,11 +1662,14 @@
 	function publishPersonProfileChangesToTableView(personProfile)
 	{
 		var newRow = {"id" : personProfile._id, "key" : [personProfile._id, 0], "value" : personProfile};
+		
+		var getResponse = getDb();
 		if (!replaceRow(getResponse.rows, newRow.id, newRow))
     	{
     		getResponse.rows.push(newRow);
     		getResponse.total_rows += 1;
     	}
+    	cacheDbInDom(getResponse);
 	    // TODO: lookup _rev version later
 	    switchToSearchResultsOnProfile(personProfile);
 	}
@@ -1773,7 +1812,7 @@
 			else if (editMode == "save-outline-source")
 			{
 				$("#sourceSearchResults_filter input").val(keywords);
-				LoadSourceResultsCallback(getResponse.rows);
+				LoadSourceResultsCallback(getDbRows());
 				if (profile)
 				{
 					var parentRow = $(jq(profile._id + "_source"));
@@ -1783,7 +1822,7 @@
 
 			if (editMode == "save-outline-submitter" || editMode == "save-outline-author")
 			{
-				LoadAuthorResultsCallback(getResponse.rows, editMode == "save-outline-submitter");
+				LoadAuthorResultsCallback(getDbRows(), editMode == "save-outline-submitter");
 				// now highlight the new row.
 				if (profile)
 				{
