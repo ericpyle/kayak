@@ -1457,6 +1457,32 @@
 		return newId;
 	}
 	
+	function publishSourceProfileChangesToTableView(updatedProfile, profileOriginal, dbRows)
+	{
+		var editMode = $("#sourceDetailBlock").data("edit-mode");
+    	var commonSourceId = "";
+    	if (editMode == "editProfile" || editMode == "editCommon")    	
+    	{
+    		if (profileOriginal.source._id.length > 0)
+	    	{
+	    		commonSourceId = profileOriginal.source._id;
+	    		var newRow = {"id" : commonSourceId, "key" : [commonSourceId, 0], "value" : clone(updatedProfile.source) };
+	    		newRow.value["head"] = { "contentType": "sourceProfile" };
+	    		//alert(JSON.stringify(newRow));
+	    		replaceRow(dbRows, commonSourceId, newRow, true);
+	    	}
+    	}
+    	if (editMode == "editProfile" && profileOriginal.outline._id.length > 0)
+    	{
+    		if (commonSourceId.length > 0)
+    			updatedProfile.outline.source["guid"] = commonSourceId;
+
+    		graftSource(dbRows, profileOriginal.outline._id, updatedProfile.outline.source);
+    	}
+    	updateStagedProfilesIfNeeded(updatedProfile);
+    	switchToSearchResultsOnProfile(updatedProfile);
+	}
+	
 	function submitSource(event)
 	{
 		$(this).unbind(event); // TODO: use on/off
@@ -1464,39 +1490,12 @@
 		var profileOriginal =  $("#sourceDetailBlock").data("profile-original");
 	    var editMode = $("#sourceDetailBlock").data("edit-mode"); // editProfile / editCommon / copyToNewProfile
 	    var updatedProfile = $("[name='updateSourceDetails']").getJSON();
+	    updatedProfile.source.head = {"contentType" : "sourceProfile"};
 	    //alert(JSON.stringify(updatedProfile));
-	    if (editMode == "editProfile" || editMode == "editCommon")
+	    var profileSwitchTo = null;
+	    if (editMode == "copyToNewProfile")
 	    {
-	    	if (dbMain){
-				// dbMain.put(personProfile._id, personProfile, function(resp) {		       
-			    // });
-		    }
-		    else  // Debug
-		    {	
-		    	// first save any changes to the common source details.
-		    	var commonSourceId = "";
-		    	if (profileOriginal.source._id.length > 0)
-		    	{
-		    		commonSourceId = profileOriginal.source._id;
-		    		var newRow = {"id" : commonSourceId, "key" : [commonSourceId, 0], "value" : clone(updatedProfile.source) };
-		    		newRow.value["head"] = { "contentType": "sourceProfile" };
-		    		//alert(JSON.stringify(newRow));
-		    		replaceRow(exampleRows, commonSourceId, newRow, true);
-		    	}
-		    	if (editMode == "editProfile" && profileOriginal.outline._id.length > 0)
-		    	{
-		    		if (commonSourceId.length > 0)
-		    			updatedProfile.outline.source["guid"] = commonSourceId;
-
-		    		graftSource(exampleRows, profileOriginal.outline._id, updatedProfile.outline.source);
-		    	}
-		    	updateStagedProfilesIfNeeded(updatedProfile);
-		    	switchToSearchResultsOnProfile(updatedProfile);
-		    }	
-	    }
-	    else if (editMode == "copyToNewProfile")
-	    {
-	    	var profileSwitchTo = clone(updatedProfile);
+	    	profileSwitchTo = clone(updatedProfile);
 	    	var newGuid = "";
 	    	if (updatedProfile.source.details.length > 0 || 
 	    		updatedProfile.source.website.length > 0 || 
@@ -1510,7 +1509,8 @@
     			{
     				// something has changed, so create a new common
 			    	newGuid = createIDFromDateNow(":sr");
-			    	var newRow = {"id" : newGuid, "key" : [newGuid, 0], "value" : clone(updatedProfile.source) };
+			    	profileSwitchTo.source._id = newGuid;
+			    	var newRow = {"id" : newGuid, "key" : [newGuid, 0], "value" : profileSwitchTo.source };
 			        newRow.value._id = newGuid;
 		    		newRow.value["head"] = { "contentType": "sourceProfile" };				
 		    		// replace authorRow with new profile
@@ -1547,8 +1547,46 @@
 				newOutlineStub.head.source = newOutlineSource;
 				profileSwitchTo._id = guidNewOutlineStub;
 	    	}
-		    updateStagedProfilesIfNeeded(profileSwitchTo);
-		    switchToSearchResultsOnProfile(profileSwitchTo);
+	    }
+		else if (editMode == "editProfile" || editMode == "editCommon")
+	    {
+	    	profileSwitchTo = updatedProfile;
+	    }
+	    
+	    findAndDo(exampleRows, profileSwitchTo.source._id, function(rows, indexFound) 
+	    {
+	    	var docToUpdate = rows[indexFound].value;
+	    	if (docToUpdate._rev)
+	    		profileSwitchTo.source["_rev"] = docToUpdate._rev;
+	    });
+	    
+	    // TODO: do I need to write the db cache back to the DOM?
+	    
+		if (dbMain)
+		{
+			try
+			{
+				dbMain.put(profileSwitchTo.source._id, profileSwitchTo.source, function(resp) {
+			        if (resp.ok)
+			        {
+			        	profileSwitchTo["_rev"] = resp.rev;
+			        	alert("Common Source Profile Changes Published. (Outline specific details will be updated after publishing the outline.)"); // Debug: " + JSON.stringify(resp));
+					    publishSourceProfileChangesToTableView(profileSwitchTo, profileOriginal, exampleRows);
+			        }
+			        else
+			        {
+			        	alert("error saving source to database." + JSON.stringify(profileSwitchTo)+ "err: " +  JSON.stringify(resp));
+			        }
+			    });
+		    }
+		    catch(err)
+		    {
+		    	alert("error saving source to database." + JSON.stringify(profileSwitchTo)+ "err: " +  JSON.stringify(err));
+		    }
+		 }
+	    else  // Debug
+	    {
+	    	publishSourceProfileChangesToTableView(profileSwitchTo, profileOriginal, exampleRows);
 	    }
 		
 		$(this).click(submitSource);
