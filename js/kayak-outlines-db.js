@@ -380,7 +380,7 @@
 			{
 				$("#sourceSearchResults").hide();
 				$("#sourceHeading").text("Enter Source Details");				
-				var emptyProfile = CreateEmptySourceFormData()
+				var emptyProfile = CreateEmptySourceFormData();
 				var sourceEditMode = $("#sourceDetailBlock").data("edit-mode");
 				if (sourceEditMode == "editCommon")
 				{
@@ -855,7 +855,9 @@
 		
 		function loadEditForm(idProfile, fetchProfile, editMode, formSelector)
 		{
-			var profile = fetchProfile(idProfile);
+			var profile = null;
+			if (idProfile)
+				profile = fetchProfile(idProfile);
 			// TODO: change to "formSelector"
 			$(formSelector).data("profile-original", profile);
 			$(formSelector).data("edit-mode", editMode);
@@ -1083,7 +1085,12 @@
 		});
 		
 		$("#btnCreateNewAuthor, #btnCreateNewSubmitter, #btnCreateNewSource").click(function(event) {
-								$("#sourceDetailBlock").data("edit-mode", "editProfile");
+								if (event.target.id == "btnCreateNewSource")
+								{
+									$("#sourceDetailBlock").data("edit-mode", "editProfile");
+									loadEditForm(null, null, "editProfile", "[name='updateSourceDetails']");
+									return false;	
+								}								
 								LoadNewProfileForm();
 				  				return false;
 							});
@@ -1463,7 +1470,7 @@
     	var commonSourceId = "";
     	if (editMode == "editProfile" || editMode == "editCommon")    	
     	{
-    		if (profileOriginal.source._id.length > 0)
+    		if (profileOriginal && profileOriginal.source._id.length > 0)
 	    	{
 	    		commonSourceId = profileOriginal.source._id;
 	    		var newRow = {"id" : commonSourceId, "key" : [commonSourceId, 0], "value" : clone(updatedProfile.source) };
@@ -1472,7 +1479,7 @@
 	    		replaceRow(dbRows, commonSourceId, newRow, true);
 	    	}
     	}
-    	if (editMode == "editProfile" && profileOriginal.outline._id.length > 0)
+    	if (editMode == "editProfile" && profileOriginal && profileOriginal.outline._id.length > 0)
     	{
     		if (commonSourceId.length > 0)
     			updatedProfile.outline.source["guid"] = commonSourceId;
@@ -1481,6 +1488,21 @@
     	}
     	updateStagedProfilesIfNeeded(updatedProfile);
     	switchToSearchResultsOnProfile(updatedProfile);
+	}
+	
+	function CommonSourceHasContent(testCommonSource)
+	{
+		return testCommonSource.details.length > 0 || 
+	    		testCommonSource.website.length > 0 || 
+	    		testCommonSource.publisherDetails.length > 0;
+	}
+	
+	function CommonSourceHasChanged(testCommonSource, originalSource)
+	{
+		return testCommonSource.details != originalSource.details || 
+	    	testCommonSource.website != originalSource.website ||
+	    	testCommonSource.publisherDetails != originalSource.publisherDetails ||
+	    	testCommonSource.media != originalSource.media;
 	}
 	
 	function submitSource(event)
@@ -1492,20 +1514,21 @@
 	    var updatedProfile = $("[name='updateSourceDetails']").getJSON();
 	    updatedProfile.source.head = {"contentType" : "sourceProfile"};
 	    //alert(JSON.stringify(updatedProfile));
+	    if (!CommonSourceHasContent(updatedProfile.source) && 
+	    	(!profileOriginal || CommonSourceHasChanged(updatedProfile.source, profileOriginal.source)))
+    	{
+    		alert("Common source requires that you keep some information.")
+    		return;
+    	}
+	    
 	    var profileSwitchTo = null;
-	    if (editMode == "copyToNewProfile")
+	    if (editMode == "copyToNewProfile" || !profileOriginal)
 	    {
 	    	profileSwitchTo = clone(updatedProfile);
 	    	var newGuid = "";
-	    	if (updatedProfile.source.details.length > 0 || 
-	    		updatedProfile.source.website.length > 0 || 
-	    		updatedProfile.source.publisherDetails.length > 0 ||
-	    		updatedProfile.source.media.length > 0)
+	    	if (CommonSourceHasContent(updatedProfile.source))
 	    	{
-	    		if (updatedProfile.source.details != profileOriginal.source.details || 
-	    			updatedProfile.source.website != profileOriginal.source.website ||
-	    			updatedProfile.source.publisherDetails != profileOriginal.source.publisherDetails ||
-	    			updatedProfile.source.media != profileOriginal.source.media)
+	    		if (!profileOriginal || CommonSourceHasChanged(updatedProfile.source, profileOriginal.source))
     			{
     				// something has changed, so create a new common
 			    	newGuid = createIDFromDateNow(":sr");
@@ -1521,6 +1544,11 @@
 	    			newGuid = updatedProfile.source._id;
 	    		}
 	    		profileSwitchTo._id = newGuid;
+    		}
+    		else
+    		{
+    			// no content. 
+    			// apparently this only has outline source details.
     		}
     		
     		var outlineSource = updatedProfile.outline.source;
@@ -1549,8 +1577,9 @@
 	    	}
 	    }
 		else if (editMode == "editProfile" || editMode == "editCommon")
-	    {
-	    	profileSwitchTo = updatedProfile;
+	    {	    	
+	    	if (profileOriginal)
+	    		profileSwitchTo = updatedProfile;
 	    }
 	    
 	    findAndDo(exampleRows, profileSwitchTo.source._id, function(rows, indexFound) 
@@ -1561,8 +1590,7 @@
 	    });
 	    
 	    // TODO: do I need to write the db cache back to the DOM?
-	    
-		if (dbMain)
+		if (dbMain && (!profileOriginal || CommonSourceHasChanged(updatedProfile.source, profileOriginal.source)))
 		{
 			try
 			{
@@ -1584,7 +1612,7 @@
 		    	alert("error saving source to database." + JSON.stringify(profileSwitchTo)+ "err: " +  JSON.stringify(err));
 		    }
 		 }
-	    else  // Debug
+	    else
 	    {
 	    	publishSourceProfileChangesToTableView(profileSwitchTo, profileOriginal, exampleRows);
 	    }
