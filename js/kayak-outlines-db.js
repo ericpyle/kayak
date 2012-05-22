@@ -817,7 +817,7 @@
 					}
 					var editLink = '<a href="#" id="'+ editModeId +'">'+ editModeText +'</a>';
 					var copyLink = '<a id="copyToNewProfile" href="#">Copy to New</a>';
-					if (idProfile == "56e905abc996fa0a1b824d411800044e_source")
+					if (idProfile == "kyk:1845-12-23T03:22:15.481Z:sr_source")
 						rowHtml = '<tr id="creditRowSelectedOptions" class="selectedRowOptions"><td colspan="3"><button id="btnCreditOk" type="button">OK</button></td></tr>';
 					else
 						rowHtml = '<tr id="creditRowSelectedOptions" class="selectedRowOptions"><td colspan="3"><button id="btnCreditOk" type="button">OK</button> ' + editLink  + " | " + copyLink + '</td></tr>';						
@@ -1211,7 +1211,7 @@
 		
 		function stageKayakAsSource()
 		{
-			var profile = fetchSourceProfile("56e905abc996fa0a1b824d411800044e_source");
+			var profile = fetchSourceProfile("kyk:1845-12-23T03:22:15.481Z:sr_source");
 			stageSelectedSourceProfile(profile);
 			$("#sourceSpecification").hide();
 		}
@@ -1926,11 +1926,11 @@ var authorsAndOutlinesResponse = {
 	"offset": 0,
 	"rows": [
 		{
-			"id": "56e905abc996fa0a1b824d411800044e",
-			"key": [ "56e905abc996fa0a1b824d411800044e", 0 ],
+			"id": "kyk:1845-12-23T03:22:15.481Z:sr",
+			"key": [ "kyk:1845-12-23T03:22:15.481Z:sr", 0 ],
 			"value" : 
 			{
-				"_id": "56e905abc996fa0a1b824d411800044e",
+				"_id": "kyk:1845-12-23T03:22:15.481Z:sr",
 				"_rev":"",
 				"head": { "contentType": "sourceProfile" },
 				"media": "website",
@@ -1940,11 +1940,11 @@ var authorsAndOutlinesResponse = {
 			}
 		},
 		{
-			"id": "56e905abc996fa0a1b824d4118000762",
-			"key": [ "56e905abc996fa0a1b824d4118000762", 0 ],
+			"id": "kyk:2011-10-18T19:00:00.002Z:sr",
+			"key": [ "kyk:2011-10-18T19:00:00.002Z:sr", 0 ],
 			"value" : 
 			{
-				"_id": "56e905abc996fa0a1b824d4118000762",
+				"_id": "kyk:2011-10-18T19:00:00.002Z:sr",
 				"_rev":"",
 				"head": { "contentType": "sourceProfile" },
 				"media": "book",
@@ -1954,11 +1954,11 @@ var authorsAndOutlinesResponse = {
 			}
 		},
 		{
-			"id": "56e905abc996fa0a1b824d4118000c10",
-			"key": [ "56e905abc996fa0a1b824d4118000c10", 0 ],
+			"id": "kyk:2011-06-06T19:00:00.004Z:sr",
+			"key": [ "kyk:2011-06-06T19:00:00.004Z:sr", 0 ],
 			"value" :
 			{
-				"_id": "56e905abc996fa0a1b824d4118000c10",
+				"_id": "kyk:2011-06-06T19:00:00.004Z:sr",
 				"_rev":"",
 				"head": { "contentType": "sourceProfile" },
 				"media": "website",
@@ -1968,11 +1968,11 @@ var authorsAndOutlinesResponse = {
 			}
 		},
 		{
-			"id": "56e905abc996fa0a1b824d41180014e4",
-			"key": [ "56e905abc996fa0a1b824d41180014e4", 0 ],
+			"id": "kyk:2011-06-06T18:47:27.848Z:sr",
+			"key": [ "kyk:2011-06-06T18:47:27.848Z:sr", 0 ],
 			"value" :
 			{
-				"_id": "56e905abc996fa0a1b824d41180014e4",
+				"_id": "kyk:2011-06-06T18:47:27.848Z:sr",
 				"_rev":"",
 				"head": { "contentType": "sourceProfile" },
 				"media": "class",
@@ -1982,11 +1982,11 @@ var authorsAndOutlinesResponse = {
 			}
 		},
 		{
-			"id": "56e905abc996fa0a1b824d41180018ba",
-			"key": [ "56e905abc996fa0a1b824d41180018ba", 0 ],
+			"id": "kyk:2011-06-18T18:47:27.948Z:sr",
+			"key": [ "kyk:2011-06-18T18:47:27.948Z:sr", 0 ],
 			"value" :
 			{
-				"_id": "56e905abc996fa0a1b824d41180018ba",
+				"_id": "kyk:2011-06-18T18:47:27.948Z:sr",
 				"_rev":"",
 				"head": { "contentType": "sourceProfile" },
 				"media": "email",
@@ -2010,13 +2010,13 @@ var authorsAndOutlinesResponse = {
 			}
 		},
 		{
-			"id": "4d43cfb36ad257f3746df55c48000d42",
+			"id": "kyk:2011-06-06T19:00:00.002Z:ps",
 			"key": [
-				"4d43cfb36ad257f3746df55c48000d42",
+				"kyk:2011-06-06T19:00:00.002Z:ps",
 				0
 			],
 			"value": {
-				"_id": "4d43cfb36ad257f3746df55c48000d42",
+				"_id": "kyk:2011-06-06T19:00:00.002Z:ps",
 				"_rev": "1-5398f44a2a0cac6af8806f9cee16bcc9",
 				"head": {
 					"contentType": "personProfile"
@@ -2036,21 +2036,21 @@ var authorsAndOutlinesResponse = {
 			}
 		},
 		{
-			"id": "17d028b6aebef1b207d226613300290b",
+			"id": "kyk:2011-06-06T19:00:00.001Z:ol",
 			"key": [
-				"4d43cfb36ad257f3746df55c48000d42",
+				"kyk:2011-06-06T19:00:00.002Z:ps",
 				1,
 				"jbjordan"
 			],
 			"value": {
-				"_id": "17d028b6aebef1b207d226613300290b",
+				"_id": "kyk:2011-06-06T19:00:00.001Z:ol",
 				"_rev": "16-98f02b889f27179807a232c07b1fc4af",
 				"head": {
 					"submissionTimestamp": [
 						2011,
 						6,
 						6,
-						"10:30:00.000Z"
+						"19:00:00.001Z"
 					],
 					"bcvRange": [
 						"Matt",
@@ -2062,14 +2062,14 @@ var authorsAndOutlinesResponse = {
 					],
 					"authorShortname": "jbjordan",
 					"author": {
-						"guid": "4d43cfb36ad257f3746df55c48000d42",
+						"guid": "kyk:2011-06-06T19:00:00.002Z:ps",
 						"shortname": "jbjordan"
 					},
 					"submittedBy": {
-						"guid": "4d43cfb36ad257f3746df55c48002968"
+						"guid": "kyk:1974-12-23T03:22:15.481Z:ps"
 					},
 					"source": {
-						"guid": "56e905abc996fa0a1b824d4118000c10",
+						"guid": "kyk:2011-06-06T19:00:00.004Z:sr",
 						"details": "#94, Apr 1997",
 						"website": "http://www.biblicalhorizons.com/biblical-horizons/no-94-toward-a-chiastic-understanding-of-the-gospel-according-to-matthew-part-1/"
 					},
@@ -2153,21 +2153,21 @@ var authorsAndOutlinesResponse = {
 			}
 		},
 		{
-			"id": "17d028b6aebef1b207d2266133003419",
+			"id": "kyk:2011-10-18T19:00:00.001Z:ol",
 			"key": [
-				"4d43cfb36ad257f3746df55c48000d42",
+				"kyk:2011-06-06T19:00:00.002Z:ps",
 				1,
 				"jbjordan"
 			],
 			"value": {
-				"_id": "17d028b6aebef1b207d2266133003419",
+				"_id": "kyk:2011-10-18T19:00:00.001Z:ol",
 				"_rev": "14-cce370309bbe943ceb0c29f428597319",
 				"head": {
 					"submissionTimestamp": [
 						2011,
 						10,
 						18,
-						"10:30:00.000Z"
+						"19:00:00.001Z"
 					],
 					"bcvRange": [
 						"Deut",
@@ -2179,13 +2179,13 @@ var authorsAndOutlinesResponse = {
 					],
 					"authorShortname": "jbjordan",
 					"author": {
-						"guid": "4d43cfb36ad257f3746df55c48000d42"
+						"guid": "kyk:2011-06-06T19:00:00.002Z:ps"
 					},
 					"submittedBy": {
-						"guid": "4d43cfb36ad257f3746df55c48002968"
+						"guid": "kyk:1974-12-23T03:22:15.481Z:ps"
 					},
 					"source": {
-						"guid": "56e905abc996fa0a1b824d4118000762",
+						"guid": "kyk:2011-10-18T19:00:00.002Z:sr",
 						"details": "p. 57"
 					},
 					"title": "Covenant/Re-creation Pattern",
@@ -2214,21 +2214,21 @@ var authorsAndOutlinesResponse = {
 			}
 		},
 		{
-			"id": "17d028b6aebef1b207d226613300400c",
+			"id": "kyk:2011-10-20T19:00:00.001Z:ol",
 			"key": [
-				"4d43cfb36ad257f3746df55c48000d42",
+				"kyk:2011-06-06T19:00:00.002Z:ps",
 				1,
 				"jbjordan"
 			],
 			"value": {
-				"_id": "17d028b6aebef1b207d226613300400c",
+				"_id": "kyk:2011-10-20T19:00:00.001Z:ol",
 				"_rev": "9-13b471f95678883c86d252e44b6a8f47",
 				"head": {
 					"submissionTimestamp": [
 						2011,
 						10,
 						20,
-						"10:30:00.000Z"
+						"19:00:00.001Z"
 					],
 					"bcvRange": [
 						"Deut",
@@ -2240,13 +2240,13 @@ var authorsAndOutlinesResponse = {
 					],
 					"authorShortname": "jbjordan",
 					"author": {
-						"guid": "4d43cfb36ad257f3746df55c48000d42"
+						"guid": "kyk:2011-06-06T19:00:00.002Z:ps"
 					},
 					"submittedBy": {
-						"guid": "4d43cfb36ad257f3746df55c48002968"
+						"guid": "kyk:1974-12-23T03:22:15.481Z:ps"
 					},
 					"source": {
-						"guid": "56e905abc996fa0a1b824d4118000762",
+						"guid": "kyk:2011-10-18T19:00:00.002Z:sr",
 						"details": "p. 59"
 					},
 					"title": "Covenant Breakdown and Renewal",
@@ -2320,13 +2320,13 @@ var authorsAndOutlinesResponse = {
 			}
 		},
 		{
-			"id": "4d43cfb36ad257f3746df55c48000e6d",
+			"id": "kyk:2011-06-05T18:47:27.748Z:ps",
 			"key": [
-				"4d43cfb36ad257f3746df55c48000e6d",
+				"kyk:2011-06-05T18:47:27.748Z:ps",
 				0
 			],
 			"value": {
-				"_id": "4d43cfb36ad257f3746df55c48000e6d",
+				"_id": "kyk:2011-06-05T18:47:27.748Z:ps",
 				"_rev": "1-233c8cea8c494c7125171a4edcc4d700",
 				"head": {
 					"contentType": "personProfile"
@@ -2348,21 +2348,21 @@ var authorsAndOutlinesResponse = {
 			}
 		},
 		{
-			"id": "17d028b6aebef1b207d2266133000d6a",
+			"id": "kyk:2011-06-06T18:47:27.748Z:ol",
 			"key": [
-				"4d43cfb36ad257f3746df55c48000e6d",
+				"kyk:2011-06-05T18:47:27.748Z:ps",
 				1,
 				"egreene"
 			],
 			"value": {
-				"_id": "17d028b6aebef1b207d2266133000d6a",
+				"_id": "kyk:2011-06-06T18:47:27.748Z:ol",
 				"_rev": "13-00ea0c1449cb7a0fcd2449675eaef228",
 				"head": {
 					"submissionTimestamp": [
 						2011,
 						6,
 						6,
-						"10:30:00.000Z"
+						"18:47:27.748Z"
 					],
 					"bcvRange": [
 						"Matt",
@@ -2371,13 +2371,13 @@ var authorsAndOutlinesResponse = {
 					],
 					"authorShortname": "egreene",
 					"author": {
-						"guid": "4d43cfb36ad257f3746df55c48000e6d"
+						"guid": "kyk:2011-06-05T18:47:27.748Z:ps"
 					},
 					"submittedBy": {
-						"guid": "4d43cfb36ad257f3746df55c48002968"
+						"guid": "kyk:1974-12-23T03:22:15.481Z:ps"
 					},
 					"source": {
-						"guid": "56e905abc996fa0a1b824d41180014e4",
+						"guid": "kyk:2011-06-06T18:47:27.848Z:sr",
 						"details": "1999"
 					},
 					"title": "",
@@ -2403,13 +2403,13 @@ var authorsAndOutlinesResponse = {
 			}
 		},
 		{
-			"id": "4d43cfb36ad257f3746df55c48001cbd",
+			"id": "kyk:2011-06-18T18:47:27.747Z:ps",
 			"key": [
-				"4d43cfb36ad257f3746df55c48001cbd",
+				"kyk:2011-06-18T18:47:27.747Z:ps",
 				0
 			],
 			"value": {
-				"_id": "4d43cfb36ad257f3746df55c48001cbd",
+				"_id": "kyk:2011-06-18T18:47:27.747Z:ps",
 				"_rev": "1-4d2650aed56e9f4eb1b64e141d31cd6c",
 				"head": {
 					"contentType": "personProfile"
@@ -2421,21 +2421,21 @@ var authorsAndOutlinesResponse = {
 			}
 		},
 		{
-			"id": "17d028b6aebef1b207d2266133001adf",
+			"id": "kyk:2011-06-18T18:47:27.748Z:ol",
 			"key": [
-				"4d43cfb36ad257f3746df55c48001cbd",
+				"kyk:2011-06-18T18:47:27.747Z:ps",
 				1,
 				"thilleke"
 			],
 			"value": {
-				"_id": "17d028b6aebef1b207d2266133001adf",
+				"_id": "kyk:2011-06-18T18:47:27.748Z:ol",
 				"_rev": "15-2fd46c58f48790ddb2ae9800c9e76d24",
 				"head": {
 					"submissionTimestamp": [
 						2011,
 						6,
 						18,
-						"10:30:00.000Z"
+						"18:47:27.748Z"
 					],
 					"bcvRange": [
 						"Jonah",
@@ -2447,13 +2447,13 @@ var authorsAndOutlinesResponse = {
 					],
 					"authorShortname": "thilleke",
 					"author": {
-						"guid": "4d43cfb36ad257f3746df55c48001cbd"
+						"guid": "kyk:2011-06-18T18:47:27.747Z:ps"
 					},
 					"submittedBy": {
-						"guid": "4d43cfb36ad257f3746df55c48002968"
+						"guid": "kyk:1974-12-23T03:22:15.481Z:ps"
 					},
 					"source": {
-						"guid": "56e905abc996fa0a1b824d41180018ba"
+						"guid": "kyk:2011-06-18T18:47:27.948Z:sr"
 					},
 					"title": "The Names of God in Jonah",
 					"contentType": "chiasm",
@@ -2505,13 +2505,13 @@ var authorsAndOutlinesResponse = {
 			}
 		},
 		{
-			"id": "4d43cfb36ad257f3746df55c48002968",
+			"id": "kyk:1974-12-23T03:22:15.481Z:ps",
 			"key": [
-				"4d43cfb36ad257f3746df55c48002968",
+				"kyk:1974-12-23T03:22:15.481Z:ps",
 				0
 			],
 			"value": {
-				"_id": "4d43cfb36ad257f3746df55c48002968",
+				"_id": "kyk:1974-12-23T03:22:15.481Z:ps",
 				"_rev": "1-556cb597e4d0c295b339b8aa12f4fc91",
 				"head": {
 					"contentType": "personProfile"
