@@ -401,7 +401,7 @@
 		{	
 			$("#authorResults").hide();
 			$("#authorHeading").text("Enter Author Details");
-			$("#authorDetailBlock").attr("style", "background: #B9C9FE;");
+			$("#personDetailBlock").attr("style", "background: #B9C9FE;");
 		}
 		
 		function PrepareNewAuthorSearchResults()
@@ -425,14 +425,14 @@
 			$("#submitterProfileResults").hide();
 			var dataTable1 = $("#submitterProfileResults").data("dataTable");
 			dataTable1.fnClearTable(false);
-			$("#authorDetailBlock").hide();
+			$("#personDetailBlock").hide();
 		}
 		
 		function LoadNewSubmitterForm()
 		{
 			$("#submitterProfileResults").hide();
 			$("#submitterHeading").text("Enter Submitter Details");
-			$("#authorDetailBlock").attr("style", "background: #B9C9FE;");
+			$("#personDetailBlock").attr("style", "background: #B9C9FE;");
 		}
 		
 		function PrepareNewSubmitterSearchResults()
@@ -453,7 +453,7 @@
 		
 		function ClearAuthorResults()
 		{
-			$("#authorDetailBlock").hide();
+			$("#personDetailBlock").hide();
 			$("#authorResults").hide();
 			var dataTable1 = $("#authorResults").data("dataTable");
 			dataTable1.fnClearTable(true);
@@ -505,7 +505,7 @@
 		
 		function matchByNewAuthorFormFields(doc)
 		{
-			var personProfile = $("[name='updateAuthorProfile']").getJSON();
+			var personProfile = $("[name='updatePersonProfile']").getJSON();
 			if (doc.name.first ==  personProfile.name.first && 
 				doc.name.last == personProfile.name.last &&
 				EmptyIfNull(doc.name.middle) == personProfile.name.middle &&
@@ -668,7 +668,7 @@
 					.click(function(event) {
 						// first turn off any other selected Row.
 						var parentRow = $(event.target).parent("tr");
-						selectCreditRow(parentRow, fetchPersonProfile, "[name='updateAuthorProfile']");
+						selectCreditRow(parentRow, fetchPersonProfile, "[name='updatePersonProfile']");
 		  				return false;
 					});
 				
@@ -1283,7 +1283,7 @@
 			return false;
 		});
 		
-		$("#btnSubmitAuthor").click(submitAuthor);
+		$("#btnSubmitPersonProfile").click(submitPersonProfile);
 		
 		$("#btnSubmitSource").click(submitSource);
 	}
@@ -1507,7 +1507,6 @@
 	
 	function submitSource(event)
 	{
-		$(this).unbind(event); // TODO: use on/off
 		var exampleRows = getDbRows();
 		var profileOriginal =  $("#sourceDetailBlock").data("profile-original");
 	    var editMode = $("#sourceDetailBlock").data("edit-mode"); // editProfile / editCommon / copyToNewProfile
@@ -1520,6 +1519,7 @@
     		alert("Common source requires that you keep some information.")
     		return;
     	}
+    	$(this).unbind(event); // TODO: use on/off
 	    
 	    var profileSwitchTo = null;
 	    if (editMode == "copyToNewProfile" || !profileOriginal)
@@ -1622,14 +1622,13 @@
 		
 	}
 	
-	function submitAuthor(event)
+	function submitPersonProfile(event)
 	{
 		var authorRows = getDbRows();
 		// TODO: replace with on/off?
-		$(this).unbind(event);
 		// first do some checking (don't create blank profile)
 		// submit new profile
-		var personProfile = $("[name='updateAuthorProfile']").getJSON();
+		var personProfile = $("[name='updatePersonProfile']").getJSON();
 		//alert(JSON.stringify(personProfile));	
 		if (personProfile.name.first.length == 0)
 		{
@@ -1641,9 +1640,7 @@
 			alert("Form requires Last name");
 			return false;
 		}
-
-		// use a timestamp as the guid.
-		
+		$(this).unbind(event);	
 		
 		personProfile.head = {"contentType" : "personProfile"};
 		
@@ -1653,7 +1650,7 @@
 			personProfile.name.title = "";
 		}
 
-		var queryResults = $("[name='updateAuthorProfile']").find("[name='_id']");
+		var queryResults = $("[name='updatePersonProfile']").find("[name='_id']");
 		var personProfileId = queryResults ? queryResults[0].value : null;
 		var fIsNewProfile = !personProfileId || personProfileId.length == 0;
 		//alert(personProfileId);
@@ -1680,12 +1677,12 @@
 				for (var i=0; i < matchingDocs.length; i++) {
 				  if (matchingDocs[i]._id == personProfileId)
 				  	switchToSearchResultsOnProfile(personProfile);
-				  	$(this).click(submitAuthor);
+				  	$(this).click(submitPersonProfile);
 				  	return true; // no changes.
 				};
 				alert("Warning: A matching person profile already exists.");
 			}
-			var personProfileRev = $("[name='updateAuthorProfile']").find("[name='_rev']");
+			var personProfileRev = $("[name='updatePersonProfile']").find("[name='_rev']");
 			
 			// verify some overlap in profiles?
 			/*
@@ -1712,16 +1709,16 @@
 				    publishPersonProfileChangesToTableView(personProfile);
 		        	loadDataSet(false);		        	
 		        }
-				$("#btnSubmitAuthor").click(submitAuthor);
+				$("#btnSubmitPersonProfile").click(submitPersonProfile);
 		    });
 	    else  // Debug
 	    {
 	    	updateStagedProfilesIfNeeded(personProfile);
 	    	publishPersonProfileChangesToTableView(personProfile);
-	    	$(this).click(submitAuthor);
+	    	$(this).click(submitPersonProfile);
 	    }
 	    
-		//alert("btnSubmitAuthor : "+ profile.name.middle);
+		//alert("btnSubmitPersonProfile : "+ profile.name.middle);
 		return false;
 	}
 	
@@ -1893,10 +1890,10 @@
 				if (profile)
 				{
 					var parentRow = $(jq(profile._id));
-					selectCreditRow(parentRow, fetchPersonProfile, "[name='updateAuthorProfile']");
+					selectCreditRow(parentRow, fetchPersonProfile, "[name='updatePersonProfile']");
 				}
-				$("[name='updateAuthorProfile']").find("[name='_id']").val(""); // reset id, to make sure we don't accidentally use an old id.
-				$("[name='updateAuthorProfile']").find("[name='_rev']").val("");
+				$("[name='updatePersonProfile']").find("[name='_id']").val(""); // reset id, to make sure we don't accidentally use an old id.
+				$("[name='updatePersonProfile']").find("[name='_rev']").val("");
 			}
 		
 	}
