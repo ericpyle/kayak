@@ -134,7 +134,7 @@
 				var dataTable1 = $("#exampleTable").data("dataTable");
 				var iSettings = dataTable1.fnAddData(
 					[	
-						formatBCVRange(doc.head.bcvRange, "") + "<br/>" + doc.head.contentType, 
+						formatScriptureRange(doc.head.ScriptureRange, "") + "<br/>" + doc.head.contentType, 
 						doc.head.title,
 						formatName(authorProfile, ""), 
 						formatSource(doc, ""), 
@@ -218,6 +218,11 @@
 				(range.length > 2 ? ":" + range[2] : "") +
 				(range.length > 4 ? "-" + (range[3] != range[0] ? range[3] + " " : "") + range[4]: "") +
 				(range.length > 5 ? ":" + range[5]: ""); 
+		}
+		
+		function formatScriptureRange(range, sdefault)
+		{
+			return range;
 		}
 		
 		function formatSource(outline, sdefault)
@@ -1334,6 +1339,8 @@
 			alert("Cannot publish an empty outline without specifying author, source, or submitter");
 			return false;
 		}
+		
+		// if guid is newOutlineStub then replace that row
 	
 		// next see if any changes need to be made
 		setOrReset(authorProfileStaged, mainOutline.head, "author", function(objToSetOrReset, propertyToSet, stagedProfile) 
