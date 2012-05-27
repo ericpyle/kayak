@@ -23,6 +23,8 @@
 		<title>kayak - chiasms made easily</title>
 </head>
 <body>
+<b id="tmpKayak" class="loading" style="font-family: Verdana,Arial,sans-serif; font-size: 1.1em;">kayak</b>
+<div class="loading">Please wait...</div>
 <!-- <asp:TextBox ID="TextBox1" runat="server" onkeyup="FitToContent('TextBox1','','100')"
             Height="100" Width="400" TextMode="MultiLine" style="overflow: hidden"></asp:TextBox> -->
 <div id="tabsMain" class="tabs" style="display:none;">
@@ -342,7 +344,7 @@
 
 
 <!-- input type="checkbox" id="cbScriptureLinking" checked="yes">Scripture Linking</input -->
-<p style="font-size: medium;">Have a suggestion or comment? <a href="https://spreadsheets.google.com/spreadsheet/viewform?formkey=dGVGUm1EYUxuVkF2UGo1N19kMk9qY1E6MQ">Please leave your feedback here for Eric Pyle</a>.</p>
+<p style="font-size: medium;">Find an issue with kayak? Create a new issue <a href="https://github.com/ericpyle/kayak/issues">here</a> so it can get fixed.</p>
 <!-- RefTagger from Logos. Visit http://www.logos.com/reftagger. This code should appear directly before the </body> tag. -->
 	<script type="text/javascript" src="js/kayak-outliner.js"></script>
 	<script type="text/javascript" src="js/kayak.js"></script>
@@ -361,6 +363,7 @@
    			show: function(event, ui) { showTab(event, ui); }
 		});
 		$('#tabsPreview').tabs();
+		$(".loading").hide();
 		$(".tabs").show();
 
 
