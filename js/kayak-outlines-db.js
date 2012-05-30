@@ -81,9 +81,13 @@
 			}
 			else
 			//if (!getResponse)
-			{
-				alert("loading temporary tables from webpage");
-				getResponse = cacheDbInDom(authorsAndOutlinesResponse);
+			{	
+				getResponse = getDb();
+				if (getResponse == null)
+				{
+					getResponse = cacheDbInDom(authorsAndOutlinesResponse);
+					alert("Loaded fixed tables. Changes will not be saved.");
+				}				
 				if (fNeedRenderToPage)
 				{					
 					LoadExamplesToTableCallback(getResponse.rows);
@@ -1437,12 +1441,9 @@
     		getResponse.total_rows += 1;
     	}			    	
     	cacheDbInDom(getResponse);
-    	
-    	loadDataSet(true, function() {
-	    	selectOutlineRow(jq(outline._id));
-	    	alert("Changes have been published");	
-    	});
-    	
+    	LoadPersonsAndAuthoredOutlines();
+    	selectOutlineRow(jq(outline._id));
+    	alert("Changes have been published");    	
 	}
 	
 	/*
