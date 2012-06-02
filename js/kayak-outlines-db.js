@@ -176,8 +176,7 @@
 		{
 			var rowId = $(outlineRow).attr("id");
 			var hadSelection = $(outlineRow).hasClass("outlineRowSelected");
-			$(".outlineRowSelected").removeClass("outlineRowSelected");
-			$("#outlineSelectedOptions").remove();
+			removeOutlineRowSelection(outlineRow);
 			var docToLoad; 
 			if (!hadSelection)
 			{
@@ -193,25 +192,32 @@
 			}
 			
 			if ($(outlineRow).hasClass("outlineRowSelected"))
-			{
-				var editText = "Edit Outline";
-				var rowHtml = "";
-				var editLink = '<a href="#" id="btnJumpToEditTab">'+ editText +'</a>';
-				rowHtml = '<tr id="outlineSelectedOptions" class="selectedRowOptions"><td colspan="6"><button id="btnJumpToViewTab" type="button">View</button> ' + editLink + '</td></tr>';
-				// add some extra options
-				$(outlineRow).after(rowHtml);
-				$("#btnJumpToViewTab").click(function(event){
-					$("#tabsMain").tabs('select',"#View");
-					return false;
-				});
-				$("#btnJumpToEditTab").click(function(event){
-					$("#tabsMain").tabs('select',"#EditView");
-					return false;
-				});
-			}
+				installOutlineRowOptions(outlineRow);
 			
 			if (docToLoad)
 				loadJSONToOutline(docToLoad);
+		}
+		
+		function installOutlineRowOptions(outlineRow)
+		{
+			if (!outlineRow)
+				return false;
+			if ($("#outlineSelectedOptions").length > 0)
+				return false;	// already installed
+			var editText = "Edit Outline";
+			var rowHtml = "";
+			var editLink = '<a href="#" id="btnJumpToEditTab">'+ editText +'</a>';
+			rowHtml = '<tr id="outlineSelectedOptions" class="selectedRowOptions"><td colspan="6"><button id="btnJumpToViewTab" type="button">View</button> ' + editLink + '</td></tr>';
+			// add some extra options
+			$(outlineRow).after(rowHtml);
+			$("#btnJumpToViewTab").click(function(event){
+				$("#tabsMain").tabs('select',"#View");
+				return false;
+			});
+			$("#btnJumpToEditTab").click(function(event){
+				$("#tabsMain").tabs('select',"#EditView");
+				return false;
+			});
 		}
 		
 		function formatBCVRange(range, sdefault)
@@ -785,54 +791,77 @@
 				};
 		}
 		
-		function removeAllRowSelections()
+		function removeOutlineRowSelection(outlineRow)
 		{
-			$(".creditRowSelected").removeClass("creditRowSelected");
+			removeRowSelectionAndOptions(outlineRow, "outlineRowSelected", "outlineSelectedOptions");
+		}
+		
+		function removeAllCreditRowSelections(creditRow)
+		{
+			removeRowSelectionAndOptions(creditRow, "creditRowSelected", "creditRowSelectedOptions");
+		}
+		
+		function removeRowSelectionAndOptions(row, classSelectedRow, idOptions)
+		{
+			var table = $(row).parent("tbody").parent("table");
+			var oTable = $(table).dataTable();			
+			var selectedRow = oTable.$('tr.' + classSelectedRow);
+			if (selectedRow)
+				selectedRow.removeClass(classSelectedRow);
 			// remove extra options
-			$("#creditRowSelectedOptions").remove();
-
+			$(jq(idOptions)).remove();			
+		}
+		
+		function installCreditRowOptions(creditRow)
+		{
+			if ($("#creditRowSelectedOptions").length > 0)
+				return false; // already installed
+			var editMode = $("#save-outline-credits").data("edit-mode");			
+			var editModeText = "Edit Profile";
+			var editModeId = "editProfile";
+			var rowHtml = "";
+			if (editMode == "save-outline-submitter" || editMode == "save-outline-author")
+			{
+				var editLink = '<a href="#" id="'+ editModeId +'">'+ editModeText +'</a>';
+				rowHtml = '<tr id="creditRowSelectedOptions" class="selectedRowOptions"><td colspan="7"><button id="btnCreditOk" type="button">OK</button> ' + editLink + '</td></tr>';
+				
+			}
+			else if (editMode == "save-outline-source")
+			{
+				var idProfile = $(".creditRowSelected").attr("id");
+				var profile = fetchSourceProfile(idProfile);
+				//alert(JSON.stringify(profile));
+				editModeId = "editCommon";
+				editModeText = "Edit Common";
+				// need to restrict editing outline to specific outline
+				if (profile._id == mainOutline._id || profile._id == "newOutlineStub")
+				{
+					editModeId = "editProfile";
+					editModeText = "Edit Common + Specific";
+				}
+				var editLink = '<a href="#" id="'+ editModeId +'">'+ editModeText +'</a>';
+				var copyLink = '<a id="copyToNewProfile" href="#">Copy to New</a>';
+				if (idProfile == "kyk:1845-12-23T03:22:15.481Z:sr_source")
+					rowHtml = '<tr id="creditRowSelectedOptions" class="selectedRowOptions"><td colspan="3"><button id="btnCreditOk" type="button">OK</button></td></tr>';
+				else
+					rowHtml = '<tr id="creditRowSelectedOptions" class="selectedRowOptions"><td colspan="3"><button id="btnCreditOk" type="button">OK</button> ' + editLink  + " | " + copyLink + '</td></tr>';						
+			}
+			// add some extra options
+			$(creditRow).after(rowHtml);
 		}
 		
 		function selectCreditRow(creditRow, fetchProfile, formSelector)
 		{
+			if (!creditRow || creditRow.length == 0)
+				return false;
 			var hadSelection = $(creditRow).hasClass("creditRowSelected");
-			removeAllRowSelections();
+			removeAllCreditRowSelections(creditRow);
 			if (!hadSelection)
 				$(creditRow).addClass("creditRowSelected");
 			if ($(creditRow).hasClass("creditRowSelected"))
 			{
 				var editMode = $("#save-outline-credits").data("edit-mode");
-				var editModeText = "Edit Profile";
-				var editModeId = "editProfile";
-				var rowHtml = "";
-				if (editMode == "save-outline-submitter" || editMode == "save-outline-author")
-				{
-					var editLink = '<a href="#" id="'+ editModeId +'">'+ editModeText +'</a>';
-					rowHtml = '<tr id="creditRowSelectedOptions" class="selectedRowOptions"><td colspan="7"><button id="btnCreditOk" type="button">OK</button> ' + editLink + '</td></tr>';
-					
-				}
-				else if (editMode == "save-outline-source")
-				{
-					var idProfile = $(".creditRowSelected").attr("id");
-					var profile = fetchProfile(idProfile);
-					//alert(JSON.stringify(profile));
-					editModeId = "editCommon";
-					editModeText = "Edit Common";
-					// need to restrict editing outline to specific outline
-					if (profile._id == mainOutline._id || profile._id == "newOutlineStub")
-					{
-						editModeId = "editProfile";
-						editModeText = "Edit Common + Specific";
-					}
-					var editLink = '<a href="#" id="'+ editModeId +'">'+ editModeText +'</a>';
-					var copyLink = '<a id="copyToNewProfile" href="#">Copy to New</a>';
-					if (idProfile == "kyk:1845-12-23T03:22:15.481Z:sr_source")
-						rowHtml = '<tr id="creditRowSelectedOptions" class="selectedRowOptions"><td colspan="3"><button id="btnCreditOk" type="button">OK</button></td></tr>';
-					else
-						rowHtml = '<tr id="creditRowSelectedOptions" class="selectedRowOptions"><td colspan="3"><button id="btnCreditOk" type="button">OK</button> ' + editLink  + " | " + copyLink + '</td></tr>';						
-				}
-				// add some extra options
-				$(creditRow).after(rowHtml);							
+				installCreditRowOptions(creditRow);						
 				$("#editProfile, #copyToNewProfile, #editCommon").click(function(event){
 					// show search
 					var idProfile = $(".creditRowSelected").attr("id");
@@ -1066,6 +1095,19 @@
 	
 	function initializeTable(idTable, tableOptions, idSearchButton, txtPlaceholder)
 	{
+		// NOTE: event functions cannot be cloned, so do them after clone.
+		tableOptions["fnDrawCallback"] = function ( oSettings ) {
+	           	var outlineRowSelected = $(".outlineRowSelected");
+	            if (outlineRowSelected.length > 0)
+	            {
+	                installOutlineRowOptions(outlineRowSelected);
+	            }
+	            var creditRowSelected = $(".creditRowSelected");
+	            if (creditRowSelected.length > 0)
+	            {
+	            	installCreditRowOptions(creditRowSelected);
+	            }	            
+	       };
 		var dataTable1 = $(jq(idTable)).dataTable(tableOptions);
 		injectSearchButton(idTable + "_filter", idSearchButton, txtPlaceholder);
 		$(jq(idTable)).data("dataTable", dataTable1);
