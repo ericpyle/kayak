@@ -422,7 +422,7 @@
 		function PrepareNewAuthorSearchResults()
 		{
 			var dataTable1 = $("#authorResults").data("dataTable");
-			dataTable1.fnClearTable(false);
+			dataTable1.fnClearTable(true);
 			SwitchToAuthorProfileSearchResults();
 		}
 		
@@ -439,7 +439,7 @@
 		{
 			$("#submitterProfileResults").hide();
 			var dataTable1 = $("#submitterProfileResults").data("dataTable");
-			dataTable1.fnClearTable(false);
+			dataTable1.fnClearTable(true);
 			$("#personDetailBlock").hide();
 		}
 		
@@ -453,7 +453,7 @@
 		function PrepareNewSubmitterSearchResults()
 		{
 			var dataTable1 = $("#submitterProfileResults").data("dataTable");
-			dataTable1.fnClearTable(false);
+			dataTable1.fnClearTable(true);
 			SwitchToSubmitterProfileSearchResults();
 		}
 		
@@ -477,7 +477,7 @@
 		function PrepareNewSourceSearchResults()
 		{
 			var dataTable1 = $("#sourceSearchResults").data("dataTable");
-			dataTable1.fnClearTable(false);
+			dataTable1.fnClearTable(true);
 			SwitchToSourceProfileSearchResults();
 		}
 		
@@ -803,8 +803,9 @@
 		
 		function removeRowSelectionAndOptions(row, classSelectedRow, idOptions)
 		{
+			$('tr.' + classSelectedRow).removeClass(classSelectedRow);
 			var table = $(row).parent("tbody").parent("table");
-			var oTable = $(table).dataTable();			
+			var oTable = $(table).data("dataTable");
 			var selectedRow = oTable.$('tr.' + classSelectedRow);
 			if (selectedRow)
 				selectedRow.removeClass(classSelectedRow);
@@ -850,9 +851,27 @@
 			$(creditRow).after(rowHtml);
 		}
 		
+		function pageToRow(domTableSelector, datatableRowSelector)
+		{
+			var oTable = $(domTableSelector).data("dataTable");		
+			var selectedRow = oTable.$(datatableRowSelector);
+			if (TestNoResults(selectedRow))
+				return;
+			var indexOfSelectedRow = oTable.$('tr').index(selectedRow);
+			var oSettings = oTable.fnSettings();
+			var targetPage = Math.floor(indexOfSelectedRow/oSettings._iDisplayLength);
+			oTable.fnPageChange(targetPage);
+			return $(datatableRowSelector);
+		}
+		
+		function TestNoResults(results)
+		{
+			return !results || results.length == 0;
+		}
+		
 		function selectCreditRow(creditRow, fetchProfile, formSelector)
 		{
-			if (!creditRow || creditRow.length == 0)
+			if (TestNoResults(creditRow))
 				return false;
 			var hadSelection = $(creditRow).hasClass("creditRowSelected");
 			removeAllCreditRowSelections(creditRow);
@@ -1484,7 +1503,8 @@
     	}			    	
     	cacheDbInDom(getResponse);
     	LoadPersonsAndAuthoredOutlines();
-    	selectOutlineRow(jq(outline._id));
+    	var newRow = pageToRow(jq("exampleTable"), jq(outline._id));
+    	selectOutlineRow(newRow);
     	alert("Changes have been published");    	
 	}
 	
@@ -1930,7 +1950,7 @@
 				LoadSourceResultsCallback(getDbRows());
 				if (profile)
 				{
-					var parentRow = $(jq(profile._id + "_source"));
+					var parentRow = pageToRow(jq("sourceSearchResults"), jq(profile._id + "_source"));
 					selectCreditRow(parentRow, fetchSourceProfile, "[name='updateSourceDetails']");
 				}
 			}
@@ -1941,13 +1961,25 @@
 				// now highlight the new row.
 				if (profile)
 				{
-					var parentRow = $(jq(profile._id));
+					var tableId = null;
+					if (editMode == "save-outline-author")
+						tableId = jq("authorResults");
+					if (editMode == "save-outline-submitter")
+						tableId = jq("submitterProfileResults");
+					var parentRow = pageToRow(tableId, jq(profile._id));
 					selectCreditRow(parentRow, fetchPersonProfile, "[name='updatePersonProfile']");
 				}
 				$("[name='updatePersonProfile']").find("[name='_id']").val(""); // reset id, to make sure we don't accidentally use an old id.
 				$("[name='updatePersonProfile']").find("[name='_rev']").val("");
 			}
 		
+	}
+	
+	function findRow(table, rowId)
+	{
+		var oTable = $(table).data("dataTable");
+		var selectedRow = oTable.$(rowId);
+		return selectedRow;
 	}
 	
 	function convertToKeywordString(list)
