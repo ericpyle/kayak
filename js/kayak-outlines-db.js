@@ -805,12 +805,17 @@
 		{
 			$('tr.' + classSelectedRow).removeClass(classSelectedRow);
 			var table = $(row).parent("tbody").parent("table");
+			removeAnyRowSelectionAndOptions(table, classSelectedRow, idOptions);
+		}
+		
+		function removeAnyRowSelectionAndOptions(table, classSelectedRow, idOptions)
+		{
 			var oTable = $(table).data("dataTable");
 			var selectedRow = oTable.$('tr.' + classSelectedRow);
 			if (selectedRow)
 				selectedRow.removeClass(classSelectedRow);
 			// remove extra options
-			$(jq(idOptions)).remove();			
+			$(jq(idOptions)).remove();
 		}
 		
 		function installCreditRowOptions(creditRow)
@@ -1152,6 +1157,16 @@
 			    }
 			} 
 			return true;
+		});
+		
+		$("#btnCreateNewOutline").click(function(event) {
+			// load a blank outline
+			removeAnyRowSelectionAndOptions("#exampleTable", "outlineRowSelected", "outlineSelectedOptions");
+			var	docToLoad = createBlankOutline("chiasm");
+			loadJSONToOutline(docToLoad);
+			$("#tabsMain").tabs('select',"#EditView");
+			
+			return false;
 		});
 		
 		$("#btnCreateNewAuthor, #btnCreateNewSubmitter, #btnCreateNewSource").click(function(event) {
@@ -1849,16 +1864,18 @@
 		return false;
 	}
 	
+	var defaultCitationLinkContent = "Click to search/specify";
+	
 	function stageSelectedAuthorProfile(profile, fIgnoreSubmitterIsAuthor)
 	{
 		$("#save-outline-author")
-			.text(formatName(profile, "Click to specify"))
+			.text(formatName(profile, defaultCitationLinkContent))
 			.data('profile-author', profile);
 		var fSubmitterIsAuthor = $("#submitterIsAuthor").attr("checked");
 		if (fSubmitterIsAuthor && !fIgnoreSubmitterIsAuthor)
 		{
 			$("#save-outline-submitter")
-				.text(formatName(profile, "Click to specify"))
+				.text(formatName(profile, defaultCitationLinkContent))
 				.data('profile-submitter', profile);
 		}
 		//alert("stageSelected : "+ profile.name.middle);	
@@ -1867,13 +1884,13 @@
 	function stageSelectedSubmitterProfile(profile, fIgnoreSubmitterIsAuthor)
 	{
 		$("#save-outline-submitter")
-			.text(formatName(profile, "Click to specify"))
+			.text(formatName(profile, defaultCitationLinkContent))
 			.data('profile-submitter', profile);
 		var fSubmitterIsAuthor = $("#submitterIsAuthor").attr("checked");
 		if (fSubmitterIsAuthor && !fIgnoreSubmitterIsAuthor)
 		{
 			$("#save-outline-author")
-				.text(formatName(profile, "Click to specify"))
+				.text(formatName(profile, defaultCitationLinkContent))
 				.data('profile-author', profile);
 		}
 		//alert("stageSelected : "+ profile.name.middle);	
@@ -1882,7 +1899,7 @@
 	function stageSelectedSourceProfile(profile)
 	{
 		$("#save-outline-source")
-			.text(formatCombinedSource(profile, "Click to specify"))
+			.text(formatCombinedSource(profile, defaultCitationLinkContent))
 			.data('profile-source', profile);	
 	}
 	

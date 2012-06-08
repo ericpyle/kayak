@@ -319,7 +319,7 @@
 				.attr("id", editItemId)
 				.attr("cols", "40")
 				.attr("rows", "1")
-				.text(content)				
+				.val(content)				
 				.appendTo("#editChiasmBody .chiasmEditItem:last")								
 				.keydown (function(event)
 					{
@@ -609,8 +609,8 @@
 	}
 
 	function InitializeHeaderInputBoxes() {
-		$("#edit-title-chiasm").text(mainOutline.head.title);
-		$("#edit-chiasm-scriptureRange").text(mainOutline.head.ScriptureRange);
+		$("#edit-title-chiasm").val(mainOutline.head.title);
+		$("#edit-chiasm-scriptureRange").val(mainOutline.head.ScriptureRange);
 		
 		$("#edit-title-chiasm, #edit-chiasm-scriptureRange").focusin(function(event) {
 					if ($("#itemHighlighting").attr("checked") == false)

@@ -56,6 +56,9 @@
 				<td>Eric Pyle</td>
 			</tr> -->
 		</tbody>
+		<tfoot>
+			<tr><td colspan="6"><a id="btnCreateNewOutline" href="#"><b>Create new outline</b></a></td></tr>
+		</tfoot>
 		</table>
 	</div>					 
 	<div id="EditView">
@@ -147,15 +150,15 @@
 				<tbody>
 					<tr>
 						<td><b>Author</b></td>
-						<td><a href='#'><span id="save-outline-author"></span></a></td>
+						<td><a href='#'><span id="save-outline-author">Click to search/specify</span></a></td>
 					</tr>
 					<tr>
 						<td><b>Source</b></td>
-						<td><a href='#'><span id="save-outline-source">Click to specify</span></a></td>
+						<td><a href='#'><span id="save-outline-source">Click to search/specify</span></a></td>
 					</tr>
 					<tr>
 						<td><b>Submitter</b></td>
-						<td><a href='#'><span id="save-outline-submitter"></span></a></td>
+						<td><a href='#'><span id="save-outline-submitter">Click to search/specify</span></a></td>
 					</tr>
 					<tr><td/><td><input id="submitterIsAuthor" type="checkbox"/><label>I am the author</label>	</td></tr>
 				</tbody>
@@ -183,7 +186,7 @@
 							<td>Credits</td></tr>
 					</thead>
 					<tbody></tbody>				
-					<tfoot><tr><td colspan="7"><a id="btnCreateNewAuthor" href="#">Specify author</a></td></tr>
+					<tfoot><tr><td colspan="7"><a id="btnCreateNewAuthor" href="#"><b>Specify author</b></a></td></tr>
 						<tr><td colspan="7"><button id="btnAuthorOk" type="button">OK</button> <button id="btnAuthorCancel" type="button">Cancel</button></td></tr>
 					</tfoot>
 				</table>
@@ -206,7 +209,7 @@
 							</tr>
 					</thead>
 					<tbody></tbody>				
-					<tfoot><tr><td colspan="7"><a id="btnCreateNewSubmitter" href="#">Specify submitter</a></td></tr>
+					<tfoot><tr><td colspan="7"><a id="btnCreateNewSubmitter" href="#"><b>Specify submitter</b></a></td></tr>
 						<tr><td colspan="7"><button id="btnSubmitterOk" type="button">OK</button> <button id="btnSubmitterCancel" type="button">Cancel</button></td></tr>
 					</tfoot>
 				</table>
@@ -257,8 +260,8 @@
 						</tr>
 					</thead>
 					<tbody></tbody>
-					<tfoot><tr><td colspan="3"><a id="btnCreateNewSource" href="#">Specify source</a></td></tr>
-						<tr><td colspan="3"><a id="btnAuthoredWithKayak" href="#">I authored this outline with kayak</a></td></tr>
+					<tfoot><tr><td colspan="3"><a id="btnCreateNewSource" href="#"><b>Specify source</b></a></td></tr>
+						<tr><td colspan="3"><a id="btnAuthoredWithKayak" href="#"><b>I authored this outline with <em>kayak</em></b></a></td></tr>
 						<tr><td colspan="3"><button id="btnSourceOk" type="button">OK</button> <button id="btnSourceCancel" type="button">Cancel</button></td></tr>						
 					</tfoot>
 				</table>
@@ -370,7 +373,9 @@
 
 		var tableOptions1 = {
 	        "bJQueryUI": true,
-	        "sPaginationType": "full_numbers"
+	        "sPaginationType": "full_numbers",
+	        "aLengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+	        "iDisplayLength": 5
 	    };
 	    var tableOptionsSortByDate = clone(tableOptions1);
 	    tableOptionsSortByDate["aaSorting"] = [[ 4, "desc" ]];

@@ -5,7 +5,7 @@
 		function loadJSONToOutline(doc)
 	    {
 	    	//mainOutline = jQuery.parseJSON( jsonText );
-	    	mainOutline = doc;
+	    	mainOutline = clone(doc);
 	    	LoadContentTypeModeFromOutline();
 	    	LoadOutlineFromCurrentState();
 	    	return false;
