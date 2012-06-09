@@ -31,9 +31,9 @@
 	 <ul>	 	 
 	 	 <li><a href="#kayak"><span><b>kayak</b></span></a></li>
 		 <li><a href="#Examples"><span>Outlines</span></a></li>
+		 <li><a href="#View"><span>View</span></a></li>
 	 	 <li><a href="#EditView"><span>Edit</span></a></li>
-	 	 <li><a href="#View"><span>View</span></a></li>
-	 	 <li><a href="#Save"><span>Save</span></a></li>
+	 	 <li><a href="#Cite"><span>Cite</span></a></li>
 	 </ul>
 	 <div id="kayak">
 	 	Welcome!
@@ -60,6 +60,8 @@
 			<tr><td colspan="6"><a id="btnCreateNewOutline" href="#"><b>Create new outline</b></a></td></tr>
 		</tfoot>
 		</table>
+	</div>
+	<div id="View" style="padding: 0em 0em;"> <!-- padding: 1em 1.4em; -->
 	</div>					 
 	<div id="EditView">
 		<div id="editChiasm" action="">
@@ -82,7 +84,14 @@
 								<option value="modeHierarchical">Hierarchical</option>
 							</select>
 						</td>
-					</tr>
+					</tr>					
+				</tbody>
+				<tfoot>
+					<tr><td><button id="btnApplyHead_Edit" type="button">Apply</button></td></tr>
+				</tfoot>
+			</table>
+			<table>
+				<tbody>
 					<tr id="edit-outline-editControl-row">
 						<td><label for="edit-outline-editControl" class="markerEditLabel">Edit Style</label></td>
 						<td>
@@ -109,7 +118,7 @@
 				<textarea id="tbImport" rows="10" Cols="60"></textarea>
 				<br/>
 				<button id="btnSplit" type="button" onclick="importFromTextBoxToCurrentChiasm('tbImport')">
-					Submit
+					Apply
 				</button>
 				<input type="checkbox" id="stripCounting" checked="yes">Strip counting (A.B.C. or 1.2.3.)</input>
 				</div>
@@ -124,12 +133,10 @@
 				</div>
 				-->
 			</div>
-			
+			<button id="btnPublishOutline_Edit" type="button">Publish Outline</button>
 		</div>	
 	</div>
-	<div id="View" style="padding: 0em 0em;"> <!-- padding: 1em 1.4em; -->
-	</div>
-	<div id="Save">
+	<div id="Cite">
 			<table id="" cols="2">
 			<thead></thead>
 			<tbody>
@@ -145,7 +152,7 @@
 			</table>
 		<table id="save-outline-credits" style="background:#B9C9FE; padding: 8px;" cols="2">
 				<thead>
-					<tr><td colspan="3" style="background:#AABCFE;"><i>Bibliographic Information</i></td></tr>
+					<tr><td colspan="3" style="background:#AABCFE;"><i>Citation Information</i></td></tr>
 				</thead>
 				<tbody>
 					<tr>
@@ -309,7 +316,6 @@
 	</div>
 </div>
 <div id="tabsPreview" class="tabs" style="display:none;">
-<input type="checkbox" id="itemHighlighting" checked="yes">Highlight matching parallel</input>
 	 <ul>
 	 	 <li><a href="#Indent"><span>Indent ( &gt; )</span></a></li>
 		 <li><a href="#Flat"><span>Flat ( | )</span></a></li>
@@ -344,6 +350,7 @@
 			</tbody>
 		</table>
 	</div>
+	<input type="checkbox" id="itemHighlighting" checked="yes">Highlight matching parallel</input>
 </div>
 
 

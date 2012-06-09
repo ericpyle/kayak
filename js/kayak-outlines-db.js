@@ -1169,6 +1169,12 @@
 			return false;
 		});
 		
+		$("btnApplyHead_Edit").click(function(event)
+		{
+			ApplyOutlineHeadChanges();
+			return LoadOutlineFromCurrentState();
+		});
+		
 		$("#btnCreateNewAuthor, #btnCreateNewSubmitter, #btnCreateNewSource").click(function(event) {
 								if (event.target.id == "btnCreateNewSource")
 								{
@@ -1219,7 +1225,7 @@
 		  				return false;
 					});
 				
-		$("#btnPublishOutline").click(publishOutline);
+		$("#btnPublishOutline, #btnPublishOutline_Edit").click(publishOutline);
 		
 		$("#save-outline-author").click(function(event){
 			$("#save-outline-credits").data("edit-mode", "save-outline-author");
@@ -1406,6 +1412,7 @@
 		// or 2) Author Specified
 		// or 3) Source Specified
 		// or 4) Submitter Specified
+		ApplyOutlineHeadChanges();
 		var authorProfileStaged = $("#save-outline-author").data('profile-author');
 		var submitterProfileStaged = $("#save-outline-submitter").data('profile-submitter');
 		var sourceStaged = $("#save-outline-source").data('profile-source');
@@ -1492,7 +1499,7 @@
 			        	publishOutlineChangesToTableView(mainOutline);
 			        }
 			        //alert("Remember to check for ok: " + JSON.stringify(resp));
-					$("#btnPublishOutline").click(publishOutline);
+					$("#btnPublishOutline, #btnPublishOutline_Edit").click(publishOutline);
 			    });
 			}								
 		    else // DEBUG

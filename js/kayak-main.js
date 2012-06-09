@@ -8,6 +8,7 @@
 	    	mainOutline = clone(doc);
 	    	LoadContentTypeModeFromOutline();
 	    	LoadOutlineFromCurrentState();
+	    	stageOutlineToSave();
 	    	return false;
 	    };
 	    
@@ -189,12 +190,17 @@
 		
 		function onChangeOutlineContentType()
 		{
+			ApplyOutlineContentType();
+  			return LoadOutlineFromCurrentState();
+		}
+		
+		function ApplyOutlineContentType()
+		{
 			var contentType = $("#edit-outline-contentType").val();
 			if (contentType == "modeChiasm")
 				mainOutline.head.contentType = "chiasm";
 			else if (contentType == "modeHierarchical")
 				mainOutline.head.contentType = "outline";
-  			return LoadOutlineFromCurrentState();
 		}
 		
 		function InitializeEditForm()
@@ -215,24 +221,35 @@
 			});
 		}
 		
+		function ApplyOutlineHeadChanges()
+		{
+			mainOutline.head.ScriptureRange = $("#edit-chiasm-scriptureRange").val();
+			mainOutline.head.title = $("#edit-title-chiasm").val();
+			ApplyOutlineContentType();			
+		}
+		
 	function showTab(event, ui)
 	{
 		//get the index from URL hash
       	var tabSelect = ui.tab.hash;
-		if (tabSelect == "#Save")
+		if (tabSelect == "#Cite")
 		{
-			if (mainOutline)
-			{
-				var authorRows = getDbRows();
-				$("#save-outline-title").text(AorB(mainOutline.head.title, "") );
-				$("#save-outline-scriptureRange").text(AorB(mainOutline.head.ScriptureRange, ""));
-				var authorProfile = collectProfileDocs("personProfile", authorRows, matchAuthorByCurrentOutline, true);
-				stageSelectedAuthorProfile(authorProfile, true);
-				var submitterProfile = collectProfileDocs("personProfile", authorRows, matchSubmitterByCurrentOutline, true);
-				stageSelectedSubmitterProfile(submitterProfile, true);				
-				//LoadPersonProfileSearchResultsFromOutline(authorProfile, submitterProfile);
-				var sourceProfile = fetchSourceProfile(mainOutline._id + "_source");
-				stageSelectedSourceProfile(sourceProfile);
-			}
+			$("#save-outline-title").text(AorB(mainOutline.head.title, "") );
+			$("#save-outline-scriptureRange").text(AorB(mainOutline.head.ScriptureRange, ""));
+		}
+	}
+	
+	function stageOutlineToSave()
+	{
+		if (mainOutline)
+		{
+			var authorRows = getDbRows();
+			var authorProfile = collectProfileDocs("personProfile", authorRows, matchAuthorByCurrentOutline, true);
+			stageSelectedAuthorProfile(authorProfile, true);
+			var submitterProfile = collectProfileDocs("personProfile", authorRows, matchSubmitterByCurrentOutline, true);
+			stageSelectedSubmitterProfile(submitterProfile, true);				
+			//LoadPersonProfileSearchResultsFromOutline(authorProfile, submitterProfile);
+			var sourceProfile = fetchSourceProfile(mainOutline._id + "_source");
+			stageSelectedSourceProfile(sourceProfile);
 		}
 	}
