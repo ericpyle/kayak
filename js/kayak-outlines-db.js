@@ -1169,10 +1169,16 @@
 			return false;
 		});
 		
-		$("btnApplyHead_Edit").click(function(event)
+		$("#btnApplyHead_Edit").click(function(event)
 		{
 			ApplyOutlineHeadChanges();
-			return LoadOutlineFromCurrentState();
+			return publishOutlineToReadOnlyViews();
+		});
+		
+		$("#btnApplyCitation_Cite").click(function(event)
+		{
+			applyCitationToOutline();
+			return publishOutlineToReadOnlyViews();
 		});
 		
 		$("#btnCreateNewAuthor, #btnCreateNewSubmitter, #btnCreateNewSource").click(function(event) {
@@ -1402,6 +1408,28 @@
 		}
 	}
 	
+	function applyCitationToOutline()
+	{
+		var authorProfileStaged = $("#save-outline-author").data('profile-author');
+		var submitterProfileStaged = $("#save-outline-submitter").data('profile-submitter');
+		var sourceStaged = $("#save-outline-source").data('profile-source');
+		
+		setOrReset(authorProfileStaged, mainOutline.head, "author", function(objToSetOrReset, propertyToSet, stagedProfile) 
+		{
+			objToSetOrReset[propertyToSet].guid = stagedProfile._id;
+		});			
+		setOrReset(submitterProfileStaged, mainOutline.head, "submittedBy", function(objToSetOrReset, propertyToSet, stagedProfile) 
+		{
+			objToSetOrReset[propertyToSet].guid = stagedProfile._id;
+		});
+		// we want to save the guid of the common outline, not our outline.
+		setOrReset(sourceStaged, mainOutline.head, "source", function(objToSetOrReset, propertyToSet, stagedProfile) 
+		{
+			objToSetOrReset[propertyToSet] = stagedProfile.outline.source;
+			objToSetOrReset[propertyToSet].guid = stagedProfile.source._id;
+		});
+	}
+	
 	function publishOutline(event)
 	{
 
@@ -1430,21 +1458,7 @@
 		// if guid is newOutlineStub then replace that row
 	
 		// next see if any changes need to be made
-		setOrReset(authorProfileStaged, mainOutline.head, "author", function(objToSetOrReset, propertyToSet, stagedProfile) 
-		{
-			objToSetOrReset[propertyToSet].guid = stagedProfile._id;
-		});			
-		setOrReset(submitterProfileStaged, mainOutline.head, "submittedBy", function(objToSetOrReset, propertyToSet, stagedProfile) 
-		{
-			objToSetOrReset[propertyToSet].guid = stagedProfile._id;
-		});
-		// we want to save the guid of the common outline, not our outline.
-		setOrReset(sourceStaged, mainOutline.head, "source", function(objToSetOrReset, propertyToSet, stagedProfile) 
-		{
-			objToSetOrReset[propertyToSet] = stagedProfile.outline.source;
-			objToSetOrReset[propertyToSet].guid = stagedProfile.source._id;
-		});
-
+		applyCitationToOutline();
 		var mainOutlineJSON_current = JSON.stringify(mainOutline);
 		var mainOutlineJSON_orig = $("body").data("mainOutlineJSON-orig");
 		if (!fIsNewOutline && mainOutlineJSON_current == mainOutlineJSON_orig)
