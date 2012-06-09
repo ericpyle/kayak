@@ -1181,6 +1181,13 @@
 			return publishOutlineToReadOnlyViews();
 		});
 		
+		$("#chiasmAutoLabelingOn, #chiasmAutoLabelingOff").click(function(event){
+			
+			$(".autoLabelingState").removeClass("autoLabelingState");
+			$(this).addClass("autoLabelingState");
+			adjustAutoLabeling();			
+		});		
+		
 		$("#btnCreateNewAuthor, #btnCreateNewSubmitter, #btnCreateNewSource").click(function(event) {
 								if (event.target.id == "btnCreateNewSource")
 								{

@@ -105,6 +105,7 @@
 		else
 			label = label + " ";
 		$(element).find("label").text(label);
+		adjustAutoLabeling();
 	}
 	
 	function refreshAllLabels()
@@ -140,6 +141,18 @@
 			var label = formatPositionIntoLabel(positionObj, ghostExists(positionList));
 			applyLabelToConceptNode(element, label);
 		});
+	}
+	
+	function adjustAutoLabeling()
+	{
+		if ($(".autoLabelingState").attr("id") == "chiasmAutoLabelingOn")
+		{
+			$(".markerEditLabel.autoLabelingOff").removeClass("autoLabelingOff");
+		}
+		if ($(".autoLabelingState").attr("id") == "chiasmAutoLabelingOff")
+		{
+			$(".concept .markerEditLabel").addClass("autoLabelingOff");
+		}
 	}
 	
 	function refreshPositionLabel(index, element)

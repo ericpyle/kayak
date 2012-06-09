@@ -8,6 +8,13 @@ button[href='#']:hover, button[type='button']:hover, button[type='submit']:hover
 	cursor: pointer;
 }
 
+.autoLabelingState 
+{
+	cursor:default;
+	font-weight: bold;
+	text-decoration:none;
+}
+
 .chiasm div {
     padding-bottom: 5px;
     padding-top: 5px;
@@ -37,6 +44,10 @@ button[href='#']:hover, button[type='button']:hover, button[type='submit']:hover
 	font-weight: bold;
 	margin-right: 10px; 
 	position: relative;
+}
+
+.markerEditLabel.autoLabelingOff {
+	display:none;	
 }
 
 .chiasmEditItem label, #editChiasmBody textarea { vertical-align: top; }
