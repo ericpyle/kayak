@@ -1140,9 +1140,30 @@
 		$(jq(idTable)).data("dataTable", dataTable1);
 	}
 	
+	function SelectUrlSpecifiedDb()
+	{
+		var dbId = $.url().param('ol');
+		if (dbId)
+		{
+			// TODO: verify db id format?
+			var newRow = pageToRow(jq("exampleTable"), jq(dbId));
+    		selectOutlineRow(newRow);
+		}
+	}
+	
+	function changeUrlToSelectedId(rowId)
+	{
+		var url = $.url();
+		var newUrl = url.attr("protocol") + "://" +  url.attr("host") + url.attr("path") + "?ol=" + rowId;
+		if (document.location != newUrl)
+			document.location = newUrl;
+	}
+	
 	function InitializeDbStuff()
 	{
 		LoadPersonsAndAuthoredOutlines();
+		SelectUrlSpecifiedDb();
+		
 		// /_design/outlines/_view
 		// /_design/personalProfiles/_view
 		$("#submitterIsAuthor").click(function(event) {
