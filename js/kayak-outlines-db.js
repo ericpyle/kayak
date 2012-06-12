@@ -82,12 +82,7 @@
 			else
 			//if (!getResponse)
 			{	
-				getResponse = getDb();
-				if (getResponse == null)
-				{
-					getResponse = cacheDbInDom(authorsAndOutlinesResponse);
-					alert("Loaded fixed tables. Changes will not be saved.");
-				}				
+				getResponse = getDb(true);				
 				if (fNeedRenderToPage)
 				{					
 					LoadExamplesToTableCallback(getResponse.rows);
@@ -104,9 +99,15 @@
 			return resp;	
 		}
 		
-		function getDb()
+		function getDb(fLoadFakeCacheIfMissing)
 		{
-			return $("body").data("getResponse");
+			var getResponse = $("body").data("getResponse");
+			if (fLoadFakeCacheIfMissing && getResponse == null)
+			{
+				getResponse = cacheDbInDom(authorsAndOutlinesResponse);
+				alert("Couldn't download tables from internet. Try refreshing your page. Otherwise your changes will not be saved.");
+			}
+			return getResponse;
 		}
 		
 		function getDbRows()
@@ -269,9 +270,11 @@
 				"publisherDetails" : ""
 			}
 			*/
-			var source = (EmptyIfNull(profile.source.details) + 
-				(profile.outline && profile.outline.source && profile.outline.source.details ? 
-					", " + EmptyIfNull(profile.outline.source.details) : "" ));
+			var commonSource = EmptyIfNull(profile.source.details);			
+			var specificSource = 
+				profile.outline && profile.outline.source && profile.outline.source.details ? 
+					EmptyIfNull(profile.outline.source.details) : "";
+			var source = commonSource.length > 0 ? commonSource + (specificSource.length > 0 ? ", " + specificSource : "") : specificSource;
 			if (source.length == 0)
 				return sdefault;
 			else
@@ -1461,9 +1464,7 @@
 			alert("Cannot publish an empty outline without specifying author, source, or submitter");
 			return false;
 		}
-		
-		// if guid is newOutlineStub then replace that row
-	
+			
 		// next see if any changes need to be made
 		applyCitationToOutline();
 		var mainOutlineJSON_current = JSON.stringify(mainOutline);
@@ -1472,8 +1473,7 @@
 		{
 			alert("No changes have been made that need to be saved.")
 			return false;	
-		}
-		
+		}		
 		else
 		{
 			$(this).unbind(event);
@@ -1488,6 +1488,16 @@
 			// authorShortname				
 			
 			**/
+			if (sourceStaged && sourceStaged.outline && sourceStaged.outline._id == "newOutlineStub")
+			{
+				var exampleRows = getDbRows(); 
+				findAndDo(exampleRows, "newOutlineStub", function(rows, indexFound) {
+						rows.splice(indexFound, 1); 
+	    				//alert("removed newOutlineStub")
+	    		});
+				// if guid is newOutlineStub then replace that row
+			}
+
 			
 			var dateNow = new Date();
 			if (fIsNewOutline)
@@ -1605,6 +1615,12 @@
     	switchToSearchResultsOnProfile(updatedProfile);
 	}
 	
+	function SpecificSourceHasContent(testSpecificSource)
+	{
+		return testSpecificSource.details.length > 0 || 
+	    		testSpecificSource.website.length > 0;
+	}
+	
 	function CommonSourceHasContent(testCommonSource)
 	{
 		return testCommonSource.details.length > 0 || 
@@ -1629,9 +1645,9 @@
 	    updatedProfile.source.head = {"contentType" : "sourceProfile"};
 	    //alert(JSON.stringify(updatedProfile));
 	    if (!CommonSourceHasContent(updatedProfile.source) && 
-	    	(!profileOriginal || CommonSourceHasChanged(updatedProfile.source, profileOriginal.source)))
+	    	!SpecificSourceHasContent(updatedProfile.outline.source))
     	{
-    		alert("Common source requires that you keep some information.")
+    		alert("Source update requires that you fill in some information.")
     		return;
     	}
     	$(this).unbind(event); // TODO: use on/off
@@ -1704,8 +1720,10 @@
 	    		profileSwitchTo.source["_rev"] = docToUpdate._rev;
 	    });
 	    
+	    var specificDetailsMsg = "Outline specific details will be updated after publishing the outline.";
 	    // TODO: do I need to write the db cache back to the DOM?
-		if (dbMain && (!profileOriginal || CommonSourceHasChanged(updatedProfile.source, profileOriginal.source)))
+		if (dbMain && CommonSourceHasContent(updatedProfile.source) && 
+			(!profileOriginal || CommonSourceHasChanged(updatedProfile.source, profileOriginal.source)))
 		{
 			try
 			{
@@ -1713,7 +1731,7 @@
 			        if (resp.ok)
 			        {
 			        	profileSwitchTo["_rev"] = resp.rev;
-			        	alert("Common Source Profile Changes Published. (Outline specific details will be updated after publishing the outline.)"); // Debug: " + JSON.stringify(resp));
+			        	alert("Common Source Profile Changes Published. (" + specificDetailsMsg + ")"); // Debug: " + JSON.stringify(resp));
 					    publishSourceProfileChangesToTableView(profileSwitchTo, profileOriginal, exampleRows);
 			        }
 			        else
@@ -1729,6 +1747,10 @@
 		 }
 	    else
 	    {
+	    	if (!CommonSourceHasContent(updatedProfile.source))
+	    	{
+	    		alert(specificDetailsMsg);
+	    	}
 	    	publishSourceProfileChangesToTableView(profileSwitchTo, profileOriginal, exampleRows);
 	    }
 		
