@@ -444,6 +444,7 @@
 	{
 		if (fInitialized)
 			return;
+		SelectUrlSpecifiedDb();
 		LoadOutlineFromCurrentState();
 		InitializeEditForm();
 		fInitialized = true;

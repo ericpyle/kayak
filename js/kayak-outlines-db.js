@@ -1165,7 +1165,6 @@
 	function InitializeDbStuff()
 	{
 		LoadPersonsAndAuthoredOutlines();
-		SelectUrlSpecifiedDb();
 		
 		// /_design/outlines/_view
 		// /_design/personalProfiles/_view
