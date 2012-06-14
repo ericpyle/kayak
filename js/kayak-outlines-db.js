@@ -197,6 +197,7 @@
 			
 			if (docToLoad)
 				loadJSONToOutline(docToLoad);
+			changeUrlToSelectedId(rowId);
 		}
 		
 		function installOutlineRowOptions(outlineRow)
@@ -1142,21 +1143,23 @@
 	
 	function SelectUrlSpecifiedDb()
 	{
-		var dbId = $.url().param('ol');
-		if (dbId)
+		var dbId = $.url().fsegment(1);
+		if (dbId && dbId.substr(dbId.length - 2, dbId.length) == "ol" && 
+			dbId.substr(0, 3) == "kyk")
 		{
 			// TODO: verify db id format?
 			var newRow = pageToRow(jq("exampleTable"), jq(dbId));
     		selectOutlineRow(newRow);
+    		$("#tabsMain").tabs('select',"#View");
 		}
 	}
 	
 	function changeUrlToSelectedId(rowId)
 	{
 		var url = $.url();
-		var newUrl = url.attr("protocol") + "://" +  url.attr("host") + url.attr("path") + "?ol=" + rowId;
-		if (document.location != newUrl)
-			document.location = newUrl;
+		var newHash = "#/" + rowId;
+		if (document.location.hash != newHash)
+			document.location.hash = newHash;
 	}
 	
 	function InitializeDbStuff()
