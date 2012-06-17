@@ -262,7 +262,7 @@
 		var bookName = getBookName(mainOutline.head.ScriptureRange);
 		var indexExited = getIndexOfOwningEditItem(element, editItemSelector);
 		//alert(indexExited + contentExited)
-		applyCitationMarkupForItemToViews(mainOutline.body.concepts, bookName, indexExited);
+		applyCitationMarkupForItemToViews(mainOutline.body.concepts, bookName, indexExited, mainOutline.head.ScriptureRange);
 		refreshScriptureTagging();		
 	}
 	
@@ -521,7 +521,7 @@
 	/*
 	 * Returns the new content with citation markup
 	 */
-	function getCitationMarkup(content, bookName1)
+	function getCitationMarkup(content, bookName1, chRange)
 	{
 		if (content == null)
 			return null;
@@ -536,11 +536,16 @@
 		for (j = 0; j < matches2.length; j++)
 		{
 			var chVerseRange = matches2[j];
+			var title = chVerseRange;
 			var matchLocation = remainingContent.indexOf(chVerseRange);
 			var segment = remainingContent.substring(0, matchLocation + chVerseRange.length);
 			remainingContent = remainingContent.substring(matchLocation + chVerseRange.length);
 			//alert(chVerseRange);
-			var markup = '<cite class="bibleref" title="' + bookName1 + " " + chVerseRange + '">' + chVerseRange + "</cite>";
+			if (chRange && chRange[0].length > 0 && chVerseRange.indexOf(":") == -1 && chVerseRange.indexOf(".") == -1)
+			{
+				title = chRange[0] + ":" + chVerseRange;
+			}
+			var markup = '<cite class="bibleref" title="' + bookName1 + " " + title + '">' + chVerseRange + "</cite>";
 			finalContent += segment.replace(chVerseRange, markup);
 		}
 		if (remainingContent.length > 0 && remainingContent != content)
@@ -567,14 +572,35 @@
 		return bookName1;
 	}
 	
+	function getChapterRange(scriptureRange)
+	{
+		var pattChSeg=/[\ \-]([1-9][0-9]?[0-9]?)[\.\:\ ]?/g;
+		var pattVerse=/[\.\:]([1-9][0-9]?[0-9]?)?/g;
+		var chMatches = scriptureRange.match(pattChSeg);
+		var verseMatches = scriptureRange.match(pattVerse);
+		var chapters = [];
+		var pattCh=/([1-9][0-9]?[0-9]?)/;
+		
+		// crop each chapter segment into just the chapter
+		var chBegin = chMatches[0].match(pattCh)[0];
+		chapters.push(chBegin);		
+		if (chMatches.length == 2 && (!verseMatches || (verseMatches.length == 0 || verseMatches.length == 2)))
+		{
+			var chEnd = chMatches[1].match(pattCh)[0];
+			chapters.push(chEnd);
+		}		
+		return chapters;
+	}
+	
 	
 	/*
 	 * returns false if no update happened, true if so.
 	 */
-	function applyCitationMarkupForItemToViews(concepts, bookName, indexAAB)
+	function applyCitationMarkupForItemToViews(concepts, bookName, indexAAB, scriptureRange)
 	{
 		var content = concepts[indexAAB].content;
-		var newContent = getCitationMarkup(content, bookName);
+		var chRange = getChapterRange(scriptureRange);		
+		var newContent = getCitationMarkup(content, bookName, chRange);
 		if (newContent == null)
 			return false; // did nothing
 		publishContentToChiasmView(concepts, indexAAB, newContent);
@@ -599,7 +625,7 @@
 		// next go through each of the items, and identify the verses
 		for (i = 0; i < chiasmJSON.body.concepts.length; i++)
 		{
-			applyCitationMarkupForItemToViews(chiasmJSON.body.concepts, bookName1, i);
+			applyCitationMarkupForItemToViews(chiasmJSON.body.concepts, bookName1, i, chiasmJSON.head.ScriptureRange);
 		}
 	}
 	
