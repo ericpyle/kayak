@@ -1,0 +1,183 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+                    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <script src="../js/jquery.js"></script>
+  <link rel="stylesheet" href="css/qunit-git.css" type="text/css" media="screen" />
+<script type="text/javascript" src="js/qunit-git.js"></script>
+<script type="text/javascript" src="../js/kayak.js"></script>
+
+  <script>
+  $(document).ready(function(){
+
+
+module("kayak.js: getBookName");    
+test("book longname", function() {
+  var value = getBookName("Genesis");
+  equal( value, "Genesis", "We expect result to be Genesis" );
+});
+
+test("book longname with chapter", function() {
+  var value = getBookName("Genesis 1");
+  equal( value, "Genesis", "We expect result to be Genesis" );
+});
+
+test("book abbreviation with chapter", function() {
+  var value = getBookName("Gen 1");
+  equal( value, "Gen", "We expect result to be Genesis" );
+});
+
+module("kayak.js: getChapterRange");
+
+test("Ch 1", function() {
+  var bcv = "Gen 1";
+  var chapters = ["1"];
+  var result = getChapterRange(bcv);
+  deepEqual(result, chapters, "We expect result to be " + chapters);
+});
+
+test("Ch 1:3-2:4", function() {
+  var bcv = "Gen 1:1-2:1";
+  var chapters = ["1", "2"];
+  var result = getChapterRange(bcv);
+  deepEqual(result, chapters, "We expect result to be " + chapters);
+});
+
+test("Ch 1:3-4", function() {
+  var bcv = "Gen 1:3-4";
+  var chapters = ["1"];
+  var result = getChapterRange(bcv);
+  deepEqual(result, chapters, "We expect result to be " + chapters);
+});
+
+test("Ch 1-2", function() {
+  var bcv = "Gen 1-2";
+  var chapters = ["1", "2"];
+  var result = getChapterRange(bcv);
+  deepEqual(result, chapters, "We expect result to be " + chapters);
+});
+
+test("book leading number", function() {
+  var bcv = "1 Cor";
+  var book = "1 Cor";
+  var result = getBookName(bcv);
+  equal(result, book, "We expect result to be " + book);
+});
+
+
+test("book leading number w/chapter", function() {
+  var bcv = "1 Cor 1";
+  var book = "1 Cor";
+  var result = getBookName(bcv);
+  equal(result, book, "We expect result to be " + book);
+});
+
+module("kayak.js: getCitationMarkup - chapter verse");    
+
+test("1:1", function() {
+  var book = "Genesis";
+  var cv = "1:1"
+  var result = getCitationMarkup(cv, book);
+  var expected = "<cite class=\"bibleref\" title=\"Genesis 1:1\">1:1</cite>";
+  equal(result, expected, "We expect result to be " + expected);
+});
+
+test("1.1", function() {
+  var book = "Genesis";
+  var cv = "1.1"
+  var result = getCitationMarkup(cv, book);
+  var expected = "<cite class=\"bibleref\" title=\"Genesis 1.1\">1.1</cite>";
+  equal(result, expected, "We expect result to be " + expected);
+});
+
+test("v.1:1", function() {
+  var book = "Genesis";
+  var cvRange = "v.1:1"
+  var result = getCitationMarkup(cvRange, book);
+  var expected = "v.<cite class=\"bibleref\" title=\"Genesis 1:1\">1:1</cite>";
+  equal(result, expected, "We expect result to be " + expected);
+});
+
+test("v 1:1", function() {
+  var book = "Genesis";
+  var cvRange = "v 1:1"
+  var result = getCitationMarkup(cvRange, book);
+  var expected = "v <cite class=\"bibleref\" title=\"Genesis 1:1\">1:1</cite>";
+  equal(result, expected, "We expect result to be " + expected);
+});
+
+test("v1:1", function() {
+  var book = "Genesis";
+  var cvRange = "v1:1"
+  var result = getCitationMarkup(cvRange, book);
+  var expected = "v<cite class=\"bibleref\" title=\"Genesis 1:1\">1:1</cite>";
+  equal(result, expected, "We expect result to be " + expected);
+});
+
+test("(1:1)", function() {
+  var book = "Genesis";
+  var cvRange = "(1:1)"
+  var result = getCitationMarkup(cvRange, book);
+  var expected = "(<cite class=\"bibleref\" title=\"Genesis 1:1\">1:1</cite>)";
+  equal(result, expected, "We expect result to be " + expected);
+});
+
+test("(v1:1)", function() {
+  var book = "Genesis";
+  var cvRange = "(v1:1)"
+  var result = getCitationMarkup(cvRange, book);
+  var expected = "(v<cite class=\"bibleref\" title=\"Genesis 1:1\">1:1</cite>)";
+  equal(result, expected, "We expect result to be " + expected);
+});
+
+module("kayak.js: getCitationMarkup - multiple references");   
+test("word (1:1), word (1:2)", function() {
+  var book = "Genesis";
+  var cvRange = "word (1:1), word (1:2)"
+  var result = getCitationMarkup(cvRange, book);
+  var expected = "word (<cite class=\"bibleref\" title=\"Genesis 1:1\">1:1</cite>), word (<cite class=\"bibleref\" title=\"Genesis 1:2\">1:2</cite>)";
+  equal(result, expected, "We expect result to be " + expected);
+});
+
+
+module("kayak.js: getCitationMarkup - ranges");
+test("1:1-2:1", function() {
+  var book = "Genesis";
+  var cvRange = "1:1-2:1"
+  var result = getCitationMarkup(cvRange, book);
+  var expected = "<cite class=\"bibleref\" title=\"Genesis 1:1-2:1\">1:1-2:1</cite>";
+  equal(result, expected, "We expect result to be " + expected);
+});
+
+test("vv.1:1-2:1", function() {
+  var book = "Genesis";
+  var cvRange = "vv.1:1-2:1"
+  var result = getCitationMarkup(cvRange, book);
+  var expected = "vv.<cite class=\"bibleref\" title=\"Genesis 1:1-2:1\">1:1-2:1</cite>";
+  equal(result, expected, "We expect result to be " + expected);
+});
+
+
+module("kayak.js: getCitationMarkup - given chapters");
+test("v. 1", function() {
+  var book = "Genesis";
+  var chRange = ["2"];
+  var cvRange = "v. 1"
+  var result = getCitationMarkup(cvRange, book, chRange);
+  var expected = "v. <cite class=\"bibleref\" title=\"Genesis 2:1\">1</cite>";
+  equal(result, expected, "We expect result to be " + expected);
+});
+
+  });
+  </script>
+  
+</head>
+<body>
+  <h1 id="qunit-header">QUnit example</h1>
+ <h2 id="qunit-banner"></h2>
+ <div id="qunit-testrunner-toolbar"></div>
+ <h2 id="qunit-userAgent"></h2>
+ <ol id="qunit-tests"></ol>
+ <div id="qunit-fixture">test markup, will be hidden</div>
+</body>
+</html>
