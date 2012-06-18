@@ -5,7 +5,7 @@
   <script src="../js/jquery.js"></script>
   <link rel="stylesheet" href="css/qunit-git.css" type="text/css" media="screen" />
 <script type="text/javascript" src="js/qunit-git.js"></script>
-<script type="text/javascript" src="../js/kayak.js"></script>
+<script type="text/javascript" src="../js/kayak-common.js"></script>
 
   <script>
   $(document).ready(function(){
@@ -42,6 +42,14 @@ test("Ch 1:3-2:4", function() {
   var result = getChapterRange(bcv);
   deepEqual(result, chapters, "We expect result to be " + chapters);
 });
+
+test("Ch 10:11-36", function() {
+  var bcv = "Gen 10:11-36";
+  var chapters = ["10"];
+  var result = getChapterRange(bcv);
+  deepEqual(result, chapters, "We expect result to be " + chapters);
+});
+
 
 test("Ch 1:3-4", function() {
   var bcv = "Gen 1:3-4";
@@ -141,6 +149,15 @@ test("word (1:1), word (1:2)", function() {
 
 
 module("kayak.js: getCitationMarkup - ranges");
+test("Ch 10:11-36", function() {
+  var book = "Genesis";
+  var cvRange = "10:11-36"
+  var result = getCitationMarkup(cvRange, book);
+  var expected = "<cite class=\"bibleref\" title=\"Genesis 10:11-36\">10:11-36</cite>";
+  equal(result, expected, "We expect result to be " + expected);
+});
+
+
 test("1:1-2:1", function() {
   var book = "Genesis";
   var cvRange = "1:1-2:1"
