@@ -40,7 +40,7 @@
 				getConceptPositions(positionList, -1);
 				positionObj = positionList[iconceptChangedContent];
 		    	var fUpdated = applyCitationMarkupForItemToViews(positionObj.concepts, 
-		    		getBookName(head.ScriptureRange), positionObj.index);
+		    		getBookName(head.ScriptureRange), positionObj.index, head.ScriptureRange, publishContentToChiasmView);
 		    	
 		    	if (!fUpdated)
 		    	{
