@@ -11,7 +11,7 @@
 		if (content == null)
 			return null;
 		//alert("applyCitation")
-		var pattCVerseRef=/(?:(?:[1-9][0-9]?[0-9]?[.:])?[1-9][0-9]*[-–—]?)+/g;		
+		var pattCVerseRef=/(?:(?:[1-9][0-9]?[0-9]?[.:])?[1-9][0-9]?[-–—]?)+/g;		
 		var matches2 = content.match(pattCVerseRef);
 		//alert(matches2)
 		if (matches2 == null)
