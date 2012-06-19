@@ -38,7 +38,7 @@ button[href='#']:hover, button[type='button']:hover, button[type='submit']:hover
 .examples { list-style: none; margin-left: 0px;}
  
 .itemMarker { font-weight: bold; margin-right: 10px;}
-.chiasmText {  }
+.conceptContent {  }
 .chiasmEditItem {  }    
 .markerEditLabel {
 	font-weight: bold;

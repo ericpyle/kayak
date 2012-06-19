@@ -67,6 +67,8 @@
 		var pattCh=/([1-9][0-9]?[0-9]?)/;
 		
 		// crop each chapter segment into just the chapter
+		if (!chMatches)
+			return null;
 		var chBegin = chMatches[0].match(pattCh)[0];
 		chapters.push(chBegin);		
 		if (chMatches.length == 2 && (!verseMatches || (verseMatches.length == 0 || verseMatches.length == 2)))
@@ -111,10 +113,22 @@
 			return;
 		}
 		// next go through each of the items, and identify the verses
-		for (i = 0; i < outline.body.concepts.length; i++)
+		var concepts = serializeConcepts();
+		for (i = 0; i < concepts.length; i++)
 		{
-			applyCitationMarkupForItemToViews(outline.body.concepts, bookName1, i, scriptureRange, publishContentToView);
+			applyCitationMarkupForItemToViews(concepts, bookName1, i, scriptureRange, publishContentToView);
 		}
+	}
+	
+	function serializeConcepts()
+	{
+		var concepts = [];
+		var positionList = new Array();
+		getConceptPositions(positionList, -1);
+		for (var i=0; i < positionList.length; i++) {
+		  	concepts.push(positionList[i].concept);
+		};
+		return concepts;
 	}
 	
 	function refreshScriptureTagging()

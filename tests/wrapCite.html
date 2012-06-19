@@ -29,6 +29,13 @@ test("book abbreviation with chapter", function() {
 
 module("kayak.js: getChapterRange");
 
+test("empty chapter", function() {
+  var bcv = "Gen";
+  var chapters = null;
+  var result = getChapterRange(bcv);
+  deepEqual(result, chapters, "We expect result to be " + chapters);
+});
+
 test("Ch 1", function() {
   var bcv = "Gen 1";
   var chapters = ["1"];

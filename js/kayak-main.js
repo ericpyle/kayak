@@ -253,3 +253,47 @@
 			stageSelectedSourceProfile(sourceProfile);
 		}
 	}
+
+	function publishOutlineToReadOnlyViews()
+	{
+		JSONToPreviewPanel();
+		if (mainOutline.head.contentType == "chiasm")
+		{
+			applyCitationMarkup(mainOutline, publishContentToChiasmView);
+		}
+		else if (mainOutline.head.contentType == "outline")
+		{
+			applyCitationMarkup(mainOutline, publishContentToHierachical);
+		}
+		refreshScriptureTagging();		
+	}
+	
+	function LoadAllViewsFromCurrentObj(doCreateEditBoxes)
+	{
+	    /*
+		 * edit views
+		 */
+		$("#editChiasmBody div").remove();
+		$("#outline div").remove();
+		/*
+		 * header edit boxes
+		 */		
+	    InitializeHeaderInputBoxes();
+		//mainOutline.body.concepts.splice(0, mainOutline.body.concepts.length);
+	    // search for chiasm to determine how many text boxes we need to display
+		// Display in pairs: AA' BB' C
+		if (doCreateEditBoxes)
+			doCreateEditBoxes(mainOutline.body.concepts);
+		refreshAllLabels();
+		publishOutlineToReadOnlyViews();
+	}
+	
+	function importFromTextBoxToCurrentChiasm(textBoxId)
+	{
+		var fStripCounting = $("#stripCounting").attr("checked");
+		var abaArray = trimChiasm(textBoxId, fStripCounting);
+		loadABAListToCurrentChiasm(abaArray);
+		//alert("import" + mainOutline.body.concepts.length);
+		LoadAllViewsFromCurrentObj(createdEditBoxesForConcepts);
+	}
+	

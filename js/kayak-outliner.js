@@ -538,7 +538,7 @@
 			var concept = concepts[i];
 			if (concept)
 			{
-				$(newOrderedList).append("<li>" + concept.content + "</li>");
+				$(newOrderedList).append("<li><span class='conceptContent'>" + concept.content + "</span></li>");
 				var newListItem = $(newOrderedList).children(":last");
 				if (concept.concepts)
 				{
@@ -546,6 +546,12 @@
 				}
 			}
 		};
+	}
+	
+	function publishContentToHierachical(concepts, iconcept, newContent)
+	{
+		var viewConcept = $("#chiasm-indent").find(".conceptContent").get(iconcept);
+		$(viewConcept).first().html(newContent);
 	}
 
 	

@@ -171,7 +171,7 @@
 	       		
 	       $("<style type='text/css'> ." + view + getBasicViewCssId(newIndex, conceptsCount) + " " + marginleft + " </style>").appendTo("head");
 		}
-	  	$(newItem).wrapInner("<span class='chiasmText'/>");
+	  	$(newItem).wrapInner("<span class='conceptContent'/>");
         $(newItem).addClass(view + getBasicViewCssId(newIndex, conceptsCount));
         $(newItem).attr("id", getViewConceptId(view, newIndex, conceptsCount));
 	    $(newItem).prepend("<span class='itemMarker'>"+ chr + endchar +"</span>");
@@ -212,7 +212,7 @@
 		    $(item).prepend("<span class='itemMarker'>"+ chr + endchar +"</span>");
 		    */
 		var view = "tableAAB";
-		var wrappedContent = "<span class='chiasmText'>" + newConcept.content + "</span>";
+		var wrappedContent = "<span class='conceptContent'>" + newConcept.content + "</span>";
 		var wrappedMarker = "<span class='itemMarker'>" + asciiMarker + endMarker + "</span>";
 		var css = view + getBasicViewCssId(newIndex, count);
 		var id = getViewConceptId(view, newIndex, count);
@@ -273,7 +273,7 @@
 			//alert(textarea.id + ":" + newValue + ": " + indexEditItem + "->" + iconcept + ": " + mainOutline.body.concepts[iconcept].content)
 			mainOutline.body.concepts[iconcept].content = newValue;
 			var chiasmElementId = getBasicViewConceptId(iconcept, count);
-			updateViewsChiasmContent(chiasmElementId + " .chiasmText", newValue);
+			updateViewsChiasmContent(chiasmElementId + " .conceptContent", newValue);
 		}
 		FitToContent(textarea.id,'','100');
 	}
@@ -499,21 +499,11 @@
 	    	concepts.push(newConcept)
 	    return newConcept;
 	}
-	
-	function importFromTextBoxToCurrentChiasm(textBoxId)
-	{
-		var fStripCounting = $("#stripCounting").attr("checked");
-		var abaArray = trimChiasm(textBoxId, fStripCounting);
-		loadABAListToCurrentChiasm(abaArray);
-		//alert("import" + mainOutline.body.concepts.length);
-		LoadAllViewsFromCurrentObj(createdEditBoxesForConcepts);
-	}
-	
 		
 	function publishContentToChiasmView(concepts, iconcept, newContent)
 	{
 		var basicViewElementId = getBasicViewConceptId(iconcept, concepts.length);
-		updateViewsChiasmContent(basicViewElementId + " .chiasmText", newContent);
+		updateViewsChiasmContent(basicViewElementId + " .conceptContent", newContent);
 	}
 
 	function InitializeHeaderInputBoxes() {
@@ -630,31 +620,4 @@
 		}
 		
 		
-	}
-	
-	function publishOutlineToReadOnlyViews()
-	{
-		JSONToPreviewPanel();
-		applyCitationMarkup(mainOutline, publishContentToChiasmView);
-		refreshScriptureTagging();		
-	}
-	
-	function LoadAllViewsFromCurrentObj(doCreateEditBoxes)
-	{
-	    /*
-		 * edit views
-		 */
-		$("#editChiasmBody div").remove();
-		$("#outline div").remove();
-		/*
-		 * header edit boxes
-		 */		
-	    InitializeHeaderInputBoxes();
-		//mainOutline.body.concepts.splice(0, mainOutline.body.concepts.length);
-	    // search for chiasm to determine how many text boxes we need to display
-		// Display in pairs: AA' BB' C
-		if (doCreateEditBoxes)
-			doCreateEditBoxes(mainOutline.body.concepts);
-		refreshAllLabels();
-		publishOutlineToReadOnlyViews();
 	}
