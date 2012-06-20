@@ -206,10 +206,12 @@
 				return false;
 			if ($("#outlineSelectedOptions").length > 0)
 				return false;	// already installed
-			var editText = "Edit Outline";
+			var editText = "Edit";
 			var rowHtml = "";
-			var editLink = '<a href="#" id="btnJumpToEditTab">'+ editText +'</a>';
-			rowHtml = '<tr id="outlineSelectedOptions" class="selectedRowOptions"><td colspan="6"><button id="btnJumpToViewTab" type="button">View</button> ' + editLink + '</td></tr>';
+			var editLink = '<a href="#" id="btnJumpToEditTab">Edit</a>';
+			var citeLink = '<a href="#" id="btnJumpToCiteTab">Cite</a>';
+			rowHtml = '<tr id="outlineSelectedOptions" class="selectedRowOptions"><td colspan="6"><button id="btnJumpToViewTab" type="button">View</button> ' 
+				+ editLink + " | " + citeLink  + '</td></tr>';
 			// add some extra options
 			$(outlineRow).after(rowHtml);
 			$("#btnJumpToViewTab").click(function(event){
@@ -218,6 +220,10 @@
 			});
 			$("#btnJumpToEditTab").click(function(event){
 				$("#tabsMain").tabs('select',"#EditView");
+				return false;
+			});
+			$("#btnJumpToCiteTab").click(function(event){
+				$("#tabsMain").tabs('select',"#Cite");
 				return false;
 			});
 		}

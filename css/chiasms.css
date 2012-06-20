@@ -79,7 +79,8 @@ table.tableViewAAB th, table.tableViewAAB td
 	vertical-align:top;
 }
 
-#exampleTable th, #exampleTable td
+#exampleTable th, 
+#exampleTable td
 {
 	/* border: 1px solid black; */
 	max-width: 250px;
@@ -181,10 +182,12 @@ table.sourceSearchResults tbody tr.creditRowSelected
 	border: 4px solid #AABCFE;
 }
 
+#exampleTable tbody tr.selectedRowOptions td,
 .selectedRowOptions td
 {
 	border-bottom: 1px solid #AABCFE;
 	border-top: 1px solid #AABCFE;
+	vertical-align: middle;
 }
 
 form div { padding-left: 10px; padding-right: 10px; padding-top: 10px; }
