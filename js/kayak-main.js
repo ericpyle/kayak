@@ -6,6 +6,7 @@
 	    {
 	    	//mainOutline = jQuery.parseJSON( jsonText );
 	    	mainOutline = clone(doc);
+	    	changeUrlToSelectedId(doc._id);
 	    	LoadContentTypeModeFromOutline();
 	    	LoadOutlineFromCurrentState();
 	    	stageOutlineToSave();

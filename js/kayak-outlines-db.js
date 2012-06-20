@@ -185,13 +185,11 @@
 				$(outlineRow).addClass("outlineRowSelected");
 				//alert(rowId);									
 				docToLoad = fetchOutline(rowId);
-				changeUrlToSelectedId(rowId);
 			} 
 			else
 			{
 				// load a blank outline
 				docToLoad = createBlankOutline("chiasm");
-				changeUrlToSelectedId(null);
 			}
 			
 			if ($(outlineRow).hasClass("outlineRowSelected"))
