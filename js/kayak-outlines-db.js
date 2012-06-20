@@ -185,11 +185,13 @@
 				$(outlineRow).addClass("outlineRowSelected");
 				//alert(rowId);									
 				docToLoad = fetchOutline(rowId);
+				changeUrlToSelectedId(rowId);
 			} 
 			else
 			{
 				// load a blank outline
 				docToLoad = createBlankOutline("chiasm");
+				changeUrlToSelectedId(null);
 			}
 			
 			if ($(outlineRow).hasClass("outlineRowSelected"))
@@ -197,7 +199,6 @@
 			
 			if (docToLoad)
 				loadJSONToOutline(docToLoad);
-			changeUrlToSelectedId(rowId);
 		}
 		
 		function installOutlineRowOptions(outlineRow)
@@ -1150,6 +1151,8 @@
 	function SelectUrlSpecifiedDb()
 	{
 		var dbId = $.url().fsegment(1);
+		if (dbId == "!")
+			dbId = $.url().fsegment(2);
 		if (dbId && dbId.substr(dbId.length - 2, dbId.length) == "ol" && 
 			dbId.substr(0, 3) == "kyk")
 		{
@@ -1163,7 +1166,9 @@
 	function changeUrlToSelectedId(rowId)
 	{
 		var url = $.url();
-		var newHash = "#/" + rowId;
+		var newHash = "";
+		if (rowId)
+			newHash = "#!/" + rowId;
 		if (document.location.hash != newHash)
 			document.location.hash = newHash;
 	}
@@ -1191,7 +1196,7 @@
 			return true;
 		});
 		
-		$("#btnCreateNewOutline").click(function(event) {
+		$("#btnCreateNewOutline, #btnNewOutline_Edit").click(function(event) {
 			// load a blank outline
 			removeAnyRowSelectionAndOptions("#exampleTable", "outlineRowSelected", "outlineSelectedOptions");
 			var	docToLoad = createBlankOutline("chiasm");
