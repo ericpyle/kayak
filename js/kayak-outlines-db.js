@@ -1166,7 +1166,7 @@
 		var url = $.url();
 		var newHash = "";
 		if (rowId)
-			newHash = "#!/" + rowId;
+			newHash = "#/" + rowId; // "#!/blah" google indexing -> ?_escaped_fragment_=/blah
 		if (document.location.hash != newHash)
 			document.location.hash = newHash;
 	}
