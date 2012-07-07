@@ -22,6 +22,25 @@
 	{
 		return s ? s : "";
 	}
+	
+	function doTestAndDoSomething(sequence, doTest, doSomething)
+	{
+		var indexOfFind = -1;
+		for (var i=0; i < sequence.length; i++) {
+		  	if (doTest(sequence[i]))
+		  	{
+		  		indexOfFind = i;
+		  		break;
+		  	}
+		};
+		if (indexOfFind >= 0)
+		{
+			if (doSomething)
+				doSomething(sequence, indexOfFind);
+			return true;
+		}
+		return false;
+	}
 
 	/*
 	 * http://sirdarckcat.blogspot.com/2007/07/passing-reference-to-javascript.html

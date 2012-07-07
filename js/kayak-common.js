@@ -2,6 +2,27 @@
  * @author Pyle
  */
 
+	function createBlankOutline(contentType)
+	{
+		if (contentType == null)
+			contentType = "outline";
+		var mainOutlineBlank = 
+		{
+			"head": 
+			{
+				"contentType" : contentType,
+				"title" : "",
+				"ScriptureRange" : ""
+			},
+			"body":
+			{
+				"concepts" :
+				[ ]
+			}
+		};
+		return jQuery.parseJSON(JSON.stringify(mainOutlineBlank));
+	}
+
 
 /*
 	 * Returns the new content with citation markup

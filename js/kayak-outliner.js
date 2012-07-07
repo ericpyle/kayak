@@ -2,27 +2,6 @@
  * @author Pyle
  */
 
-	function createBlankOutline(contentType)
-	{
-		if (contentType == null)
-			contentType = "outline";
-		var mainOutlineBlank = 
-		{
-			"head": 
-			{
-				"contentType" : contentType,
-				"title" : "",
-				"ScriptureRange" : ""
-			},
-			"body":
-			{
-				"concepts" :
-				[ ]
-			}
-		};
-		return jQuery.parseJSON(JSON.stringify(mainOutlineBlank));
-	}
-
 	var numConceptCreated = 1; // number of concepts created (for unique ids)
 
 	/*

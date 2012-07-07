@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+                    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <script src="../js/jquery.js"></script>
+  <link rel="stylesheet" href="css/qunit-git.css" type="text/css" media="screen" />
+<script type="text/javascript" src="js/qunit-git.js"></script>
+<script type="text/javascript" src="../js/jquery-extensions-utils.js"></script>
+<script type="text/javascript" src="../js/kayak-common.js"></script>
+<script type="text/javascript" src="../js/kayak-views.js"></script>
+
+  <script>
+  $(document).ready(function(){
+
+
+module("kayak-views.js");
+
+
+test("non panel", function() {
+  var outline = createBlankOutline("chiasm");
+  var result = generatePanelIndent(outline);
+  var expected = {};
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("empty", function() {
+  var outline = createBlankOutline("panel");
+  var result = generatePanelIndent(outline);
+  var expected = {};
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+
+test("one line", function() {
+  var outline = createBlankOutline("panel");
+  outline.head["contentParams"] = {"repeat" : 0};
+  outline.body.concepts.push({"content": "one line"});
+  var result = generatePanelIndent(outline);
+  var expected = {
+  	"indentStyles": [".panel-indent-level-1"],
+  	"html" :   "<div class='panel-indent-level-1'><span class='itemMarker'>1</span><span class='conceptContent'>one line</span></div>"
+  };
+  
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("two lines", function() {
+  var outline = createBlankOutline("panel");
+  outline.head["contentParams"] = {"repeat" : 0};
+  outline.body.concepts.push({"content": "one line"});
+  outline.body.concepts.push({"content": "second line"});
+  var result = generatePanelIndent(outline);
+  var expected = {
+  	"indentStyles": [".panel-indent-level-1", ".panel-indent-level-2"],
+  	"html" :   "<div class='panel-indent-level-1'><span class='itemMarker'>1</span><span class='conceptContent'>one line</span></div>" + 
+  			   "<div class='panel-indent-level-2'>&nbsp;&nbsp;&nbsp;&nbsp;<span class='itemMarker'>2</span><span class='conceptContent'>second line</span></div>" 
+  }
+  
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+
+test("two lines - repeat 1", function() {
+  var outline = createBlankOutline("panel");
+  outline.head["contentParams"] = {"repeat" : 1 };
+  outline.body.concepts.push({"content": "first line"});
+    outline.body.concepts.push({"content": "first repeat"});
+  var result = generatePanelIndent(outline);
+  var expected = {
+  	"indentStyles": [".panel-indent-level-1"],
+  	"html" :   "<div class='panel-indent-level-1'><span class='itemMarker'>1</span><span class='conceptContent'>first line</span></div>"+ 
+  			   "<div class='panel-indent-level-1'><span class='itemMarker'>1</span><span class='conceptContent'>first repeat</span></div>" 
+  }
+  
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+
+test("one line - header", function() {
+  var outline = createBlankOutline("panel");
+  outline.head["contentParams"] = {"repeat" : 0, "header": true};
+  outline.body.concepts.push({"content": "header"});
+  var result = generatePanelIndent(outline);
+  var expected = {
+  	"indentStyles": [".panel-indent-level-1"], // .panel-header {font-weight: 600;}
+  	"html" :   "<div class='panel-indent-level-1 panel-header'><span class='itemMarker'>A</span><span class='conceptContent'>header</span></div>" 
+  }
+  
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("two lines - header", function() {
+  var outline = createBlankOutline("panel");
+  outline.head["contentParams"] = {"repeat" : 0, "header": true};
+  outline.body.concepts.push({"content": "header"});
+    outline.body.concepts.push({"content": "first point"});
+  var result = generatePanelIndent(outline);
+  var expected = {
+  	"indentStyles": [".panel-indent-level-1", ".panel-indent-level-2"],
+  	"html" :   "<div class='panel-indent-level-1 panel-header'><span class='itemMarker'>A</span><span class='conceptContent'>header</span></div>"+ 
+  			   "<div class='panel-indent-level-2'>&nbsp;&nbsp;&nbsp;&nbsp;<span class='itemMarker'>1</span><span class='conceptContent'>first point</span></div>" 
+  }
+  
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+
+
+  });
+  </script>
+  
+</head>
+<body>
+  <h1 id="qunit-header">QUnit example</h1>
+ <h2 id="qunit-banner"></h2>
+ <div id="qunit-testrunner-toolbar"></div>
+ <h2 id="qunit-userAgent"></h2>
+ <ol id="qunit-tests"></ol>
+ <div id="qunit-fixture">test markup, will be hidden</div>
+</body>
+</html>
