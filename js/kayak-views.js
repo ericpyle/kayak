@@ -3,6 +3,16 @@
  */
 
 
+	var cAsciiA = 65; // 'A'
+
+	function IndexToAsciiMarkerABC(index)
+	{
+		if (index > 25)
+			index = index % 25;
+	    asciiMarker = String.fromCharCode(cAsciiA + index);
+		return asciiMarker;		
+	}
+
 
 function generatePanelIndent(outline)
 {
@@ -31,7 +41,7 @@ function generatePanelIndent(outline)
 		{
 			if (indentStyleNum == 1)
 			{
-				indexForLabel = "A";
+				indexForLabel = IndexToAsciiMarkerABC((contentParams.repeat ? (i/contentParams.repeat) : 0)) // 1: 0(0) 1(1) 2(2), 2: 0(0) 1 2(1) 3, 3: 
 			}
 			else
 			{

@@ -104,6 +104,25 @@ test("two lines - header", function() {
   deepEqual(result, expected, "We expect result to be " + expected);
 });
 
+test("four lines with headers - repeat 1", function() {
+  var outline = createBlankOutline("panel");
+  outline.head["contentParams"] = {"repeat" : 2, "header": true };
+   outline.body.concepts.push({"content": "first header"});
+    outline.body.concepts.push({"content": "first line"});
+  outline.body.concepts.push({"content": "second header"});
+    outline.body.concepts.push({"content": "second line"});
+  var result = generatePanelIndent(outline);
+  var expected = {
+  	"indentStyles": [".panel-indent-level-1", ".panel-indent-level-2"],
+  	"html" :   "<div class='panel-indent-level-1 panel-header'><span class='itemMarker'>A</span><span class='conceptContent'>first header</span></div>"+ 
+  			   "<div class='panel-indent-level-2'>&nbsp;&nbsp;&nbsp;&nbsp;<span class='itemMarker'>1</span><span class='conceptContent'>first line</span></div>"+
+  			   "<div class='panel-indent-level-1 panel-header'><span class='itemMarker'>B</span><span class='conceptContent'>second header</span></div>"+ 
+  			   "<div class='panel-indent-level-2'>&nbsp;&nbsp;&nbsp;&nbsp;<span class='itemMarker'>1</span><span class='conceptContent'>second line</span></div>"
+  }
+  
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
 
 
   });
