@@ -170,6 +170,8 @@
 			formatPositionIntoLabel = formatPositionIntoLabel_ABA;
 		else if (outlineMode == "123")
 			formatPositionIntoLabel = formatPositionIntoLabel_123;
+		else if (outlineMode == "Panel")
+			formatPositionIntoLabel = formatPositionIntoLabel_Panel;
 	}
 		
 	function formatPositionIntoLabel_123(positionObj, ghostExists)
@@ -183,6 +185,13 @@
 			label = label + "." + positionObj.position[i];
 		}
 		return label + ".";
+	}
+	
+	function formatPositionIntoLabel_Panel(positionObj, ghostExists)
+	{
+		if (!positionObj)
+			return "";
+		return getLabelForPanelIndex(mainOutline, positionObj.index) + ".";
 	}
 	
 	/*
@@ -392,12 +401,51 @@
 		});
 	}
 	
+	function initializeCbIsPanelHead()
+	{
+		if (outlineMode == "Chiasm" || outlineMode == "123")
+		{
+			$("#btnSetPanelCycle").removeAttr("href");
+			$("#btnSetPanelCycle").unbind("click");
+			return false;
+		}
+		$("#btnSetPanelCycle").attr("href","#");
+		$("#btnSetPanelCycle").unbind("click"); // make sure we don't install multiple times
+		// TODO: determine if it should be checked or not.
+		$("#btnSetPanelCycle").removeAttr("checked");
+		$("#btnSetPanelCycle").click(function(event)
+		{
+			var fIsPanelHead = $("#btnSetPanelCycle").attr("checked");
+			var index = $('.edit-state').index();
+			var positionList = new Array();
+			getConceptPositions(positionList, index);
+			if ($('.edit-state').hasClass("ghost"))
+			{
+				// convert to real
+				convertGhostToReal($('.edit-state'));
+				getConceptPositions(positionList, index);
+			}
+			else
+			{
+				var textArea = $('.edit-state textarea');
+				var newContent = $(textArea).val();
+				positionObj = positionList[index];
+				positionObj.concept.content = newContent;			
+			}
+			
+			setPanelHeadInterval(mainOutline, index);
+			refreshAllLabels();
+			publishConceptInsertionElsewhere();
+			return true;
+		});
+	}
+	
 	function initializeBtnSubpoint()
 	{
-		if (outlineMode == "Chiasm")
+		if (outlineMode == "Chiasm" || outlineMode == "Panel")
 		{
 			$("#btnSubpoint").removeAttr("href");
--			$("#btnSubpoint").unbind("click");
+			$("#btnSubpoint").unbind("click");
 			return false;
 		}
 		$("#btnSubpoint").attr("href","#");
@@ -562,8 +610,12 @@
 		{
 			$("<div></div>").prependTo(".edit-state")
 		    	.attr("id", "head-editBoxControls");
+			var btnOptionalHtml = "";
+		    if (outlineMode == "Panel")
+		    	btnOptionalHtml = '<button id="btnSetPanelCycle"> Set Panel Cycle </button> ';
 			$("#head-editBoxControls")
-				.append('<button id="btnAddPointAbove"> + point </button>');
+				.append('<button id="btnAddPointAbove"> + point </button>')
+				.append(btnOptionalHtml);
 		}
 		else
 		{
@@ -573,10 +625,14 @@
 		{
 		    $("<div></div>").appendTo(".edit-state")
 		    	.attr("id", "tail-editBoxControls");
+		    var btnOptionalHtml = "";
+		    if (outlineMode == "123")
+		    	btnOptionalHtml = '<button id="btnSubpoint"> &gt; subpoint </button> | ';
+		    
 			$("#tail-editBoxControls")
 				.append('<button id="btnAddPointBelow"> + point </button>')
-				.append('<button id="btnUpdateContent" type="button" value="'+ txtContentId +'">Update</button>') 
-				.append('<button id="btnSubpoint"> &gt; subpoint </button> | ')
+				.append('<button id="btnUpdateContent" type="button" value="'+ txtContentId +'">Enter</button>') 
+				.append(btnOptionalHtml)
 				.append('<button id="btnDelete"> x delete </button> | ');
 			$("#btnUpdateContent").click(updateContent);
 		}
@@ -584,6 +640,7 @@
 		{
 			$("#tail-editBoxControls").appendTo(".edit-state");	
 		}
+		initializeCbIsPanelHead();
 		initializeBtnDelete();
 		initializeBtnSubpoint();
 		initializeBtnAddPoint(0);

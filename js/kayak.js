@@ -618,6 +618,9 @@
 		{
 			PublishOutlineViewItems(mainOutline.body.concepts, "#chiasm-" + "indent");			
 		}
-		
-		
+		else if (mainOutline.head.contentType == "panel")
+		{
+			var result = generatePanelIndent(mainOutline);
+			$("#chiasm-indent").append(result.html);
+		}
 	}

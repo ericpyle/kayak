@@ -20,6 +20,8 @@
 	    		contentTypeMode = "modeHierarchical";
 	    	else if (mainOutline.head.contentType == "chiasm")
 	    		contentTypeMode = "modeChiasm";
+	    	else if (mainOutline.head.contentType == "panel")
+	    		contentTypeMode = "modePanel";
 	    	$("#edit-outline-contentType").val(contentTypeMode);
 	    }
 	    
@@ -49,6 +51,10 @@
 		    	}
 	    	}
 	    	else if (mainOutline.head.contentType == "outline")
+	    	{
+	    		publishOutlineToReadOnlyViews();
+	    	}
+	    	else if (mainOutline.head.contentType == "panel")
 	    	{
 	    		publishOutlineToReadOnlyViews();
 	    	}
@@ -132,6 +138,35 @@
   				$("body").data("mainOutlineJSON-orig", JSON.stringify(mainOutline));
   				return false;
   			}
+  			if (mainOutline.head.contentType == "panel")
+  			{
+   				$("#edit-outline-editControl-row").attr('style', "display:none;");
+  				$("#outlineContainer").empty();
+  				switchOutlineMode("Panel");
+  				//$("#edit-outline-editControl");
+  				$("#outlineContainer").append('<div id="outline"></div>');
+  				if (mainOutline.body.concepts.length == 1 && mainOutline.body.concepts[0].content == "")
+  				{
+  					mainOutline = createBlankOutline("panel");
+  					mainOutline.head["contentParams"] = {"repeat" : 0, "header": false};
+  					initializeEmptyView();
+  				}
+  				else if (mainOutline.body.concepts.length == 0)
+  				{
+  					mainOutline.head["contentParams"] = {"repeat" : 0, "header": false};
+  					initializeEmptyView();
+  				}
+  				else
+  				{
+  					if (!mainOutline.head.contentParams || !mainOutline.head.contentParams.repeat )
+  						mainOutline.head["contentParams"] = {"repeat" : 0 };
+  					LoadAllViewsFromCurrentObj(createEditBoxesForOutline);
+  				}
+
+  				$("body").data("mainOutlineJSON-orig", JSON.stringify(mainOutline));
+  				return false;
+  			}
+  			
   			
 	    };
 	    
@@ -202,6 +237,8 @@
 				mainOutline.head.contentType = "chiasm";
 			else if (contentType == "modeHierarchical")
 				mainOutline.head.contentType = "outline";
+			else if (contentType== "modePanel")
+				mainOutline.head.contentType = "panel";
 		}
 		
 		function InitializeEditForm()
@@ -265,6 +302,10 @@
 		else if (mainOutline.head.contentType == "outline")
 		{
 			applyCitationMarkup(mainOutline, publishContentToHierachical);
+		}
+		else if (mainOutline.head.contentType == "panel")
+		{
+			applyCitationMarkup(mainOutline, publishContentToChiasmView);
 		}
 		refreshScriptureTagging();		
 	}
