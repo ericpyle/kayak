@@ -70,6 +70,7 @@
 	    		mainOutline.head.contentType = "chiasm";  // default    	
 	    	if (mainOutline.head.contentType == "chiasm")
   			{
+  				$("#edit-outline-panelOptions-row").attr('style', "display:none;");
   				$("#edit-outline-editControl-row").removeAttr('style');
   				switchOutlineMode("Chiasm");
   				$("#edit-outline-contentType").val("Chiasm");
@@ -119,6 +120,7 @@
   			}
   			if (mainOutline.head.contentType == "outline")
   			{
+  				$("#edit-outline-panelOptions-row").attr('style', "display:none;");
   				$("#edit-outline-editControl-row").attr('style', "display:none;");
   				$("#outlineContainer").empty();
   				switchOutlineMode("123");
@@ -141,6 +143,7 @@
   			if (mainOutline.head.contentType == "panel")
   			{
    				$("#edit-outline-editControl-row").attr('style', "display:none;");
+  				$("#edit-outline-panelOptions-row").removeAttr('style');
   				$("#outlineContainer").empty();
   				switchOutlineMode("Panel");
   				//$("#edit-outline-editControl");
@@ -252,6 +255,16 @@
 	  			return true;
 			});
 			
+			$("#cbPanelHasHeaders").click(function() {
+	  			var fPanelHasHeaders = $("#cbPanelHasHeaders").attr("checked");
+	  			if (fPanelHasHeaders)
+	  				mainOutline.head.contentParams["header"] = true;
+				else
+					mainOutline.head.contentParams["header"] = false;
+				LoadAllViewsFromCurrentObj();
+	  			return true;
+			});
+			
 			$("#edit-outline-contentType").change(onChangeOutlineContentType);
 			
 			$("#edit-outline-editControl").change(function() {
@@ -315,8 +328,12 @@
 	    /*
 		 * edit views
 		 */
-		$("#editChiasmBody div").remove();
-		$("#outline div").remove();
+		if (doCreateEditBoxes)
+		{
+			$("#editChiasmBody div").remove();
+			$("#outline div").remove();
+		}
+			
 		/*
 		 * header edit boxes
 		 */		

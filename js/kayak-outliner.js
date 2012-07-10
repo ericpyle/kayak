@@ -612,7 +612,7 @@
 		    	.attr("id", "head-editBoxControls");
 			var btnOptionalHtml = "";
 		    if (outlineMode == "Panel")
-		    	btnOptionalHtml = '<button id="btnSetPanelCycle"> Set Panel Cycle </button> ';
+		    	btnOptionalHtml = '<button id="btnSetPanelCycle"> Insert panel break </button> ';
 			$("#head-editBoxControls")
 				.append('<button id="btnAddPointAbove"> + point </button>')
 				.append(btnOptionalHtml);

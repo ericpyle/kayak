@@ -34,6 +34,10 @@ button[href='#']:hover, button[type='button']:hover, button[type='submit']:hover
 .preview-outline-titleBlock-source {
 	float:left;
 }
+
+.panel-header {
+	font-weight: 600;
+}
     
 .examples { list-style: none; margin-left: 0px;}
  
