@@ -80,7 +80,7 @@
 	function applyLabelToConceptNode(element, label)
 	{
 		if ($(element).hasClass("ghost"))
-			label = "("+ label +") "
+			label = "("+ label +") ";
 		else
 			label = label + " ";
 		$(element).find("label").text(label);
@@ -191,7 +191,7 @@
 	{
 		if (!positionObj)
 			return "";
-		return getLabelForPanelIndex(mainOutline, positionObj.index) + ".";
+		return getLabelForPanelIndex(mainOutline, positionObj.position[0] - 1) + ".";
 	}
 	
 	/*
