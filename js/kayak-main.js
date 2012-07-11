@@ -73,7 +73,6 @@
   				$("#edit-outline-panelOptions-row").attr('style', "display:none;");
   				$("#edit-outline-editControl-row").removeAttr('style');
   				switchOutlineMode("Chiasm");
-  				$("#edit-outline-contentType").val("Chiasm");
 	  			if (editControl == "chiasmABBA")
 	  			{
 	  				$("#outlineContainer").empty();  				
