@@ -37,8 +37,8 @@ test("one line", function() {
   outline.body.concepts.push({"content": "one line"});
   var result = generatePanelIndent(outline);
   var expected = {
-  	"indentStyles": [".panel-indent-level-1"],
-  	"html" :   "<div class='panel-indent-level-1'><span class='itemMarker'>1</span><span class='conceptContent'>one line</span></div>"
+  	"indentStyles": [".indent-panel-level-1"],
+  	"html" :   "<div class='indent-panel-level-1'><span class='itemMarker'>1. </span><span class='conceptContent'>one line</span></div>"
   };
   
   deepEqual(result, expected, "We expect result to be " + expected);
@@ -51,9 +51,9 @@ test("two lines", function() {
   outline.body.concepts.push({"content": "second line"});
   var result = generatePanelIndent(outline);
   var expected = {
-  	"indentStyles": [".panel-indent-level-1", ".panel-indent-level-2"],
-  	"html" :   "<div class='panel-indent-level-1'><span class='itemMarker'>1</span><span class='conceptContent'>one line</span></div>" + 
-  			   "<div class='panel-indent-level-2'>&nbsp;&nbsp;&nbsp;&nbsp;<span class='itemMarker'>2</span><span class='conceptContent'>second line</span></div>" 
+  	"indentStyles": [".indent-panel-level-1", ".indent-panel-level-2"],
+  	"html" :   "<div class='indent-panel-level-1'><span class='itemMarker'>1. </span><span class='conceptContent'>one line</span></div>" + 
+  			   "<div class='indent-panel-level-2'>&nbsp;&nbsp;&nbsp;&nbsp;<span class='itemMarker'>2. </span><span class='conceptContent'>second line</span></div>" 
   }
   
   deepEqual(result, expected, "We expect result to be " + expected);
@@ -67,9 +67,9 @@ test("two lines - repeat 1", function() {
     outline.body.concepts.push({"content": "first repeat"});
   var result = generatePanelIndent(outline);
   var expected = {
-  	"indentStyles": [".panel-indent-level-1"],
-  	"html" :   "<div class='panel-indent-level-1'><span class='itemMarker'>1</span><span class='conceptContent'>first line</span></div>"+ 
-  			   "<div class='panel-indent-level-1'><span class='itemMarker'>1</span><span class='conceptContent'>first repeat</span></div>" 
+  	"indentStyles": [".indent-panel-level-1"],
+  	"html" :   "<div class='indent-panel-level-1'><span class='itemMarker'>1. </span><span class='conceptContent'>first line</span></div>"+ 
+  			   "<div class='indent-panel-level-1'><span class='itemMarker'>1. </span><span class='conceptContent'>first repeat</span></div>" 
   }
   
   deepEqual(result, expected, "We expect result to be " + expected);
@@ -82,8 +82,8 @@ test("one line - header", function() {
   outline.body.concepts.push({"content": "header"});
   var result = generatePanelIndent(outline);
   var expected = {
-  	"indentStyles": [".panel-indent-level-1"], // .panel-header {font-weight: 600;}
-  	"html" :   "<div class='panel-indent-level-1 panel-header'><span class='itemMarker'>A</span><span class='conceptContent'>header</span></div>" 
+  	"indentStyles": [".indent-panel-level-1"], // .panel-header {font-weight: 600;}
+  	"html" :   "<div class='indent-panel-level-1 panel-header'><span class='itemMarker'>A. </span><span class='conceptContent'>header</span></div>" 
   }
   
   deepEqual(result, expected, "We expect result to be " + expected);
@@ -96,9 +96,9 @@ test("two lines - header", function() {
     outline.body.concepts.push({"content": "first point"});
   var result = generatePanelIndent(outline);
   var expected = {
-  	"indentStyles": [".panel-indent-level-1", ".panel-indent-level-2"],
-  	"html" :   "<div class='panel-indent-level-1 panel-header'><span class='itemMarker'>A</span><span class='conceptContent'>header</span></div>"+ 
-  			   "<div class='panel-indent-level-2'>&nbsp;&nbsp;&nbsp;&nbsp;<span class='itemMarker'>1</span><span class='conceptContent'>first point</span></div>" 
+  	"indentStyles": [".indent-panel-level-1", ".indent-panel-level-2"],
+  	"html" :   "<div class='indent-panel-level-1 panel-header'><span class='itemMarker'>A. </span><span class='conceptContent'>header</span></div>"+ 
+  			   "<div class='indent-panel-level-2'>&nbsp;&nbsp;&nbsp;&nbsp;<span class='itemMarker'>1. </span><span class='conceptContent'>first point</span></div>" 
   }
   
   deepEqual(result, expected, "We expect result to be " + expected);
@@ -113,11 +113,11 @@ test("four lines with headers - repeat 1", function() {
     outline.body.concepts.push({"content": "second line"});
   var result = generatePanelIndent(outline);
   var expected = {
-  	"indentStyles": [".panel-indent-level-1", ".panel-indent-level-2"],
-  	"html" :   "<div class='panel-indent-level-1 panel-header'><span class='itemMarker'>A</span><span class='conceptContent'>first header</span></div>"+ 
-  			   "<div class='panel-indent-level-2'>&nbsp;&nbsp;&nbsp;&nbsp;<span class='itemMarker'>1</span><span class='conceptContent'>first line</span></div>"+
-  			   "<div class='panel-indent-level-1 panel-header'><span class='itemMarker'>B</span><span class='conceptContent'>second header</span></div>"+ 
-  			   "<div class='panel-indent-level-2'>&nbsp;&nbsp;&nbsp;&nbsp;<span class='itemMarker'>1</span><span class='conceptContent'>second line</span></div>"
+  	"indentStyles": [".indent-panel-level-1", ".indent-panel-level-2"],
+  	"html" :   "<div class='indent-panel-level-1 panel-header'><span class='itemMarker'>A. </span><span class='conceptContent'>first header</span></div>"+ 
+  			   "<div class='indent-panel-level-2'>&nbsp;&nbsp;&nbsp;&nbsp;<span class='itemMarker'>1. </span><span class='conceptContent'>first line</span></div>"+
+  			   "<div class='indent-panel-level-1 panel-header'><span class='itemMarker'>B. </span><span class='conceptContent'>second header</span></div>"+ 
+  			   "<div class='indent-panel-level-2'>&nbsp;&nbsp;&nbsp;&nbsp;<span class='itemMarker'>1. </span><span class='conceptContent'>second line</span></div>"
   }
   
   deepEqual(result, expected, "We expect result to be " + expected);

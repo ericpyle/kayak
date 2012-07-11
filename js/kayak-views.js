@@ -68,7 +68,7 @@ function generatePanelIndent(outline)
 		else if (indentStyleNum == 1)
 			indentSpacing = "";
 		var indexForLabel = getLabelForPanelIndex(outline, i);
-		var classIndent = "panel-indent-level-" + indentStyleNum;
+		var classIndent = "indent-panel-level-" + indentStyleNum;
 		// lookup to see if we've already added this
 		// "." + classIndent
 		if(!doTestAndDoSomething(indentStyles, function (item) { return item == ("." + classIndent); }))
@@ -76,7 +76,7 @@ function generatePanelIndent(outline)
 			indentStyles.push("." + classIndent);
 		}		
 		html += "<div class='"+ classIndent + (contentParams.header && indentStyleNum == 1 ? " panel-header" : "") + "'>" + 
-			indentSpacing + "<span class='itemMarker'>"+ indexForLabel +".</span><span class='conceptContent'>"+ concepts[i].content +"</span></div>";
+			indentSpacing + "<span class='itemMarker'>"+ indexForLabel +". </span><span class='conceptContent'>"+ concepts[i].content +"</span></div>";
 	};
 	panelOutput["indentStyles"] = indentStyles;
 	panelOutput["html"] = html;
