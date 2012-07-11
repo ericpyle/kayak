@@ -109,12 +109,22 @@
 		RemoveAllHighlighting();
 		if ($("#itemHighlighting").attr("checked") == false)
 			return false;
+        var viewMatchingClass = $(this).attr("class");
+        var view = viewMatchingClass.split("-")[0];
+        var matchingClass = viewMatchingClass.substr(view.length);
+        $(".indent" + matchingClass + "," + 
+          ".flat" + matchingClass + "," + 
+          ".tableAAB" + matchingClass)        
+        	.addClass("chiasmItemHighlightedSecondaryFocus");
+        $(this).removeClass("chiasmItemHighlightedSecondaryFocus");
         $(this).addClass("chiasmItemHighlightedMainFocus");
 
+		/*
         var previewId = $(this).attr("id");
         var view = previewId.split("-")[0];
         var matchingPairSelector = createMatchingPairSelectorFromViewElementId(previewId);
         $('#' + view + "-" + matchingPairSelector).addClass("chiasmItemHighlightedSecondaryFocus");
+        */
 	}
 	
 	function removeHighlight()
@@ -622,5 +632,6 @@
 		{
 			var result = generatePanelIndent(mainOutline);
 			$("#chiasm-indent").append(result.html);
+			$("#chiasm-indent div").click(highlightItem);
 		}
 	}
