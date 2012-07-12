@@ -62,6 +62,34 @@
 	    	//alert("changed" + iconceptChangedContent);
 	    }
 	    
+	    function LoadOutlineToBulkEditBox()
+	    {
+	    	$("#outlineContainer").empty();
+			$("#outlineContainer").append('<div id="outlineBulkEdit"></div>');
+			$('#bulkEditABA').contents().clone().appendTo('#outlineBulkEdit');
+			loadCurrentChiasmIntoTextBox('tbImport');
+	    }
+	    
+	    function LoadOutlineToChiasmEdit()
+	    {
+		  	$("#outlineContainer").empty();  				
+			$("#outlineContainer").append('<div id="outline"></div>');
+			if (mainOutline.body.concepts.length == 1 && mainOutline.body.concepts[0].content == "")
+			{
+				mainOutline = createBlankOutline("chiasm");
+				LoadAllViewsFromCurrentObj();
+				initializeEmptyView();
+			}
+			else if (mainOutline.body.concepts.length == 0)
+			{
+				LoadAllViewsFromCurrentObj();
+				initializeEmptyView();	  					
+			}	  					
+			else
+				LoadAllViewsFromCurrentObj(createEditBoxesForOutline);
+			$("body").data("mainOutlineJSON-orig", JSON.stringify(mainOutline));
+	    }
+	    
 	    function LoadOutlineFromCurrentState()
 	    {
 	    	var editControl = $("#edit-outline-editControl").val();
@@ -75,22 +103,7 @@
   				switchOutlineMode("Chiasm");
 	  			if (editControl == "chiasmABBA")
 	  			{
-	  				$("#outlineContainer").empty();  				
-	  				$("#outlineContainer").append('<div id="outline"></div>');
-	  				if (mainOutline.body.concepts.length == 1 && mainOutline.body.concepts[0].content == "")
-	  				{
-	  					mainOutline = createBlankOutline("chiasm");
-	  					LoadAllViewsFromCurrentObj();
-	  					initializeEmptyView();
-	  				}
-	  				else if (mainOutline.body.concepts.length == 0)
-	  				{
-	  					LoadAllViewsFromCurrentObj();
-	  					initializeEmptyView();	  					
-	  				}	  					
-	  				else
-	  					LoadAllViewsFromCurrentObj(createEditBoxesForOutline);
-	  				$("body").data("mainOutlineJSON-orig", JSON.stringify(mainOutline));
+	  				LoadOutlineToChiasmEdit();
 	  				return false;
 	  			}
 	  			if (editControl == "chiasmAABB")
@@ -109,10 +122,7 @@
 	  			}  	
 	  			if (editControl == "chiasmBulk")
 	  			{
-					$("#outlineContainer").empty();
-					$("#outlineContainer").append('<div id="outlineBulkEdit"></div>');
-					$('#bulkEditABA').contents().clone().appendTo('#outlineBulkEdit');
-					loadCurrentChiasmIntoTextBox('tbImport');
+					LoadOutlineToBulkEditBox();
 	  				return false;
 	  			}
   				return false;
@@ -123,7 +133,6 @@
   				$("#edit-outline-editControl-row").attr('style', "display:none;");
   				$("#outlineContainer").empty();
   				switchOutlineMode("123");
-  				//$("#edit-outline-editControl");
   				$("#outlineContainer").append('<div id="outline"></div>');
   				if (mainOutline.body.concepts.length == 1 && mainOutline.body.concepts[0].content == "")
   				{
@@ -145,7 +154,6 @@
   				$("#edit-outline-panelOptions-row").removeAttr('style');
   				$("#outlineContainer").empty();
   				switchOutlineMode("Panel");
-  				//$("#edit-outline-editControl");
   				$("#outlineContainer").append('<div id="outline"></div>');
   				if (mainOutline.body.concepts.length == 1 && mainOutline.body.concepts[0].content == "")
   				{
@@ -252,6 +260,44 @@
 					RemoveAllHighlighting();
 	  			}
 	  			return true;
+			});
+			
+			$("#btnCreateNewOutline, #btnNewOutline_Edit").click(function(event) {
+				// load a blank outline
+				removeAnyRowSelectionAndOptions("#exampleTable", "outlineRowSelected", "outlineSelectedOptions");
+				var	docToLoad = createBlankOutline("chiasm");
+				loadJSONToOutline(docToLoad);
+				$("#tabsMain").tabs('select',"#EditView");
+				
+				return false;
+			});
+			
+			$("#btnBulkEditOutline").click(function(event) {
+				LoadOutlineToBulkEditBox();
+				$("#btnBulkCancel").click(function(event) {
+					LoadOutlineFromCurrentState();
+					return false;
+				});
+				return false;
+			});
+			
+			$("#btnApplyHead_Edit").click(function(event)
+			{
+				ApplyOutlineHeadChanges();
+				return publishOutlineToReadOnlyViews();
+			});
+			
+			$("#btnApplyCitation_Cite").click(function(event)
+			{
+				applyCitationToOutline();
+				return publishOutlineToReadOnlyViews();
+			});
+			
+			$("#chiasmAutoLabelingOn, #chiasmAutoLabelingOff").click(function(event){
+				
+				$(".autoLabelingState").removeClass("autoLabelingState");
+				$(this).addClass("autoLabelingState");
+				adjustAutoLabeling();			
 			});
 			
 			$("#cbPanelHasHeaders").click(function() {

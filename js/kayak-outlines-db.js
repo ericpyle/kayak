@@ -1192,35 +1192,6 @@
 			    }
 			} 
 			return true;
-		});
-		
-		$("#btnCreateNewOutline, #btnNewOutline_Edit").click(function(event) {
-			// load a blank outline
-			removeAnyRowSelectionAndOptions("#exampleTable", "outlineRowSelected", "outlineSelectedOptions");
-			var	docToLoad = createBlankOutline("chiasm");
-			loadJSONToOutline(docToLoad);
-			$("#tabsMain").tabs('select',"#EditView");
-			
-			return false;
-		});
-		
-		$("#btnApplyHead_Edit").click(function(event)
-		{
-			ApplyOutlineHeadChanges();
-			return publishOutlineToReadOnlyViews();
-		});
-		
-		$("#btnApplyCitation_Cite").click(function(event)
-		{
-			applyCitationToOutline();
-			return publishOutlineToReadOnlyViews();
-		});
-		
-		$("#chiasmAutoLabelingOn, #chiasmAutoLabelingOff").click(function(event){
-			
-			$(".autoLabelingState").removeClass("autoLabelingState");
-			$(this).addClass("autoLabelingState");
-			adjustAutoLabeling();			
 		});		
 		
 		$("#btnCreateNewAuthor, #btnCreateNewSubmitter, #btnCreateNewSource").click(function(event) {

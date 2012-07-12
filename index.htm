@@ -90,7 +90,8 @@
 				</tbody>
 				<tfoot>
 					<tr><td colspan="2"><button id="btnApplyHead_Edit" type="button">Enter</button> 
-						<a id="btnNewOutline_Edit" href="#">Create new outline</a> 			
+						<a id="btnNewOutline_Edit" href="#">Create new outline</a> |
+						<a id="btnBulkEditOutline" href="#">Bulk Edit</a> 			
 						(Auto labeling: <a id="chiasmAutoLabelingOn" class="autoLabelingState" href="#">on</a> | <a id="chiasmAutoLabelingOff" href="#">off</a>)</td></tr>
 				</tfoot>
 			</table>
@@ -126,6 +127,9 @@
 				<br/>
 				<button id="btnSplit" type="button" onclick="importFromTextBoxToCurrentChiasm('tbImport')">
 					Enter
+				</button>
+				<button id="btnBulkCancel" type="button">
+					Back to Edit
 				</button>
 				<input type="checkbox" id="stripCounting" checked="yes">Strip counting (A.B.C. or 1.2.3.)</input>
 				</div>
@@ -452,6 +456,7 @@
 		if (fInitialized)
 			return;
 		SelectUrlSpecifiedDb();
+		$("#edit-outline-contentType").val("modeChiasm");
 		LoadOutlineFromCurrentState();
 		InitializeEditForm();
 		fInitialized = true;
