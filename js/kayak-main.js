@@ -355,7 +355,7 @@
 		JSONToPreviewPanel();
 		if (mainOutline.head.contentType == "chiasm")
 		{
-			applyCitationMarkup(mainOutline, publishContentToChiasmView);
+			applyCitationMarkup(mainOutline, publishContentToHierachical);
 		}
 		else if (mainOutline.head.contentType == "outline")
 		{
@@ -363,7 +363,7 @@
 		}
 		else if (mainOutline.head.contentType == "panel")
 		{
-			applyCitationMarkup(mainOutline, publishContentToChiasmView);
+			applyCitationMarkup(mainOutline, publishContentToHierachical);
 		}
 		refreshScriptureTagging();		
 	}
