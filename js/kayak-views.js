@@ -99,3 +99,23 @@ function generatePanelVertical(outline, spacing, view)
 	 */
 	return panelOutput;
 }
+
+
+function generateHierarchicalFlat(outline)
+{
+	var response = {};
+	if (outline.head.contentType != "outline" || outline.body.concepts.length == 0)
+		return response;
+	
+	var html = "";
+	var positionList = new Array();
+	getConceptPositions(positionList, -1, null, outline.body.concepts);
+	for (var i=0; i < positionList.length; i++) {
+		var positionObj = positionList[i];
+		var label = formatPositionIntoLabel(positionObj); //, ghostExists(positionList));
+		
+		html += "<div><span class='itemMarker'>"+ label +" </span><span class='conceptContent'>"+ positionObj.concept.content +"</span></div>";
+	}
+	response["html"] = html;
+	return response;
+}

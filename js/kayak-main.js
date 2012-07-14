@@ -390,7 +390,9 @@
 		}
 		else if (mainOutline.head.contentType == "outline")
 		{
-			PublishOutlineViewItems(mainOutline.body.concepts, "#chiasm-" + "indent");			
+			PublishOutlineViewItems(mainOutline.body.concepts, "#chiasm-" + "indent");
+			var result = generateHierarchicalFlat(mainOutline);
+			$("#chiasm-flat").append(result.html);			
 		}
 		else if (mainOutline.head.contentType == "panel")
 		{

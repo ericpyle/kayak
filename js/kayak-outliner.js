@@ -468,17 +468,28 @@
 				positionObj = positionList[index];
 				positionObj.concept.content = newContent;			
 			}
-			var newConcept = createConcept("");
 			var positionObj = positionList[index];
-			if (!positionObj.concept.concepts)
-				positionObj.concept.concepts = new Array();
-			positionObj.concept.concepts.push(newConcept);
+			insertSubpoint(positionObj, "");
 			convertTextarea();
 			var newConceptHtml = insertConceptAfterEditBoxInView("");
 			moveEditBoxToNext(newConceptHtml);
 			publishConceptInsertionElsewhere();
 			return false;
 		});
+	}
+	
+	function insertSubpoint(positionObj, content)
+	{
+		return insertChildConcept(positionObj.concept, content);
+	}
+	
+	function insertChildConcept(concept, content)
+	{
+		var newConcept = createConcept(content);
+		if (!concept.concepts)
+			concept.concepts = new Array();
+		concept.concepts.push(newConcept);
+		return newConcept;
 	}
 	
 	function initializeBtnAddPoint(offset)
