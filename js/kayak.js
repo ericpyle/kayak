@@ -603,35 +603,3 @@
 		return (combinedTitle1.length > 0 && sourceDetails.length > 0) ? (combinedTitle1 + "<div class='preview-outline-titleBlock-source'> &nbsp;(" + sourceDetails + ")</div>") :
 			((combinedTitle1.length > 0) ? combinedTitle1 : sourceDetails);
 	}
-	
-	function JSONToPreviewPanel() {
-		$("#tableViewAAB tr").remove();
-		$(".chiasm div").remove();
-		$(".chiasm ol").remove();  // outline
-		
-		var combinedTitle = CombineTitleAuthorAndSource();
-		updateViewsChiasmContent("-title-chiasm", combinedTitle);
-		updateViewsChiasmContent("-chiasm-scriptureRange", mainOutline.head.ScriptureRange);
-	
-		var count = mainOutline.body.concepts.length;
-		
-		if (mainOutline.head.contentType == "chiasm")
-		{
-			$(mainOutline.body.concepts).each(function(index)
-			{
-				ConceptToChiasmViewItem(mainOutline.body.concepts, index, true);
-		    	ConceptToChiasmViewItem(mainOutline.body.concepts, index, false);
-				UpdateTableFromConcept(mainOutline.body.concepts, index, "#tableViewAAB", count);
-			});			
-		}
-		else if (mainOutline.head.contentType == "outline")
-		{
-			PublishOutlineViewItems(mainOutline.body.concepts, "#chiasm-" + "indent");			
-		}
-		else if (mainOutline.head.contentType == "panel")
-		{
-			var result = generatePanelIndent(mainOutline);
-			$("#chiasm-indent").append(result.html);
-			$("#chiasm-indent div").click(highlightItem);
-		}
-	}

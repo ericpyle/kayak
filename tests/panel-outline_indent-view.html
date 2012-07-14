@@ -13,7 +13,7 @@
   $(document).ready(function(){
 
 
-module("kayak-views.js");
+module("kayak-views.js - indent");
 
 
 test("non panel", function() {
@@ -124,6 +124,21 @@ test("four lines with headers - repeat 1", function() {
 });
 
 
+module("kayak-views.js - flat");
+test("two lines", function() {
+  var outline = createBlankOutline("panel");
+  outline.head["contentParams"] = {"repeat" : 0};
+  outline.body.concepts.push({"content": "one line"});
+  outline.body.concepts.push({"content": "second line"});
+  var result = generatePanelFlat(outline);
+  var expected = {
+  	"indentStyles": [".flat-panel-level-1", ".flat-panel-level-2"],
+  	"html" :   "<div class='flat-panel-level-1'><span class='itemMarker'>1. </span><span class='conceptContent'>one line</span></div>" + 
+  			   "<div class='flat-panel-level-2'><span class='itemMarker'>2. </span><span class='conceptContent'>second line</span></div>" 
+  }
+  
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
 
   });
   </script>

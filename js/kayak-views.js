@@ -52,6 +52,16 @@ function getLabelForPanelIndex(outline, iconcept)
 
 function generatePanelIndent(outline)
 {
+	return generatePanelVertical(outline, "&nbsp;&nbsp;&nbsp;&nbsp;", "indent");
+}
+
+function generatePanelFlat(outline)
+{
+	return generatePanelVertical(outline, "", "flat");
+}
+
+function generatePanelVertical(outline, spacing, view)
+{
 	var panelOutput = {};
 	if (outline.head.contentType != "panel" || outline.body.concepts.length == 0)
 		return panelOutput;
@@ -64,11 +74,11 @@ function generatePanelIndent(outline)
 	for (var i=0; i < concepts.length; i++) {
 		var indentStyleNum = getIndentStyleNum(outline, i);
 		if (indentStyleNum > 1)
-			indentSpacing += "&nbsp;&nbsp;&nbsp;&nbsp;";
+			indentSpacing += spacing;
 		else if (indentStyleNum == 1)
 			indentSpacing = "";
 		var indexForLabel = getLabelForPanelIndex(outline, i);
-		var classIndent = "indent-panel-level-" + indentStyleNum;
+		var classIndent = view + "-panel-level-" + indentStyleNum;
 		// lookup to see if we've already added this
 		// "." + classIndent
 		if(!doTestAndDoSomething(indentStyles, function (item) { return item == ("." + classIndent); }))
