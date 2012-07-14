@@ -355,15 +355,15 @@
 		JSONToPreviewPanel();
 		if (mainOutline.head.contentType == "chiasm")
 		{
-			applyCitationMarkup(mainOutline, publishContentToHierachical);
+			applyCitationMarkup(mainOutline, publishContentToPreviewTabs);
 		}
 		else if (mainOutline.head.contentType == "outline")
 		{
-			applyCitationMarkup(mainOutline, publishContentToHierachical);
+			applyCitationMarkup(mainOutline, publishContentToPreviewTabs);
 		}
 		else if (mainOutline.head.contentType == "panel")
 		{
-			applyCitationMarkup(mainOutline, publishContentToHierachical);
+			applyCitationMarkup(mainOutline, publishContentToPreviewTabs);
 		}
 		refreshScriptureTagging();		
 	}

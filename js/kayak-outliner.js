@@ -575,12 +575,18 @@
 		};
 	}
 	
-	function publishContentToHierachical(concepts, iconcept, newContent)
+	function publishContentToPreviewTabs(concepts, iconcept, newContent)
 	{
-		var viewConcept = $("#chiasm-indent").find(".conceptContent").get(iconcept);
+		publishContent("#chiasm-indent", iconcept, newContent);
+		publishContent("#chiasm-flat", iconcept, newContent);
+		publishContent("#tableViewAAB", iconcept, newContent);
+	}
+	
+	function publishContent(containerSelector, iconcept, newContent)
+	{
+		var viewConcept = $(containerSelector).find(".conceptContent").get(iconcept);
 		$(viewConcept).first().html(newContent);
 	}
-
 	
 	function moveEditBoxToNext(nextRow)
 	{
