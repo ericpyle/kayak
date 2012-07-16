@@ -370,8 +370,10 @@
 	
 	function JSONToPreviewPanel() {
 		$("#tableViewAAB tr").remove();
+		$("#chiasm-flat").addClass("chiasm");
 		$(".chiasm div").remove();
 		$(".chiasm ol").remove();  // outline
+		$("#chiasm-flat").removeClass("chiasm");
 		
 		var combinedTitle = CombineTitleAuthorAndSource();
 		updateViewsChiasmContent("-title-chiasm", combinedTitle);
@@ -386,7 +388,8 @@
 				ConceptToChiasmViewItem(mainOutline.body.concepts, index, true);
 		    	ConceptToChiasmViewItem(mainOutline.body.concepts, index, false);
 				UpdateTableFromConcept(mainOutline.body.concepts, index, "#tableViewAAB", count);
-			});			
+			});
+			$("#chiasm-flat").addClass("chiasm");
 		}
 		else if (mainOutline.head.contentType == "outline")
 		{
@@ -403,6 +406,7 @@
 			var result = generatePanelFlat(mainOutline);
 			$("#chiasm-flat").append(result.html);
 			$("#chiasm-flat div").click(highlightItem);
+			$("#chiasm-flat").addClass("chiasm");
 		}
 	}
 	
