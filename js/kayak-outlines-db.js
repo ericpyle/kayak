@@ -121,7 +121,7 @@
 			dataTable1.fnClearTable(false);
 			for (var i=0; i < exampleRows.length; ++i) {
 				var doc = exampleRows[i].value;
-				if (!doc || (doc.head.contentType != "chiasm" && doc.head.contentType != "outline"))
+				if (!doc || (doc.head.contentType != "chiasm" && doc.head.contentType != "outline" && doc.head.contentType != "panel"))
 					continue;
 				var authorProfile = collectProfileDocs("personProfile", exampleRows, function(rowDoc){
 							if (rowDoc.head.contentType == "personProfile" && 
@@ -175,6 +175,8 @@
 		
 		function selectOutlineRow(outlineRow)
 		{
+			if (!outlineRow)
+				return false;
 			var rowId = $(outlineRow).attr("id");
 			var hadSelection = $(outlineRow).hasClass("outlineRowSelected");
 			removeOutlineRowSelection(outlineRow);
@@ -1559,8 +1561,8 @@
     	}			    	
     	cacheDbInDom(getResponse);
     	LoadPersonsAndAuthoredOutlines();
-    	var newRow = pageToRow(jq("exampleTable"), jq(outline._id));
-    	selectOutlineRow(newRow);
+    	var newRowInTable = pageToRow(jq("exampleTable"), jq(outline._id));
+    	selectOutlineRow(newRowInTable);
     	alert("Changes have been published");    	
 	}
 	
