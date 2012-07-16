@@ -247,7 +247,7 @@
 				mainOutline.head.contentType = "chiasm";
 			else if (contentType == "modeHierarchical")
 				mainOutline.head.contentType = "outline";
-			else if (contentType== "modePanel")
+			else if (contentType == "modePanel")
 				mainOutline.head.contentType = "panel";
 		}
 		
@@ -310,6 +310,10 @@
 	  			return true;
 			});
 			
+			// kludge: change OutlineType to correct type. doesn't seem to always work when loading outline from url 
+			$("#edit-outline-contentType").unbind("change");
+			LoadContentTypeModeFromOutline();
+			// $("#edit-outline-contentType").change(onChangeOutlineContentType);
 			$("#edit-outline-contentType").change(onChangeOutlineContentType);
 			
 			$("#edit-outline-editControl").change(function() {
@@ -332,7 +336,7 @@
 		{
 			$("#save-outline-title").text(AorB(mainOutline.head.title, "") );
 			$("#save-outline-scriptureRange").text(AorB(mainOutline.head.ScriptureRange, ""));
-		}
+		}		
 	}
 	
 	function stageOutlineToSave()
