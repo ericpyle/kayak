@@ -151,7 +151,6 @@
   			if (mainOutline.head.contentType == "panel")
   			{
    				$("#edit-outline-editControl-row").attr('style', "display:none;");
-  				$("#edit-outline-panelOptions-row").removeAttr('style');
   				$("#outlineContainer").empty();
   				switchOutlineMode("Panel");
   				$("#outlineContainer").append('<div id="outline"></div>');
@@ -172,6 +171,11 @@
   						mainOutline.head["contentParams"] = {"repeat" : 0 };
   					LoadAllViewsFromCurrentObj(createEditBoxesForOutline);
   				}
+  				if (mainOutline.head.contentParams && mainOutline.head.contentParams.header)
+   					$("#cbPanelHasHeaders").attr("checked", true);
+   				else
+   					$("#cbPanelHasHeaders").removeAttr("checked");
+  				$("#edit-outline-panelOptions-row").removeAttr('style');
 
   				$("body").data("mainOutlineJSON-orig", JSON.stringify(mainOutline));
   				return false;
