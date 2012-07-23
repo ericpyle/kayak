@@ -617,7 +617,7 @@
 				var countAuthored = 0;
 				for (var inext=0; inext < authorRows.length; inext++) {					
 					var nextDoc = authorRows[inext].value;
-					if (nextDoc && (nextDoc.head.contentType == "chiasm" || nextDoc.head.contentType == "outline" ) && 
+					if (nextDoc && (nextDoc.head.contentType == "chiasm" || nextDoc.head.contentType == "outline" || nextDoc.head.contentType == "panel" ) && 
 						nextDoc.head.author && nextDoc.head.author.guid == personProfile._id)
 						authoredDocs.push(nextDoc);
 					else
@@ -731,7 +731,7 @@
 				var guid = idProfile.substring(0, idProfile.length - "_source".length);
 				if (doc._id != guid)
 					continue;
-				if (doc.head.contentType == "chiasm" || doc.head.contentType == "outline")
+				if (doc.head.contentType == "chiasm" || doc.head.contentType == "outline" || doc.head.contentType == "panel")
 				{
 					//alert(JSON.stringify(doc));
 					// create a profile
@@ -1015,7 +1015,8 @@
 				if (!doc)
 					continue;
 				if (doc.head.contentType == "chiasm" || 
-					doc.head.contentType == "outline")
+					doc.head.contentType == "outline" || 
+					doc.head.contentType == "panel" )
 				{
 					profiles.push(doc);
 					if (doc.head.source && doc.head.source.guid)
@@ -1062,7 +1063,7 @@
 				var authorDetails = "";
 				var sourceDetails = "";
 				var rowId = "";
-				if (doc.head.contentType == "chiasm" || doc.head.contentType == "outline")
+				if (doc.head.contentType == "chiasm" || doc.head.contentType == "outline" || doc.head.contentType == "panel")
 				{
 					var authorProfile = fetchAuthorProfileByOutline(doc);
 					authorDetails = formatName(authorProfile, "");
