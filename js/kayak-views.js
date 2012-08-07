@@ -100,6 +100,70 @@ function generatePanelVertical(outline, spacing, view)
 	return panelOutput;
 }
 
+// (if repeat == 2)
+//  0   1   2
+// [0] [2] [4] (+ row == 0)
+//  3   4   5
+// [1] [3] [5] (+ row == 1)
+
+function generatePanelTable(outline)
+{
+	var panelOutput = {};
+	if (outline.head.contentType != "panel" || outline.body.concepts.length == 0)
+		return panelOutput;
+	panelOutput["html"] = "";
+	var contentParams = outline.head.contentParams;
+	var concepts = outline.body.concepts;
+
+	
+	var cColumns = contentParams.repeat != 0 ? Math.max(Math.round(concepts.length / contentParams.repeat), 1) : 1;
+	var html = "";
+	for (var i=0; i < concepts.length; i++) {
+		var icolumn = i % cColumns;
+		var irow =  Math.floor(i / cColumns);
+		var icell = irow + icolumn * contentParams.repeat; 
+		
+		// lookup to see if we've already added this
+		// "." + classIndent
+		if (icolumn == 0)
+		{
+			if (i == 0)
+			{
+				if (contentParams.header)
+					html += "<thead>";
+				else
+					html += "<tbody>";
+			}
+			else
+			{
+				html += "</tr>";
+				if (irow == 1 && icolumn == 0 && contentParams.header)
+				{
+					html += "</thead><tbody>";
+				}
+			}
+				
+			html += "<tr>";
+		}
+		
+		html += "<td><span class='conceptContent'>"+ concepts[icell].content +"</span></td>";
+	
+		/*
+	 *   
+	  	"html" :   "<thead><tr><td><span class='conceptContent'>header</span></td></tr></thead>" +
+  				"<tbody><tr><td><span class='conceptContent'>first point</span></td></tr><tbody>"
+		  };
+	 */	
+	};
+	html += "</tr>";
+	if (irow == 0 && contentParams.header)
+		html += "</thead>";
+	else
+		html += "</tbody>";
+	panelOutput["html"] = html;
+	return panelOutput;
+}
+
 
 function generateHierarchicalFlat(outline)
 {

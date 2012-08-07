@@ -140,6 +140,91 @@ test("two lines", function() {
   deepEqual(result, expected, "We expect result to be " + expected);
 });
 
+module("kayak-views.js - table");
+test("one line", function() {
+  var outline = createBlankOutline("panel");
+  outline.head["contentParams"] = {"repeat" : 0};
+  outline.body.concepts.push({"content": "one line"});
+  var result = generatePanelTable(outline);
+  var expected = {
+  	"html" :   "<tbody><tr><td><span class='conceptContent'>one line</span></td></tr></tbody>"
+	};
+   deepEqual(result, expected, "We expect result to be " + expected);
+});
+  
+test("two lines", function() {
+  var outline = createBlankOutline("panel");
+  outline.head["contentParams"] = {"repeat" : 0};
+  outline.body.concepts.push({"content": "one line"});
+  outline.body.concepts.push({"content": "second line"});
+  var result = generatePanelTable(outline);
+  var expected = {
+  	"html" :   "<tbody><tr><td><span class='conceptContent'>one line</span></td></tr>" +
+  				"<tr><td><span class='conceptContent'>second line</span></td></tr></tbody>"
+  }
+  
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("two lines - repeat 1", function() {
+  var outline = createBlankOutline("panel");
+  outline.head["contentParams"] = {"repeat" : 1 };
+  outline.body.concepts.push({"content": "first line"});
+    outline.body.concepts.push({"content": "first repeat"});
+  var result = generatePanelTable(outline);
+  var expected = {
+  	"html" :   "<tbody><tr><td><span class='conceptContent'>first line</span></td>" +
+  				   "<td><span class='conceptContent'>first repeat</span></td></tr></tbody>" 
+  }
+  
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("one line - header", function() {
+  var outline = createBlankOutline("panel");
+  outline.head["contentParams"] = {"repeat" : 0, "header": true};
+  outline.body.concepts.push({"content": "header"});
+  var result = generatePanelTable(outline);
+  var expected = {
+  	"html" :   "<thead><tr><td><span class='conceptContent'>header</span></td></tr></thead>" 
+  }
+  
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("two lines - header", function() {
+  var outline = createBlankOutline("panel");
+  outline.head["contentParams"] = {"repeat" : 0, "header": true};
+  outline.body.concepts.push({"content": "header"});
+    outline.body.concepts.push({"content": "first point"});
+  var result = generatePanelTable(outline);
+  var expected = {
+  	"html" :   "<thead><tr><td><span class='conceptContent'>header</span></td></tr></thead>" +
+  				"<tbody><tr><td><span class='conceptContent'>first point</span></td></tr></tbody>"
+  }
+  
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("four lines with headers - repeat 1", function() {
+  var outline = createBlankOutline("panel");
+  outline.head["contentParams"] = {"repeat" : 2, "header": true };
+   outline.body.concepts.push({"content": "first header"});
+    outline.body.concepts.push({"content": "first line"});
+  outline.body.concepts.push({"content": "second header"});
+    outline.body.concepts.push({"content": "second line"});
+  var result = generatePanelTable(outline);
+  var expected = {
+  	"html" :   "<thead><tr><td><span class='conceptContent'>first header</span></td>" +
+  				          "<td><span class='conceptContent'>second header</span></td></tr></thead>" +
+  				"<tbody><tr><td><span class='conceptContent'>first line</span></td>" + 
+  				           "<td><span class='conceptContent'>second line</span></td></tr></tbody>"
+  }
+  
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+
   });
   </script>
   
