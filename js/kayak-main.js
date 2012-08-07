@@ -378,6 +378,7 @@
 	
 	function JSONToPreviewPanel() {
 		$("#tableViewAAB tr").remove();
+		$("#outline-table tbody, #outline-table thead").remove();
 		$("#chiasm-flat").addClass("chiasm");
 		$(".chiasm div").remove();
 		$(".chiasm ol").remove();  // outline
@@ -398,7 +399,6 @@
 				UpdateTableFromConcept(mainOutline.body.concepts, index, "#tableViewAAB", count);
 			});
 			$("#chiasm-flat").addClass("chiasm");
-			$("#outline-table").attr("cols", 4);
 		}
 		else if (mainOutline.head.contentType == "outline")
 		{
@@ -417,9 +417,7 @@
 			$("#chiasm-flat div").click(highlightItem);
 			$("#chiasm-flat").addClass("chiasm");
 			
-			$("#outline-table tbody, #outline-table thead").remove();
 			var result = generatePanelTable(mainOutline);
-			$("#outline-table").removeAttr("cols");
 			$("#outline-table").append(result.html);
 		}
 	}
