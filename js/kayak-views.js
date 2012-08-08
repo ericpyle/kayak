@@ -106,6 +106,15 @@ function generatePanelVertical(outline, spacing, view)
 //  3   4   5
 // [1] [3] [5] (+ row == 1)
 
+//i  0   1
+//  [0] [4] [8]
+//   2   3
+//  [1] [5]
+//   4   5
+//  [2] [6]
+//   6   7
+//  [3] [7]
+
 function generatePanelTable(outline)
 {
 	var panelOutput = {};
@@ -115,13 +124,17 @@ function generatePanelTable(outline)
 	var contentParams = outline.head.contentParams;
 	var concepts = outline.body.concepts;
 
-	
-	var cColumns = contentParams.repeat != 0 ? Math.max(Math.round(concepts.length / contentParams.repeat), 1) : 1;
+	var cColumnsTotal = contentParams.repeat != 0 ? Math.max(Math.ceil(concepts.length / contentParams.repeat), 1) : 1;
+	var cColumnsFull = contentParams.repeat != 0 ? Math.max(Math.floor(concepts.length / contentParams.repeat), 1) : 1;
+	var cRows = Math.floor(concepts.length / cColumnsFull);
+	var cCells = cColumnsTotal * cRows;
 	var html = "";
-	for (var i=0; i < concepts.length; i++) {
-		var icolumn = i % cColumns;
-		var irow =  Math.floor(i / cColumns);
-		var icell = irow + icolumn * contentParams.repeat; 
+	for (var i=0; i < cCells; i++) {
+		var icolumn = i % cColumnsTotal;
+		var irow =  Math.floor(i / cColumnsTotal);
+		var icell = irow + icolumn * contentParams.repeat;
+		if (icell >= concepts.length) 
+			continue;
 		
 		// lookup to see if we've already added this
 		// "." + classIndent
