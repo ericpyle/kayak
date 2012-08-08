@@ -83,6 +83,14 @@ table.tableViewAAB th, table.tableViewAAB td
 	vertical-align:top;
 }
 
+table.tableViewAAB #outlineHead-table tr td {
+	padding:0px;
+}
+
+#outline-table thead tr td {
+	font-weight: 600;
+}
+
 #exampleTable th, 
 #exampleTable td
 {
