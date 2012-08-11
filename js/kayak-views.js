@@ -85,7 +85,8 @@ function generatePanelVertical(outline, spacing, view)
 		{
 			indentStyles.push("." + classIndent);
 		}		
-		html += "<div class='"+ classIndent + (contentParams.header && indentStyleNum == 1 ? " panel-header" : "") + "'>" + 
+		var id = view + "-panel-concept-" + i;
+		html += "<div id='"+ id +"' class='"+ classIndent + (contentParams.header && indentStyleNum == 1 ? " panel-header" : "") + "'>" + 
 			indentSpacing + "<span class='itemMarker'>"+ indexForLabel +". </span><span class='conceptContent'>"+ concepts[i].content +"</span></div>";
 	};
 	panelOutput["indentStyles"] = indentStyles;
@@ -158,8 +159,8 @@ function generatePanelTable(outline)
 				
 			html += "<tr>";
 		}
-		
-		html += "<td><span class='conceptContent'>"+ concepts[icell].content +"</span></td>";
+		var id = "table-panel-concept-" + icell; 
+		html += "<td id='"+ id +"'><span class='conceptContent'>"+ concepts[icell].content +"</span></td>";
 	
 		/*
 	 *   
