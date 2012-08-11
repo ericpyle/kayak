@@ -75,22 +75,6 @@
 	    return item;
 	}
 	
-	/*
-	 * preceded with "-level-A-[1/2]"
-	 */
-	function getBasicViewConceptId(indexABA, count)
-	{
-		var conceptMarker = IndexToAsciiMarkerABA(indexABA, count);
-		var halfway = Math.round(count/2);
-		var basicViewConceptId = "-level-" + conceptMarker + "-" + (indexABA < halfway ? 1 : 2);
-		return basicViewConceptId;
-	}
-	
-	function getViewConceptId(view, indexABA, count)
-	{
-		return view + getBasicViewConceptId(indexABA, count);
-	}
-	
 	function getBasicViewCssId(indexABA, count)
 	{
 		var conceptMarker = IndexToAsciiMarkerABA(indexABA, count);

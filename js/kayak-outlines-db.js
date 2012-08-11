@@ -641,13 +641,6 @@
 			return submittedDocs;
 		}
 		
-		/*
-		 * Utility
-		 */
-		function jq(myid) { 
-   			return '#' + myid.replace(/(:|\.)/g,'\\$1');
- 		}
-
 		function LoadAuthorResultsCallback(authorRows, fSubmitter)
 		{
 			//alert("loadAuthorResultsCallback");

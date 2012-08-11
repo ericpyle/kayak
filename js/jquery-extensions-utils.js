@@ -18,6 +18,14 @@
 		return jQuery.parseJSON(JSON.stringify(obj));
 	}
 	
+	
+	/*
+	 * Utility
+	 */
+	function jq(myid) { 
+		return '#' + myid.replace(/(:|\.)/g,'\\$1');
+	}
+	
 	function EmptyIfNull(s)
 	{
 		return s ? s : "";

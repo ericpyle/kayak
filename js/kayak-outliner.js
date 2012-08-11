@@ -586,19 +586,6 @@
 		};
 	}
 	
-	function publishContentToPreviewTabs(concepts, iconcept, newContent)
-	{
-		publishContent("#chiasm-indent", iconcept, newContent);
-		publishContent("#chiasm-flat", iconcept, newContent);
-		publishContent("#tableViewAAB", iconcept, newContent);
-	}
-	
-	function publishContent(containerSelector, iconcept, newContent)
-	{
-		var viewConcept = $(containerSelector).find(".conceptContent").get(iconcept);
-		$(viewConcept).first().html(newContent);
-	}
-	
 	function moveEditBoxToNext(nextRow)
 	{
 		var indexRowEdit = $('.edit-state').index();

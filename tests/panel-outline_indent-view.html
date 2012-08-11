@@ -224,9 +224,6 @@ test("four lines with headers - repeat 1", function() {
   deepEqual(result, expected, "We expect result to be " + expected);
 });
 
-// {"head":{"contentType":"panel","contentParams":{"repeat":4,"header":true}},"body":{"concepts":[{"content":"Dividing"},{"content":"Day 1: Light/dark"},{"content":"Day 2: Waters above/below"},{"content":"Day 3: Waters/land"},{"content":"Filling"},{"content":"Day 4: Sun, moon, stars"},{"content":"Day 5: Birds and fish"},{"content":"Day 6: Land animals and man"},{"content":"Day 7: Sabbath"}]}}
-
-
 test("nine lines with headers - repeat 4", function() {
   var outline = {"head":{"contentType":"panel","contentParams":{"repeat":4,"header":true}},
   	"body":{"concepts":[{"content":"Dividing"},{"content":"Day 1: Light/dark"},{"content":"Day 2: Waters above/below"},{"content":"Day 3: Waters/land"},
@@ -243,7 +240,65 @@ test("nine lines with headers - repeat 4", function() {
   deepEqual(result, expected, "We expect result to be " + expected);
 });
 
+
+module("kayak-views.js - panel - table - publish to id");
+test("one line", function() {
+  
+  $("body").append("<table><tbody><tr><td id='table-panel-concept-0'><span class='conceptContent'>empty</span></td></tr></tbody></table>");
+  
+  publishContentToId("one line", getPanelTableConceptId(0));
+  var result = $("#table-panel-concept-0").html();   
+  var expected = "<span class=\"conceptContent\">one line</span>";
+  
+   deepEqual(result, expected, "We expect result to be " + expected);
+
+  // cleanup
+  $("body table").remove();
+  
+});
+
+
+test("four lines - repeat 2 with headers", function() {
+  
+  var html = "<table><thead><tr><td id='table-panel-concept-0'><span class='conceptContent'>empty</span></td>" +
+  				          		"<td id='table-panel-concept-2'><span class='conceptContent'>empty</span></td></tr></thead>" +
+  			   "<tbody><tr><td id='table-panel-concept-1'><span class='conceptContent'>empty</span></td>" + 
+  				          		"<td id='table-panel-concept-3'><span class='conceptContent'>empty</span></td></tr></tbody><table>";
+  
+  $("body").append(html);
+  
+  publishContentToId("header one", getPanelTableConceptId(0));
+  publishContentToId("line one", getPanelTableConceptId(1));
+  publishContentToId("header two", getPanelTableConceptId(2));
+  publishContentToId("line two", getPanelTableConceptId(3));
+  {
+	  var result = $("#table-panel-concept-0").html();   
+	  var expected = "<span class=\"conceptContent\">header one</span>";
+	  deepEqual(result, expected, "We expect result to be " + expected);	
+  }
+  {
+	  var result = $("#table-panel-concept-1").html();
+	  var expected = "<span class=\"conceptContent\">line one</span>";
+	  deepEqual(result, expected, "We expect result to be " + expected);  	
+  }
+  {
+	  var result = $("#table-panel-concept-2").html();   
+	  var expected = "<span class=\"conceptContent\">header two</span>";
+	  deepEqual(result, expected, "We expect result to be " + expected);	
+  }
+  {
+	  var result = $("#table-panel-concept-3").html();
+	  var expected = "<span class=\"conceptContent\">line two</span>";
+	  deepEqual(result, expected, "We expect result to be " + expected);  	
+  }
+  // cleanup
+  $("body table").remove();
+  
+});
+
+
   });
+
   </script>
   
 </head>

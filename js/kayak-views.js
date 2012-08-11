@@ -2,6 +2,54 @@
  * @author Pyle
  */
 
+function publishContentToSequentialPreviewTabs(concepts, iconcept, newContent)
+{
+	publishSequentialContentInPlace("#chiasm-indent", iconcept, newContent);
+	publishSequentialContentInPlace("#chiasm-flat", iconcept, newContent);
+	//publishContent("#tableViewAAB", iconcept, newContent);
+}
+
+function publishSequentialContentInPlace(containerSelector, iconcept, newContent)
+{
+	var viewConcept = $(containerSelector).find(".conceptContent").get(iconcept);
+	$(viewConcept).first().html(newContent);
+}
+
+function publishContentToPanelTablePreviewTab(conceptsNotUsed, iconcept, newContent)
+{
+	publishContentToId(newContent, getPanelTableConceptId(iconcept));
+}
+
+function publishContentToChiasmTablePreviewTab(concepts, iconcept, newContent)
+{
+	publishContentToId(newContent, getViewConceptId("tableAAB", iconcept, concepts.length));
+}
+
+/*
+ * NOTE: For Chiasm only. TODO: Rename.
+ * preceded with "-level-A-[1/2]"
+ */
+function getBasicViewConceptId(indexABA, count)
+{
+	var conceptMarker = IndexToAsciiMarkerABA(indexABA, count);
+	var halfway = Math.round(count/2);
+	var basicViewConceptId = "-level-" + conceptMarker + "-" + (indexABA < halfway ? 1 : 2);
+	return basicViewConceptId;
+}
+
+/*
+ * NOTE: For Chiasm only. TODO: Rename.
+ */
+function getViewConceptId(view, indexABA, count)
+{
+	return view + getBasicViewConceptId(indexABA, count);
+}
+
+function publishContentToId(newContent, id)
+{
+	var viewConcept = $(jq(id)).find(".conceptContent").get(0);
+	$(viewConcept).first().html(newContent);
+}
 
 var cAsciiA = 65; // 'A'
 
@@ -101,6 +149,11 @@ function generatePanelVertical(outline, spacing, view)
 	return panelOutput;
 }
 
+function getPanelTableConceptId(iconcept)
+{
+	return "table-panel-concept-" + iconcept;	
+}
+
 // (if repeat == 2)
 //  0   1   2
 // [0] [2] [4] (+ row == 0)
@@ -159,7 +212,7 @@ function generatePanelTable(outline)
 				
 			html += "<tr>";
 		}
-		var id = "table-panel-concept-" + icell; 
+		var id = getPanelTableConceptId(icell); 
 		html += "<td id='"+ id +"'><span class='conceptContent'>"+ concepts[icell].content +"</span></td>";
 	
 		/*

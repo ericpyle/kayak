@@ -363,15 +363,17 @@
 		JSONToPreviewPanel();
 		if (mainOutline.head.contentType == "chiasm")
 		{
-			applyCitationMarkup(mainOutline, publishContentToPreviewTabs);
+			applyCitationMarkup(mainOutline, publishContentToSequentialPreviewTabs);
+			applyCitationMarkup(mainOutline, publishContentToChiasmTablePreviewTab);			
 		}
 		else if (mainOutline.head.contentType == "outline")
 		{
-			applyCitationMarkup(mainOutline, publishContentToPreviewTabs);
+			applyCitationMarkup(mainOutline, publishContentToSequentialPreviewTabs);
 		}
 		else if (mainOutline.head.contentType == "panel")
 		{
-			applyCitationMarkup(mainOutline, publishContentToPreviewTabs);
+			applyCitationMarkup(mainOutline, publishContentToSequentialPreviewTabs);
+			applyCitationMarkup(mainOutline, publishContentToPanelTablePreviewTab);
 		}
 		refreshScriptureTagging();		
 	}
