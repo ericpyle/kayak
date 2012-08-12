@@ -687,7 +687,7 @@
 					.click(function(event) {
 						// first turn off any other selected Row.
 						var parentRow = $(event.target).parent("tr");
-						selectCreditRow(parentRow, fetchPersonProfile, "[name='updatePersonProfile']");
+						selectCreditRow(parentRow);
 		  				return false;
 					});
 				
@@ -858,6 +858,42 @@
 			}
 			// add some extra options
 			$(creditRow).after(rowHtml);
+			var fetchProfile;
+			var formSelector;
+			if (editMode == "save-outline-author" || editMode == "save-outline-submitter"){
+				fetchProfile = fetchPersonProfile;
+				formSelector = "[name='updatePersonProfile']";
+			}
+			if (editMode == "save-outline-source"){
+				fetchProfile = fetchSourceProfile;
+				formSelector = "[name='updateSourceDetails']";
+			}
+			$("#editProfile, #copyToNewProfile, #editCommon").click(function(event){
+					// show search
+					var idProfile = $(".creditRowSelected").attr("id");
+					var editMode = event.target.id;
+					loadEditForm(idProfile, fetchProfile, editMode, formSelector);
+					return false;
+				});
+
+			$("#btnCreditOk").click(function(event){
+				var idProfile = $(".creditRowSelected").attr("id");
+				var profile = fetchProfile(idProfile);
+				var editMode = $("#save-outline-credits").data("edit-mode");
+				if (editMode == "save-outline-author"){
+					stageSelectedAuthorProfile(profile);
+					$("#authorSpecification").hide();
+				}
+				if (editMode == "save-outline-submitter"){
+					stageSelectedSubmitterProfile(profile);
+					$("#submitterSpecification").hide();
+				}
+				if (editMode == "save-outline-source"){
+					stageSelectedSourceProfile(profile);
+					$("#sourceSpecification").hide();
+				}
+				return false;
+			});
 		}
 		
 		function pageToRow(domTableSelector, datatableRowSelector)
@@ -878,7 +914,7 @@
 			return !results || results.length == 0;
 		}
 		
-		function selectCreditRow(creditRow, fetchProfile, formSelector)
+		function selectCreditRow(creditRow)
 		{
 			if (TestNoResults(creditRow))
 				return false;
@@ -889,33 +925,7 @@
 			if ($(creditRow).hasClass("creditRowSelected"))
 			{
 				var editMode = $("#save-outline-credits").data("edit-mode");
-				installCreditRowOptions(creditRow);						
-				$("#editProfile, #copyToNewProfile, #editCommon").click(function(event){
-					// show search
-					var idProfile = $(".creditRowSelected").attr("id");
-					var editMode = event.target.id;
-					loadEditForm(idProfile, fetchProfile, editMode, formSelector);
-					return false;
-				});
-
-				$("#btnCreditOk").click(function(event){
-					var idProfile = $(".creditRowSelected").attr("id");
-					var profile = fetchProfile(idProfile);
-					var editMode = $("#save-outline-credits").data("edit-mode");
-					if (editMode == "save-outline-author"){
-						stageSelectedAuthorProfile(profile);
-						$("#authorSpecification").hide();
-					}
-					if (editMode == "save-outline-submitter"){
-						stageSelectedSubmitterProfile(profile);
-						$("#submitterSpecification").hide();
-					}
-					if (editMode == "save-outline-source"){
-						stageSelectedSourceProfile(profile);
-						$("#sourceSpecification").hide();
-					}
-					return false;
-				});				
+				installCreditRowOptions(creditRow);				
 			}
 		}
 		
@@ -1094,7 +1104,7 @@
 					.click(function(event) {
 						// first turn off any other selected Row.
 						var parentRow = $(event.target).parent("tr");
-						selectCreditRow(parentRow, fetchSourceProfile, "[name='updateSourceDetails']");
+						selectCreditRow(parentRow);
 		  				return false;
 					});
 				
@@ -2017,7 +2027,7 @@
 				if (profile)
 				{
 					var parentRow = pageToRow(jq("sourceSearchResults"), jq(profile._id + "_source"));
-					selectCreditRow(parentRow, fetchSourceProfile, "[name='updateSourceDetails']");
+					selectCreditRow(parentRow);
 				}
 			}
 
@@ -2033,7 +2043,7 @@
 					if (editMode == "save-outline-submitter")
 						tableId = jq("submitterProfileResults");
 					var parentRow = pageToRow(tableId, jq(profile._id));
-					selectCreditRow(parentRow, fetchPersonProfile, "[name='updatePersonProfile']");
+					selectCreditRow(parentRow);
 				}
 				$("[name='updatePersonProfile']").find("[name='_id']").val(""); // reset id, to make sure we don't accidentally use an old id.
 				$("[name='updatePersonProfile']").find("[name='_rev']").val("");

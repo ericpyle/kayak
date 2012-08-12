@@ -420,7 +420,7 @@
 				try
 				{
 					var server = new Couch.Server('http://kayak.iriscouch.com', '', '');
-					dbMain = new Couch.Database(server, 'outlinesstaged');
+					dbMain = new Couch.Database(server, 'outlineslive');
 					//dbMain = null; // DEBUG: just run from local db.
 					InitializeDbStuff();
 				}
