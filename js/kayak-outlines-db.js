@@ -808,13 +808,17 @@
 		function removeRowSelectionAndOptions(row, classSelectedRow, idOptions)
 		{
 			$('tr.' + classSelectedRow).removeClass(classSelectedRow);
-			var table = $(row).parent("tbody").parent("table");
+			var table = $(row).parent("tbody").parent("table"); // could be empty set
 			removeAnyRowSelectionAndOptions(table, classSelectedRow, idOptions);
 		}
 		
 		function removeAnyRowSelectionAndOptions(table, classSelectedRow, idOptions)
 		{
+			if (table == null || $(table)[0] == null || $(table)[0].tagName != "TABLE")
+				return;
 			var oTable = $(table).data("dataTable");
+			if (!oTable)
+				return;
 			var selectedRow = oTable.$('tr.' + classSelectedRow);
 			if (selectedRow)
 				selectedRow.removeClass(classSelectedRow);
@@ -1565,6 +1569,9 @@
     	}			    	
     	cacheDbInDom(getResponse);
     	LoadPersonsAndAuthoredOutlines();
+    	// clear outline table to prepare for the new row item
+		$("#exampleTable_filter input").val("");
+		$("#exampleTable_filter input").keyup();
     	var newRowInTable = pageToRow(jq("exampleTable"), jq(outline._id));
     	selectOutlineRow(newRowInTable);
     	alert("Changes have been published");    	
