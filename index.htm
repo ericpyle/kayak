@@ -31,13 +31,48 @@
 <div id="tabsMain" class="tabs" style="display:none;">
 	 <ul>	 	 
 	 	 <li><a href="#kayak"><span><b>kayak</b></span></a></li>
-		 <li><a href="#Examples"><span>Outlines</span></a></li>
+	 	 <li><a href="#BrowseByBook"><span>Browse</span></a></li>
+		 <li><a href="#Examples"><span>Search</span></a></li>
 		 <li><a href="#View"><span>View</span></a></li>
 	 	 <li><a href="#EditView"><span>Edit</span></a></li>
 	 	 <li><a href="#Cite"><span>Cite</span></a></li>
 	 </ul>
-	 <div id="kayak">
+	 <div id="kayak" style="">
 	 	Welcome!
+	 </div>
+	 <div id="BrowseByBook">
+	
+	<script type="text/javascript" src="js/BibleBookInfo.js"></script>
+	<script type="text/javascript">
+
+	$(document).ready(function(){
+		
+		for(var property in BookStats) {
+			if(typeof BookStats[property] == "string" || property.length == 3) {
+				var bookNameLong = SILTitleAbbrToHeader_eng[property];
+				var chapters = BookStats[property].chapters;
+				var chapterHtml = "";
+				for (var i=1; i <= chapters; i++) {
+					
+					/* chapterHtml += "<div style='margin:5px;display:run-in;float:left;'> " + i + " </div>" */
+				  if (i < 10)
+					 chapterHtml += "&nbsp;"
+				  chapterHtml += i;
+				  if (i < 8)
+					 chapterHtml += "&nbsp; "
+				  else
+				  	chapterHtml += " ";
+				};
+				
+				$("#BrowseByBook").append("<div><h3>" + bookNameLong + "</h3> <div style='width:250px;'>"+ chapterHtml +"</div></div>")
+			}
+		}
+
+	});
+	
+
+</script>
+		
 	 </div>
 	 <div id="Examples">
 		<table id="exampleTable" cols="6" width="100%">
