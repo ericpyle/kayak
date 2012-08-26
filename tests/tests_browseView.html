@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+                    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <script src="../js/jquery.js"></script>
+  <link rel="stylesheet" href="css/qunit-git.css" type="text/css" media="screen" />
+<script type="text/javascript" src="js/qunit-git.js"></script>
+<script type="text/javascript" src="../js/jquery-extensions-utils.js"></script>
+<script type="text/javascript" src="../js/kayak-browseView.js"></script>
+
+  <script>
+  $(document).ready(function(){
+
+
+module("kayak browse view - chapter slices");
+
+test("no matching outlines", function() {
+  var allOutlinesKeyedByBCVRange = [
+{"id":"774c87bd5ec2e4afb24a0ce0d1000c9f","key":[["MAT",1,1,"MAT",28,20],"chiasm"],"value":{"_id":"774c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Matthew 1:1-28:20","contentType":"chiasm"}}},
+{"id":"874c87bd5ec2e4afb24a0ce0d1000c9f","key":[["EXO",1,1,"EXO",40,38],"chiasm"],"value":{"_id":"874c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Exodus 1:1-40:38","contentType":"chiasm"}}}
+ ];
+  var result = getChapterSlice(allOutlinesKeyedByBCVRange, ["GEN",1]);
+  var expected = {"outlines": []};
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("one matching outline - one chapter slice - no overlap", function() {
+  var allOutlinesKeyedByBCVRange = [
+{"id":"974c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,1],"chiasm"],"value":{"_id":"974c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:1","contentType":"chiasm"}}},
+{"id":"874c87bd5ec2e4afb24a0ce0d1000c9f","key":[["EXO",1,1,"EXO",40,38],"chiasm"],"value":{"_id":"874c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Exodus 1:1-40:38","contentType":"chiasm"}}}
+ ];
+  var result = getChapterSlice(allOutlinesKeyedByBCVRange, ["GEN",1]);
+  var expected = {"outlines":["974c87bd5ec2e4afb24a0ce0d1000c9f"]};
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("one matching outline - one chapter slice - within range", function() {
+  var allOutlinesKeyedByBCVRange = [
+{"id":"974c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,1,"GEN",3,1],"chiasm"],"value":{"_id":"974c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:1-3:1","contentType":"chiasm"}}},
+{"id":"874c87bd5ec2e4afb24a0ce0d1000c9f","key":[["EXO",1,1,"EXO",40,38],"chiasm"],"value":{"_id":"874c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Exodus 1:1-40:38","contentType":"chiasm"}}}
+ ];
+  var result = getChapterSlice(allOutlinesKeyedByBCVRange, ["GEN",2]);
+  var expected = {"outlines":["974c87bd5ec2e4afb24a0ce0d1000c9f"]};
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("two matching outlines - one chapter slice - overlap", function() {
+  var allOutlinesKeyedByBCVRange = [
+{"id":"974c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,1],"chiasm"],"value":{"_id":"974c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:1","contentType":"chiasm"}}},
+{"id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,3],"chiasm"],"value":{"_id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:1","contentType":"chiasm"}}},
+{"id":"B74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",2,2],"chiasm"],"value":{"_id":"B74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 2:2","contentType":"chiasm"}}}
+ ];
+  var result = getChapterSlice(allOutlinesKeyedByBCVRange, ["GEN",1]);
+  var expected = {"outlines":["974c87bd5ec2e4afb24a0ce0d1000c9f","A74c87bd5ec2e4afb24a0ce0d1000c9f"]};
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+module("kayak browse view - verse slices");
+test("one matching outline - one verse slice - no overlap", function() {
+  var allOutlinesKeyedByBCVRange = [
+{"id":"974c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,1],"chiasm"],"value":{"_id":"974c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:1","contentType":"chiasm"}}},
+{"id":"B74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,2],"chiasm"],"value":{"_id":"B74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:2","contentType":"chiasm"}}}
+ ];
+  var result = getVerseSlice(allOutlinesKeyedByBCVRange, ["GEN",1,1]);
+  var expected = {"outlines":["974c87bd5ec2e4afb24a0ce0d1000c9f"]};
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("two matching outlines - one verse slice - one verse overlap", function() {
+  var allOutlinesKeyedByBCVRange = [
+{"id":"974c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,1],"chiasm"],"value":{"_id":"974c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:1","contentType":"chiasm"}}},
+{"id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,1,"GEN",1,2],"chiasm"],"value":{"_id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:1-2","contentType":"chiasm"}}},
+{"id":"B74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,2],"chiasm"],"value":{"_id":"B74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:2","contentType":"chiasm"}}}
+ ];
+  var result = getVerseSlice(allOutlinesKeyedByBCVRange, ["GEN",1,1]);
+  var expected = {"outlines":["974c87bd5ec2e4afb24a0ce0d1000c9f","A74c87bd5ec2e4afb24a0ce0d1000c9f"]};
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+
+test("two matching outlines - one verse slice - within range", function() {
+  var allOutlinesKeyedByBCVRange = [
+{"id":"974c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,1],"chiasm"],"value":{"_id":"974c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:1","contentType":"chiasm"}}},
+{"id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,1,"GEN",1,3],"chiasm"],"value":{"_id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:1-3","contentType":"chiasm"}}},
+{"id":"B74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,4],"chiasm"],"value":{"_id":"B74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:4","contentType":"chiasm"}}}
+ ];
+  var result = getVerseSlice(allOutlinesKeyedByBCVRange, ["GEN",1,2]);
+  var expected = {"outlines":["A74c87bd5ec2e4afb24a0ce0d1000c9f"]};
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+
+test("two matching outlines - one verse slice - within range", function() {
+  var allOutlinesKeyedByBCVRange = [
+{"id":"974c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,1],"chiasm"],"value":{"_id":"974c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:1","contentType":"chiasm"}}},
+{"id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,1,"GEN",3,1],"chiasm"],"value":{"_id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:1-3:1","contentType":"chiasm"}}},
+{"id":"B74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,4],"chiasm"],"value":{"_id":"B74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:4","contentType":"chiasm"}}}
+ ];
+  var result = getVerseSlice(allOutlinesKeyedByBCVRange, ["GEN",2,15]);
+  var expected = {"outlines":["A74c87bd5ec2e4afb24a0ce0d1000c9f"]};
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+
+
+  });
+  </script>
+  
+</head>
+<body>
+  <h1 id="qunit-header">QUnit example</h1>
+ <h2 id="qunit-banner"></h2>
+ <div id="qunit-testrunner-toolbar"></div>
+ <h2 id="qunit-userAgent"></h2>
+ <ol id="qunit-tests"></ol>
+ <div id="qunit-fixture">test markup, will be hidden</div>
+</body>
+</html>
