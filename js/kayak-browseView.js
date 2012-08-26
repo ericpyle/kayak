@@ -62,6 +62,29 @@
 	}
 
 
+/*
+	 *   var result = getChapterSlice(outlines, ["GEN",1]);
+  		 var expected = {"outlines":["974c87bd5ec2e4afb24a0ce0d1000c9f","A74c87bd5ec2e4afb24a0ce0d1000c9f"]};
+  		 ["GEN",1,1,"GEN",1,2]
+  		 	0,  1,2  "3", 4,5
+	 */
+	function getBookSlice(outlinesKeyedByBCVRange, targetB)
+	{
+		var results = {};
+		var matchingOutlines = [];
+		for (var i=0; i < outlinesKeyedByBCVRange.length; i++) {
+		  var outlineRow = outlinesKeyedByBCVRange[i];
+		  var bcvRange = outlineRow.key[0];
+		  // TODO: expand to include other books
+		  if (targetB[0] == bcvRange[0])
+		  {		  	
+		  	 matchingOutlines.push(outlineRow.id);
+		  }
+		};		
+		results["outlines"] = matchingOutlines;		
+		return results;
+	}
+
 	/*
 	 *   var result = getChapterSlice(outlines, ["GEN",1]);
   		 var expected = {"outlines":["974c87bd5ec2e4afb24a0ce0d1000c9f","A74c87bd5ec2e4afb24a0ce0d1000c9f"]};

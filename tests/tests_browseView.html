@@ -11,6 +11,29 @@
   <script>
   $(document).ready(function(){
 
+module("kayak browse view - book slices");
+
+test("no matching outlines", function() {
+  var allOutlinesKeyedByBCVRange = [
+{"id":"774c87bd5ec2e4afb24a0ce0d1000c9f","key":[["MAT",1,1,"MAT",28,20],"chiasm"],"value":{"_id":"774c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Matthew 1:1-28:20","contentType":"chiasm"}}},
+{"id":"874c87bd5ec2e4afb24a0ce0d1000c9f","key":[["EXO",1,1,"EXO",40,38],"chiasm"],"value":{"_id":"874c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Exodus 1:1-40:38","contentType":"chiasm"}}}
+ ];
+  var result = getBookSlice(allOutlinesKeyedByBCVRange, ["GEN"]);
+  var expected = {"outlines": []};
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("two matching outlines - one chapter slice - overlap", function() {
+  var allOutlinesKeyedByBCVRange = [
+{"id":"974c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,1],"chiasm"],"value":{"_id":"974c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:1","contentType":"chiasm"}}},
+{"id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,3],"chiasm"],"value":{"_id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:3","contentType":"chiasm"}}},
+{"id":"B74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["EXO",2,2],"chiasm"],"value":{"_id":"B74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Exodus 2:2","contentType":"chiasm"}}}
+ ];
+  var result = getBookSlice(allOutlinesKeyedByBCVRange, ["GEN"]);
+  var expected = {"outlines":["974c87bd5ec2e4afb24a0ce0d1000c9f","A74c87bd5ec2e4afb24a0ce0d1000c9f"]};
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
 
 module("kayak browse view - chapter slices");
 
