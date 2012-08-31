@@ -38,21 +38,21 @@ test("empty chapter", function() {
 
 test("Ch 1", function() {
   var bcv = "Gen 1";
-  var chapters = ["1"];
+  var chapters = [1];
   var result = getChapterRange(bcv);
   deepEqual(result, chapters, "We expect result to be " + chapters);
 });
 
 test("Ch 1:3-2:4", function() {
   var bcv = "Gen 1:1-2:1";
-  var chapters = ["1", "2"];
+  var chapters = [1, 2];
   var result = getChapterRange(bcv);
   deepEqual(result, chapters, "We expect result to be " + chapters);
 });
 
 test("Ch 10:11-36", function() {
   var bcv = "Gen 10:11-36";
-  var chapters = ["10"];
+  var chapters = [10];
   var result = getChapterRange(bcv);
   deepEqual(result, chapters, "We expect result to be " + chapters);
 });
@@ -60,14 +60,14 @@ test("Ch 10:11-36", function() {
 
 test("Ch 1:3-4", function() {
   var bcv = "Gen 1:3-4";
-  var chapters = ["1"];
+  var chapters = [1];
   var result = getChapterRange(bcv);
   deepEqual(result, chapters, "We expect result to be " + chapters);
 });
 
 test("Ch 1-2", function() {
   var bcv = "Gen 1-2";
-  var chapters = ["1", "2"];
+  var chapters = [1, 2];
   var result = getChapterRange(bcv);
   deepEqual(result, chapters, "We expect result to be " + chapters);
 });
@@ -185,7 +185,7 @@ test("vv.1:1-2:1", function() {
 module("kayak.js: getCitationMarkup - given chapters");
 test("v. 1", function() {
   var book = "Genesis";
-  var chRange = ["2"];
+  var chRange = [2];
   var cvRange = "v. 1"
   var result = getCitationMarkup(cvRange, book, chRange);
   var expected = "v. <cite class=\"bibleref\" title=\"Genesis 2:1\">1</cite>";

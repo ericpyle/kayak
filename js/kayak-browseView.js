@@ -6,7 +6,7 @@
 	{
 		for(var property in BookStats) {
 			if(typeof BookStats[property] == "string" || property.length == 3) {
-				var bookNameLong = SILTitleAbbrToHeader_eng[property];
+				var bookNameLong = BookCodeToName[property];
 				var chapters = BookStats[property].chapters;
 				var chapterHtml = "";
 				for (var i=1; i <= chapters; i++) {
@@ -34,10 +34,10 @@
 				var bookNameLong = "";
 				if (property.substr(0,1) == "1" || property.substr(0,1) == "2" || property.substr(0,1) == "3")
 				{
-					bookNameLong = property.substr(0,1) + " " + property.substr(1,1).toUpperCase() + property.substr(2,1).toLowerCase(); // SILTitleAbbrToHeader_eng[property];					
+					bookNameLong = property.substr(0,1) + " " + property.substr(1,1).toUpperCase() + property.substr(2,1).toLowerCase(); // BookCodeToName[property];					
 				}
 				else
-				 	bookNameLong = property.substr(0,1).toUpperCase() + property.substr(1,2).toLowerCase(); // SILTitleAbbrToHeader_eng[property];
+				 	bookNameLong = property.substr(0,1).toUpperCase() + property.substr(1,2).toLowerCase(); // BookCodeToName[property];
 				var chapterVerseHtml = "1:1";
 				
 				$("#BrowseByBook").append("<div>" + bookNameLong + " "+ chapterVerseHtml +"</div>")
@@ -160,4 +160,128 @@
 		};		
 		results["outlines"] = matchingOutlines;
 		return results;	
+	}
+	
+	function parseBookCode(bookName)
+	{
+		var endChar = bookName.substr(bookName.length - 1, 1);
+		if (endChar == ".")
+			bookName = bookName.substr(0, bookName.length - 1); // strip off the endChar
+		if (!bookName || bookName == "")
+			return null;
+		
+		if (!bookName || bookName == "")
+			return null;
+		
+		var bookCode = BookNameToCode[bookName.toLowerCase()];
+		if (!bookCode)
+		{
+			// try matching the bookcode
+			var testBookCode = bookName.toUpperCase();
+			if (testBookCode.length == 4)
+			{
+				var secondChar = testBookCode.substr(1, 1);
+				if (secondChar == " ")
+				{
+					// remove the space
+					testBookCode = testBookCode.substr(0,1) + testBookCode.substr(2,2);					
+				}
+			}
+			if (testBookCode.length == 3)
+			{
+				if(BookCodeToName[testBookCode])
+					bookCode = testBookCode;
+			}			
+		}
+		return bookCode;
+	}
+	
+	function parseBCVRange(scriptureRange)
+	{
+		var bcvRange = [];
+		if (!scriptureRange || scriptureRange == "")
+			return bcvRange;
+		// TODO: handle multiple books (1 Sam - 2 Sam)
+		var bookName = getBookName(scriptureRange); // kayak-common.js			
+		var bookCode = parseBookCode(bookName);
+		if (!bookCode)
+			return bcvRange;
+		
+		bcvRange.push(bookCode);
+		
+		var pattCVerseRef=/(?:(?:[1-9][0-9]?[0-9]?[.:])?[1-9][0-9]?[-–—]?)/g;		
+		var matches2 = scriptureRange.match(pattCVerseRef);
+		if (!matches2 || matches2.length == 0)
+			return bcvRange;
+		
+		var chapter1 = getChapter(matches2[0]);
+		var verse1 = null;
+		if (chapter1)
+		{
+			bcvRange.push(chapter1);
+			verse1 = getVerse(matches2[0], true /* expect colon to precede verse */);
+			if (verse1)
+				bcvRange.push(verse1); // first Verse
+			else
+				bcvRange.push(1); // no verses specified, just start at verse 1
+		}
+		
+		if (matches2.length == 1)
+			return bcvRange;
+		
+		bcvRange.push(bookCode);
+		var chapter2 = getChapter(matches2[1], true /* expect colon followed by verse */);		
+		if (chapter2)
+		{
+			var verse2 = getVerse(matches2[1]);
+			// bcvRange.push(chapters2[0]);
+			if (verse1)
+			{
+				if (verse2)
+				{
+					bcvRange.push(chapter2);
+					bcvRange.push(verse2); 
+				}
+				else
+				{
+					// wrong format, oh well.
+					bcvRange.push(chapter2);
+					bcvRange.push(null); 
+				}
+			}
+			else
+			{
+				bcvRange.push(chapters2);
+				bcvRange.push(-1); 
+			}
+		}
+		else
+		{
+			var verse2 = getVerse(matches2[1]);
+			if (verse2)
+			{
+				if (verse1)
+				{
+					// the verse2 is actually a continuation of verse1 (GEN 1:2-3), so use the first chapter we found,
+					// followed by verse2
+					var verse2 = getVerse(matches2[1]);
+					bcvRange.push(chapter1);
+					bcvRange.push(verse2);
+				}
+				else
+				{
+					// assume that verse2 is actually a continuation of chapter1 (GEN 1-2), so use verse2 as 
+					// the second chapter.
+					bcvRange.push(verse2);
+					bcvRange.push(-1); 
+				}	
+			}
+			else
+			{
+				// wrong format, oh well.
+				bcvRange.push(null);
+				bcvRange.push(null);				
+			}
+		}
+		return bcvRange;
 	}

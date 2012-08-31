@@ -47,7 +47,7 @@
 			var segment = remainingContent.substring(0, matchLocation + chVerseRange.length);
 			remainingContent = remainingContent.substring(matchLocation + chVerseRange.length);
 			//alert(chVerseRange);
-			if (chRange && chRange[0].length > 0 && chVerseRange.indexOf(":") == -1 && chVerseRange.indexOf(".") == -1)
+			if (chRange && chRange.length > 0 && chVerseRange.indexOf(":") == -1 && chVerseRange.indexOf(".") == -1)
 			{
 				title = chRange[0] + ":" + chVerseRange;
 			}
@@ -78,23 +78,76 @@
 		return bookName1;
 	}
 	
+	function getVerse(chapterVerseSeg, fExpectColon)
+	{
+		var pattVerseSeg=/[\.\:]([1-9][0-9]?[0-9]?)/g;
+		var pattVer =       /([1-9][0-9]?[0-9]?)/g;
+		var verseMatches = chapterVerseSeg.match(pattVerseSeg);
+		if (!verseMatches)
+		{
+			// possibly just a verse range (GEN 1:1-3)
+			if (!fExpectColon)
+				verseMatches = chapterVerseSeg.match(pattVer);
+			if (!verseMatches)
+				return null;	
+		}
+
+		var verse = verseMatches[0].match(pattVer)[0];
+		return parseInt(verse);
+	}
+	
+	function getVerseRange(scriptureRange)
+	{
+		//var pattVerseSeg=/([\.\:]([1-9][0-9]?[0-9]?)|[-–—][1-9][0-9]?[0-9]?(?![\.\:]))/g;
+		var pattVerseSeg=/[\.\:]([1-9][0-9]?[0-9]?)/g;
+		var pattVer =       /([1-9][0-9]?[0-9]?)/g;
+		var verseMatches = scriptureRange.match(pattVerseSeg);
+		var verses = [];
+		if (!verseMatches)
+			return verses;
+		if (verseMatches.length > 0)
+			verses.push(getVerse(verseMatches[0]));
+		if (verseMatches.length > 1)
+			verses.push(getVerse(verseMatches[1]));
+		return verses;
+	}
+	
+	function getChapter(chapterVerseSeg, fExpectColon)
+	{
+		var pattChSeg=/([1-9][0-9]?[0-9]?)[\.\:\ ]/g;
+		var pattCh= /([1-9][0-9]?[0-9]?)/;
+		var chMatches = chapterVerseSeg.match(pattChSeg);
+		if (!chMatches || chMatches.length == 0)
+		{
+			// maybe just a chapter range GEN 1-30
+			if (!fExpectColon)
+				chMatches = chapterVerseSeg.match(pattCh);
+			if (!chMatches || chMatches.length == 0)
+				return null;	
+		}
+
+		var ch = chMatches[0].match(pattCh)[0];
+		return parseInt(ch);
+	}
+	
 	function getChapterRange(scriptureRange)
 	{
-		var pattChSeg=/[\ \-]([1-9][0-9]?[0-9]?)[\.\:\ ]?/g;
-		var pattVerse=/[\.\:]([1-9][0-9]?[0-9]?)?/g;
+		//var pattChSeg=/([\ ][1-9][0-9]?[0-9]?[\.\:\ ]?)|(([^\.\:][1-9][0-9]?[0-9]?)[-–—][1-9][0-9]?[0-9]?)/g;
+		var pattChSeg=/[\ -–—]([1-9][0-9]?[0-9]?)[\.\:\ ]?/g;
+		var pattVerse=/[\.\:]([1-9][0-9]?[0-9]?)/g;
 		var chMatches = scriptureRange.match(pattChSeg);
-		var verseMatches = scriptureRange.match(pattVerse);
 		var chapters = [];
-		var pattCh=/([1-9][0-9]?[0-9]?)/;
-		
+
 		// crop each chapter segment into just the chapter
 		if (!chMatches)
 			return null;
-		var chBegin = chMatches[0].match(pattCh)[0];
-		chapters.push(chBegin);		
+		
+		var chBegin = getChapter(chMatches[0]);
+		chapters.push(chBegin);
+		var verseMatches = getVerseRange(scriptureRange);		
 		if (chMatches.length == 2 && (!verseMatches || (verseMatches.length == 0 || verseMatches.length == 2)))
 		{
-			var chEnd = chMatches[1].match(pattCh)[0];
+			var chEnd = getChapter(chMatches[1]);
 			chapters.push(chEnd);
 		}		
 		return chapters;

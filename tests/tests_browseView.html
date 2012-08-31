@@ -6,6 +6,8 @@
   <link rel="stylesheet" href="css/qunit-git.css" type="text/css" media="screen" />
 <script type="text/javascript" src="js/qunit-git.js"></script>
 <script type="text/javascript" src="../js/jquery-extensions-utils.js"></script>
+<script type="text/javascript" src="../js/kayak-common.js"></script>
+<script type="text/javascript" src="../js/BibleBookInfo.js"></script>
 <script type="text/javascript" src="../js/kayak-browseView.js"></script>
 
   <script>
@@ -124,6 +126,70 @@ test("two matching outlines - one verse slice - within range", function() {
   deepEqual(result, expected, "We expect result to be " + expected);
 });
 
+module("kayak browse view - create bcvRange");
+
+test("no scripture range outlines", function() {
+  var result = parseBCVRange("");
+  var expected = [];
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+
+test("bad scripture range outlines", function() {
+  var result = parseBCVRange("garbage in");
+  var expected = [];
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+
+test("book longname + chapter verse", function() {
+  var result = parseBCVRange("Genesis 1:2");
+  var expected = ["GEN",1,2,];
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("book longname + chapter verses", function() {
+  var result = parseBCVRange("Genesis 1:2-3");
+  var expected = ["GEN",1,2,"GEN",1,3];
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("book longname + chapters and verses", function() {
+  var result = parseBCVRange("Genesis 1:2-3:4");
+  var expected = ["GEN",1,2,"GEN",3,4];
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("book longname + chapters", function() {
+  var result = parseBCVRange("Genesis 2-4");
+  var expected = ["GEN",2,1,"GEN",4,-1];
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+
+test("book shortname + chapter verse", function() {
+  var result = parseBCVRange("Gen 1:1");
+  var expected = ["GEN",1,1,];
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("book shortname-period + chapter verse", function() {
+  var result = parseBCVRange("Gen. 1:1");
+  var expected = ["GEN",1,1,];
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("book only scripture range", function() {
+  var result = parseBCVRange("Genesis");
+  var expected = ["GEN"];
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("book only scripture range", function() {
+  var result = parseBCVRange("Gen");
+  var expected = ["GEN"];
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
 
 
   });
