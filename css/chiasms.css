@@ -206,6 +206,17 @@ form div { padding-left: 10px; padding-right: 10px; padding-top: 10px; }
 form div p { padding: 10px; }
 form div label, form div textarea { vertical-align: middle; }
 
+.ch-options
+{
+	background-color: #B9C9FE; 
+	cursor: pointer;
+}
+
+.ch-options-multiple
+{
+	background-color: #E9C9FE; 
+}
+
     /*
 .chiasm > li:before {
     content: counter(count, upper-latin) ". ";

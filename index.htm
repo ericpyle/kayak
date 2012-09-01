@@ -44,15 +44,6 @@
 	
 	<script type="text/javascript" src="js/BibleBookInfo.js"></script>
 	<script type="text/javascript" src="js/kayak-browseView.js"></script>
-	<script type="text/javascript">
-
-	$(document).ready(function(){
-		
-		DisplayBooksAndChapters();
-
-	});
-	
-	</script>
 		
 	 </div>
 	 <div id="Examples">
@@ -475,6 +466,7 @@
 	{
 		if (fInitialized)
 			return;
+		DisplayBooksAndChapters();
 		SelectUrlSpecifiedDb();
 		$("#edit-outline-contentType").val("modeChiasm");
 		LoadOutlineFromCurrentState();

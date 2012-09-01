@@ -179,6 +179,12 @@ test("book shortname-period + chapter verse", function() {
   deepEqual(result, expected, "We expect result to be " + expected);
 });
 
+test("book shortname + chapter verse", function() {
+  var result = parseBCVRange("1 Cor 15:10");
+  var expected = ["1CO",15,10,];
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
 test("book only scripture range", function() {
   var result = parseBCVRange("Genesis");
   var expected = ["GEN"];

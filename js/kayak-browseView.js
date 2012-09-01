@@ -4,28 +4,49 @@
 
 	function DisplayBooksAndChapters()
 	{
+		var outlinesKeyedByBCVRange = indexOutlinesByBCVRange(getDbRows());
+		
 		for(var property in BookStats) {
 			if(typeof BookStats[property] == "string" || property.length == 3) {
-				var bookNameLong = BookCodeToName[property];
-				var chapters = BookStats[property].chapters;
+				var bookCode = property;
+				var bookNameLong = BookCodeToName[bookCode];
+				var chapters = BookStats[bookCode].chapters;
 				var chapterHtml = "";
+				var bookDivId = "bv-book-"+ bookCode;
+				$("#BrowseByBook").append("<div id='"+ bookDivId + "' class='bv-book' style='overflow:auto; width:250px;'><h3>" + bookNameLong + "</h3> <div></div></div>");
+				// see if book has any outlines
+				var bookSlice = getBookSlice(outlinesKeyedByBCVRange, [bookCode]);
+				if (bookSlice.outlines.length == 0)
+					continue;
 				for (var i=1; i <= chapters; i++) {
 					
-					/* chapterHtml += "<div style='margin:5px;display:run-in;float:left;'> " + i + " </div>" */
-				  if (i < 10)
-					 chapterHtml += "&nbsp;"
-				  chapterHtml += i;
-				  if (i < 8)
-					 chapterHtml += "&nbsp; "
-				  else
-				  	chapterHtml += " ";
+					var cssChapter = "bv-ch";
+					var bcRange = [bookCode, i];
+					var chSlice = getChapterSlice(outlinesKeyedByBCVRange, bcRange);
+					if (chSlice.outlines.length > 0)
+					{
+						cssChapter += " ch-options";
+						if (chSlice.outlines.length > 1)
+							cssChapter += " ch-options-multiple";
+					}
+					$("#" + bookDivId).append("<div class='"+ cssChapter + "' style='padding:5px;display:run-in;float:left;'> " + i + " </div>");						
 				};
-				
-				$("#BrowseByBook").append("<div><h3>" + bookNameLong + "</h3> <div style='width:250px;'>"+ chapterHtml +"</div></div>")
 			}
 		}
+		
+		$(".ch-options").click(function(event) 
+					{
+						var indexCh = $(this).text();
+						var bookId = $(this).parent(".bv-book");
+						var book = bookId.attr("id").substr(bookId.length - 4, 3);
+						alert(book + " " + indexCh);
+						// get chapter index in book.
+						// find corresponding slice.
+						// select first outline
+						//selectOutlineRow($(this)); 
+		  				return false;
+					});
 	}
-	
 	
 	function DisplayBooksAndChapterFormat()
 	{
@@ -208,9 +229,9 @@
 			return bcvRange;
 		
 		bcvRange.push(bookCode);
-		
+		var cvRef = scriptureRange.substr(bookName.length, scriptureRange.length - bookName.length);
 		var pattCVerseRef=/(?:(?:[1-9][0-9]?[0-9]?[.:])?[1-9][0-9]?[-–—]?)/g;		
-		var matches2 = scriptureRange.match(pattCVerseRef);
+		var matches2 = cvRef.match(pattCVerseRef);
 		if (!matches2 || matches2.length == 0)
 			return bcvRange;
 		
@@ -251,7 +272,7 @@
 			}
 			else
 			{
-				bcvRange.push(chapters2);
+				bcvRange.push(chapter2);  // TODO: need test for this
 				bcvRange.push(-1); 
 			}
 		}
@@ -284,4 +305,26 @@
 			}
 		}
 		return bcvRange;
+	}
+	
+	function indexOutlinesByBCVRange(outlineRows)
+	{
+		var newRows = [];
+		// {"id":"kyk:2011-06-06T18:47:27.748Z:ol","key":["kyk:2011-06-06T18:47:27.748Z:ol","chiasm: egreene"],"value":{"_id":"kyk:2011-06-06T18:47:27.748Z:ol","_rev":"21-d1ed85705c82e14deec99f48f7dc6ff1","head":{"submissionTimestamp":[2011,6,6,"18:47:27.748Z"],"bcvRange":["Matt",7,6],"author":{"guid":"kyk:2011-06-05T18:47:27.748Z:ps","authorShortname":"egreene"},"submittedBy":{"guid":"kyk:1974-12-23T03:22:15.481Z:ps"},"source":{"guid":"kyk:2011-06-06T18:47:27.848Z:sr","details":"1999"},"title":"","ScriptureRange":"Matthew 7:6","contentType":"chiasm"},"body":{"concepts":[{"content":"dogs"},{"content":"pigs"},{"content":"trample under feet"},{"content":"turn and tear to pieces"}]}}},
+// to 
+// 		  {"id":"56e905abc996fa0a1b824d4118002410","key":[["GEN",1,1],"chiasm"],"value":{"_id":"56e905abc996fa0a1b824d4118002410","head":{"ScriptureRange":"Genesis 1:1","contentType":"chiasm"}}},
+
+		for (var irow=0; irow < outlineRows.length; irow++) {
+		  	var outlineRow = outlineRows[irow];
+		  	var outline = outlineRow.value; 		  			  	
+		  	// create new key
+		  	var bcvRange = parseBCVRange(outline.head.ScriptureRange);
+		  	if (bcvRange.length == 0)
+		  		continue; // skip outlines without BCVRange	  		  	
+		  	var newKey = [bcvRange, outline.head.contentType];		  	
+		  	var newRow = { id : outline._id, key: newKey, value : outline };		  	
+		  	newRows.push(newRow);
+		};
+		
+		return newRows;
 	}
