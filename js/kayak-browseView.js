@@ -37,10 +37,17 @@
 		
 		$(".ch-options").click(function(event) 
 					{
-						var indexCh = $(this).text();
+						var indexCh = parseInt($(this).text());
 						var bookId = $(this).parent(".bv-book");
 						var book = bookId.attr("id").substr(bookId.length - 4, 3);
-						alert(book + " " + indexCh);
+						//alert(book + " " + indexCh);
+						
+						var outlinesKeyedByBCVRange = indexOutlinesByBCVRange(getDbRows());
+						var bcRange = [book, indexCh];
+						var chSlice = getChapterSlice(outlinesKeyedByBCVRange, bcRange);
+						var dbId = chSlice.outlines[0];
+						// TODO: pick outline by fewest number of verses in range
+						pageToAndSelectOutline(dbId);
 						// get chapter index in book.
 						// find corresponding slice.
 						// select first outline

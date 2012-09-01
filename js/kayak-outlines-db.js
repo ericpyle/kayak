@@ -1165,10 +1165,15 @@
 			dbId.substr(0, 3) == "kyk")
 		{
 			// TODO: verify db id format?
-			var newRow = pageToRow(jq("exampleTable"), jq(dbId));
-    		selectOutlineRow(newRow);
-    		$("#tabsMain").tabs('select',"#View");
+			pageToAndSelectOutline(dbId);
 		}
+	}
+	
+	function pageToAndSelectOutline(dbId)
+	{
+		var newRow = pageToRow(jq("exampleTable"), jq(dbId));
+		selectOutlineRow(newRow);
+		$("#tabsMain").tabs('select',"#View");
 	}
 	
 	function changeUrlToSelectedId(rowId)
