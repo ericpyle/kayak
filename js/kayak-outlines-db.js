@@ -1574,7 +1574,8 @@
 		$("#exampleTable_filter input").keyup();
     	var newRowInTable = pageToRow(jq("exampleTable"), jq(outline._id));
     	selectOutlineRow(newRowInTable);
-    	alert("Changes have been published");    	
+    	alert("Changes have been published");
+    	DisplayBooksAndChapters();    	
 	}
 	
 	/*

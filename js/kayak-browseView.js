@@ -4,6 +4,7 @@
 
 	function DisplayBooksAndChapters()
 	{
+		$("#BrowseByBook div").remove();
 		var outlinesKeyedByBCVRange = indexOutlinesByBCVRange(getDbRows());
 		
 		for(var property in BookStats) {
