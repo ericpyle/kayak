@@ -30,7 +30,10 @@
 						if (chSlice.outlines.length > 1)
 							cssChapter += " ch-options-multiple";
 					}
-					$("#" + bookDivId).append("<div class='"+ cssChapter + "' style='padding:5px;display:run-in;float:left;'> " + i + " </div>");						
+					var paddingLR = "5px";
+					if (i < 10)
+						paddingLR = "10.5px";
+					$("#" + bookDivId).append("<div class='"+ cssChapter + "' style='padding:5px;padding-left:"+paddingLR+";padding-right:"+paddingLR+";display:run-in;float:left;'> " + i + " </div>");						
 				};
 			}
 		}
@@ -48,10 +51,6 @@
 						var dbId = chSlice.outlines[0];
 						// TODO: pick outline by fewest number of verses in range
 						pageToAndSelectOutline(dbId);
-						// get chapter index in book.
-						// find corresponding slice.
-						// select first outline
-						//selectOutlineRow($(this)); 
 		  				return false;
 					});
 	}
