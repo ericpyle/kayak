@@ -2,6 +2,50 @@
  * @author Eric Pyle
  */
 
+	function GenerateBookAndChaptersHtml(outlinesKeyedByBCVRange, bookCode)
+	{
+		var results = {};
+		var bookNameLong = BookCodeToName[bookCode];
+		var chapters = BookStats[bookCode].chapters;
+		var chapterHtml = "";
+		var bookHeadDivId = "bv-book-head-"+ bookCode;
+		var bookTailDivId = "bv-book-tail-"+ bookCode;		
+		results[bookCode] = { "bookHeadDivId": bookHeadDivId, 
+							 "bookHeadDiv" : "<div id='"+ bookHeadDivId + "' class='bv-book' style='overflow:auto; width:250px;'><h3>" + bookNameLong + "</h3> <div></div></div>",
+							 "bookTailDivId": bookTailDivId,
+							 "bookTailDiv" : "<div id='"+ bookTailDivId + "' class='bv-book' style='overflow:auto; width:250px;'><div></div></div>",
+							 "chapters" : []
+							 };
+		// see if book has any outlines
+		var bookSlice = getBookSlice(outlinesKeyedByBCVRange, [bookCode]);
+		if (bookSlice.outlines.length == 0)
+			return results;
+		for (var i=1; i <= chapters; i++) {
+			
+			var cssChapter = "bv-ch";
+			var bcRange = [bookCode, i];
+			var chSlice = getChapterSlice(outlinesKeyedByBCVRange, bcRange);
+			if (chSlice.outlines.length > 0)
+			{
+				cssChapter += " ch-options";
+				if (chSlice.outlines.length > 1)
+					cssChapter += " ch-options-multiple";
+			}
+			var paddingLR = "5px";
+			if (i < 10)
+				paddingLR = "10.5px";
+			results[bookCode].chapters.push("<div class='"+ cssChapter + "' style='padding:5px;padding-left:"+paddingLR+";padding-right:"+paddingLR+";display:run-in;float:left;'> " + i + " </div>")
+		}
+		return results;
+	}
+	
+	function GenerateOutlineExpansion(outline)
+	{
+		var results = [];
+		
+		return results;
+	}
+
 	function DisplayBooksAndChapters()
 	{
 		$("#BrowseByBook div").remove();
@@ -10,49 +54,65 @@
 		for(var property in BookStats) {
 			if(typeof BookStats[property] == "string" || property.length == 3) {
 				var bookCode = property;
-				var bookNameLong = BookCodeToName[bookCode];
-				var chapters = BookStats[bookCode].chapters;
-				var chapterHtml = "";
-				var bookDivId = "bv-book-"+ bookCode;
-				$("#BrowseByBook").append("<div id='"+ bookDivId + "' class='bv-book' style='overflow:auto; width:250px;'><h3>" + bookNameLong + "</h3> <div></div></div>");
-				// see if book has any outlines
-				var bookSlice = getBookSlice(outlinesKeyedByBCVRange, [bookCode]);
-				if (bookSlice.outlines.length == 0)
-					continue;
-				for (var i=1; i <= chapters; i++) {
-					
-					var cssChapter = "bv-ch";
-					var bcRange = [bookCode, i];
-					var chSlice = getChapterSlice(outlinesKeyedByBCVRange, bcRange);
-					if (chSlice.outlines.length > 0)
-					{
-						cssChapter += " ch-options";
-						if (chSlice.outlines.length > 1)
-							cssChapter += " ch-options-multiple";
-					}
-					var paddingLR = "5px";
-					if (i < 10)
-						paddingLR = "10.5px";
-					$("#" + bookDivId).append("<div class='"+ cssChapter + "' style='padding:5px;padding-left:"+paddingLR+";padding-right:"+paddingLR+";display:run-in;float:left;'> " + i + " </div>");						
-				};
+				var results = GenerateBookAndChaptersHtml(outlinesKeyedByBCVRange, bookCode);
+				
+				$("#BrowseByBook").append(results[bookCode].bookHeadDiv);
+				var chapters = results[bookCode].chapters;
+				for (var i=0; i < chapters.length; i++) {
+				  $(jq(results[bookCode].bookHeadDivId)).append(chapters[i]);
+				};				
 			}
 		}
 		
-		$(".ch-options").click(function(event) 
-					{
-						var indexCh = parseInt($(this).text());
-						var bookId = $(this).parent(".bv-book");
-						var book = bookId.attr("id").substr(bookId.length - 4, 3);
-						//alert(book + " " + indexCh);
-						
-						var outlinesKeyedByBCVRange = indexOutlinesByBCVRange(getDbRows());
-						var bcRange = [book, indexCh];
-						var chSlice = getChapterSlice(outlinesKeyedByBCVRange, bcRange);
-						var dbId = chSlice.outlines[0];
-						// TODO: pick outline by fewest number of verses in range
-						pageToAndSelectOutline(dbId);
-		  				return false;
-					});
+		$(".ch-options").click(doChapterOptions);
+	}
+	
+	function doChapterOptions()
+	{
+		var indexCh = parseInt($(this).text());
+		var bookId = $(this).parent(".bv-book");
+		var bookCode = bookId.attr("id").substr(bookId.length - 4, 3);
+		//alert(book + " " + indexCh);
+		
+		var outlinesKeyedByBCVRange = indexOutlinesByBCVRange(getDbRows());
+		var bcRange = [bookCode, indexCh];
+		var chSlice = getChapterSlice(outlinesKeyedByBCVRange, bcRange);
+		var dbId = chSlice.outlines[0];
+		
+		var results = GenerateBookAndChaptersHtml(outlinesKeyedByBCVRange, bookCode);
+		$(jq(results[bookCode].bookHeadDivId + " div")).remove();
+		$(jq(results[bookCode].bookTailDivId + " div")).remove();
+		
+		var chapters = results[bookCode].chapters;
+		for (var i=0; i < indexCh; i++) {
+		  $(jq(results[bookCode].bookHeadDivId)).append(chapters[i]);
+		};
+		
+		if (indexCh < chapters.length){
+			if($(jq(results[bookCode].bookTailDivId)).length == 0)
+				$(jq(results[bookCode].bookHeadDivId)).after(results[bookCode].bookTailDiv);
+			for (var i=indexCh; i < chapters.length; i++) {
+			  $(jq(results[bookCode].bookTailDivId)).append(chapters[i]);
+			};
+		} 
+		else
+		{
+			$(jq(results[bookCode].bookTailDivId)).remove();
+		}
+	
+		$(jq(results[bookCode].bookHeadDivId)).find("div.ch-options").click(doChapterOptions);
+		$(jq(results[bookCode].bookTailDivId)).find("div.ch-options").click(doChapterOptions);
+		// find widest range of context
+		// split book into two: 1) up through chapter clicked upon
+		// 2) next chapter through end of book
+		// If outline is entire book, add expansion under all the chapters.
+		// (alternatively, split after first chapter in range?)
+		
+		// TODO: pick outline by fewest number of verses in range
+		// TODO:
+		
+		//pageToAndSelectOutline(dbId);
+		return false;
 	}
 	
 	function DisplayBooksAndChapterFormat()
