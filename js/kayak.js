@@ -162,7 +162,8 @@
 	       		marginleft = "{ margin-left:" + marginLeft + "px;}";
 	       }
 
-	       result["conceptStyleDefinition"] = "<style type='text/css'> ." + view + getBasicViewCssId(newIndex, conceptsCount) + " " + marginleft + " </style>";
+		   result["conceptStyle"] = "." + view + getBasicViewCssId(newIndex, conceptsCount) + " " + marginleft;
+	       result["conceptStyleDefinition"] = "<style type='text/css'> " + result.conceptStyle + " </style>";
 		}
 		
 		var conceptClass = view + getBasicViewCssId(newIndex, conceptsCount);
@@ -185,8 +186,11 @@
 	    //alert(newIndex + "/" + concepts.length);
 		var newConcept = concepts[newIndex];
 		$("#chiasm-" + view).insertAt(newIndex, result.conceptHtml);
-		if (result.conceptStyleDefinition)
-			$(result.conceptStyleDefinition).appendTo("head");
+		if (result.conceptStyleDefinition){
+			// make sure the style has not already been added.
+			if ($("head style[type='text/css']").is(":contains('"+ result.conceptStyle +"')") == false)
+				$(result.conceptStyleDefinition).appendTo("head");
+		}
 		var newItem = $("#chiasm-" + view).children("div:eq(" + newIndex + ")");
 	    //$(newItem).hover(highlightItem, removeHighlight);
 	    $(newItem).click(highlightItem);
