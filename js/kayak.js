@@ -153,11 +153,12 @@
 		var chr = IndexToAsciiMarkerABA(newIndex, conceptsCount);
 		var endchar = GetEndMarkerABA(newIndex, conceptsCount);
 		var marginLeft = CalculateMarginInPx(newIndex, conceptsCount);
-		var halfway = Math.round(conceptsCount/2);		
+		var halfway = Math.round(conceptsCount/2)
+		var fIndentMode = view.substr(0, "indent".length) == "indent";		
 	    if (newIndex < halfway)
 	    {
 	       var marginleft = "";
-	       if (!CompatibilityMode && view == "indent")
+	       if (!CompatibilityMode && fIndentMode)
 	       {
 	       		marginleft = "{ margin-left:" + marginLeft + "px;}";
 	       }
@@ -171,7 +172,7 @@
 		var conceptMarker = "<span class='itemMarker'>"+ chr + endchar +"</span>";
 		
 		var spaces = "";
-	    if (CompatibilityMode && view == "indent")
+	    if (CompatibilityMode && fIndentMode)
 	    	spaces = convertIndentToSpaces(marginLeft); 	
 	    var conceptHtml = "<div class='"+ conceptClass + "' id='"+ conceptId +"'>" + spaces + conceptMarker + "<span class='conceptContent'>" + newConcept.content + "</span></div>";
 		result["conceptHtml"] = conceptHtml;
@@ -179,19 +180,21 @@
 		return result;
 	}
 	
-	function CreateChiasmViewItem(concepts, newIndex, view)
+	function CreateChiasmViewItem(concepts, newIndex, view, containerSelector)
 	{	
+		if (!containerSelector)
+			containerSelector = "#chiasm-" + view;
 		var result = generateChiasmConceptHtml(concepts, newIndex, view);
 		var conceptsCount = concepts.length;
 	    //alert(newIndex + "/" + concepts.length);
 		var newConcept = concepts[newIndex];
-		$("#chiasm-" + view).insertAt(newIndex, result.conceptHtml);
+		$(containerSelector).insertAt(newIndex, result.conceptHtml);
 		if (result.conceptStyleDefinition){
 			// make sure the style has not already been added.
 			if ($("head style[type='text/css']").is(":contains('"+ result.conceptStyle +"')") == false)
 				$(result.conceptStyleDefinition).appendTo("head");
 		}
-		var newItem = $("#chiasm-" + view).children("div:eq(" + newIndex + ")");
+		var newItem = $(containerSelector).children("div:eq(" + newIndex + ")");
 	    //$(newItem).hover(highlightItem, removeHighlight);
 	    $(newItem).click(highlightItem);
 		return newItem;

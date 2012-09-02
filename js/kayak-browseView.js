@@ -39,9 +39,19 @@
 		return results;
 	}
 	
-	function GenerateOutlineExpansion(outline)
+	function DisplayOutlineExpansion(outline, container)
 	{
 		var results = [];
+		if (outline.head.contentType == "chiasm")
+		{
+			
+			$(outline.body.concepts).each(function(index)
+			{
+				CreateChiasmViewItem(outline.body.concepts, index, "indent-bv", container);
+			});
+			//$("#chiasm-flat").addClass("chiasm");
+		}
+		
 		
 		return results;
 	}
@@ -75,9 +85,6 @@
 		//alert(book + " " + indexCh);
 		
 		var outlinesKeyedByBCVRange = indexOutlinesByBCVRange(getDbRows());
-		var bcRange = [bookCode, indexCh];
-		var chSlice = getChapterSlice(outlinesKeyedByBCVRange, bcRange);
-		var dbId = chSlice.outlines[0];
 		
 		var results = GenerateBookAndChaptersHtml(outlinesKeyedByBCVRange, bookCode);
 		$(jq(results[bookCode].bookHeadDivId + " div")).remove();
@@ -102,6 +109,16 @@
 	
 		$(jq(results[bookCode].bookHeadDivId)).find("div.ch-options").click(doChapterOptions);
 		$(jq(results[bookCode].bookTailDivId)).find("div.ch-options").click(doChapterOptions);
+		
+		var outlineContainerId = "bv-outline-selected";
+		$(jq(outlineContainerId)).remove();
+		$(jq(results[bookCode].bookHeadDivId)).after("<div id='" + outlineContainerId + "'></div>");
+		var bcRange = [bookCode, indexCh];
+		var chSlice = getChapterSlice(outlinesKeyedByBCVRange, bcRange);
+		var dbId = chSlice.outlines[0];
+		var outline = fetchOutline(dbId);
+		DisplayOutlineExpansion(outline, jq(outlineContainerId));
+
 		// find widest range of context
 		// split book into two: 1) up through chapter clicked upon
 		// 2) next chapter through end of book
