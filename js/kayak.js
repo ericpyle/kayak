@@ -135,9 +135,10 @@
 	{
 		return Math.round(mainOutline.body.concepts.length/2);
 	}
-
-	function CreateChiasmViewItem(concepts, newIndex, view)
-	{		
+		
+	function generateChiasmConceptHtml(concepts, newIndex, view)
+	{
+		var result = {};		
 		// 0 -> 0
 		// 1 -> 1
 		// 2 -> 1
@@ -147,9 +148,7 @@
 		// 6 -> 3
 		var conceptsCount = concepts.length;
 	    //alert(newIndex + "/" + concepts.length);
-		var newConcept = concepts[newIndex];
-		$("#chiasm-" + view).insertAt(newIndex, "<div>" + newConcept.content + "</div>");
-		var newItem = $("#chiasm-" + view).children("div:eq(" + newIndex + ")");								
+		var newConcept = concepts[newIndex];						
 
 		var chr = IndexToAsciiMarkerABA(newIndex, conceptsCount);
 		var endchar = GetEndMarkerABA(newIndex, conceptsCount);
@@ -162,21 +161,35 @@
 	       {
 	       		marginleft = "{ margin-left:" + marginLeft + "px;}";
 	       }
-	       		
-	       $("<style type='text/css'> ." + view + getBasicViewCssId(newIndex, conceptsCount) + " " + marginleft + " </style>").appendTo("head");
-		}
-	  	$(newItem).wrapInner("<span class='conceptContent'/>");
-        $(newItem).addClass(view + getBasicViewCssId(newIndex, conceptsCount));
-        $(newItem).attr("id", getViewConceptId(view, newIndex, conceptsCount));
-	    $(newItem).prepend("<span class='itemMarker'>"+ chr + endchar +"</span>");
-	    if (CompatibilityMode && view == "indent")
-	    {
-	    	var spaces = convertIndentToSpaces(marginLeft);	    
-	    	$(newItem).prepend(spaces); 	
-	    }
-	    //$(newItem).hover(highlightItem, removeHighlight);
-	    $(newItem).click(highlightItem);	
 
+	       result["conceptStyleDefinition"] = "<style type='text/css'> ." + view + getBasicViewCssId(newIndex, conceptsCount) + " " + marginleft + " </style>";
+		}
+		
+		var conceptClass = view + getBasicViewCssId(newIndex, conceptsCount);
+		var conceptId = getViewConceptId(view, newIndex, conceptsCount);
+		var conceptMarker = "<span class='itemMarker'>"+ chr + endchar +"</span>";
+		
+		var spaces = "";
+	    if (CompatibilityMode && view == "indent")
+	    	spaces = convertIndentToSpaces(marginLeft); 	
+	    var conceptHtml = "<div class='"+ conceptClass + "' id='"+ conceptId +"'>" + spaces + conceptMarker + "<span class='conceptContent'>" + newConcept.content + "</span></div>";
+		result["conceptHtml"] = conceptHtml;
+		result["conceptIndex"] = newIndex;
+		return result;
+	}
+	
+	function CreateChiasmViewItem(concepts, newIndex, view)
+	{	
+		var result = generateChiasmConceptHtml(concepts, newIndex, view);
+		var conceptsCount = concepts.length;
+	    //alert(newIndex + "/" + concepts.length);
+		var newConcept = concepts[newIndex];
+		$("#chiasm-" + view).insertAt(newIndex, result.conceptHtml);
+		if (result.conceptStyleDefinition)
+			$(result.conceptStyleDefinition).appendTo("head");
+		var newItem = $("#chiasm-" + view).children("div:eq(" + newIndex + ")");
+	    //$(newItem).hover(highlightItem, removeHighlight);
+	    $(newItem).click(highlightItem);
 		return newItem;
 	}
 	
