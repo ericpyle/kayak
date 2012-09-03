@@ -111,12 +111,42 @@
 		$(jq(results[bookCode].bookTailDivId)).find("div.ch-options").click(doChapterOptions);
 		
 		var outlineContainerId = "bv-outline-selected";
+		var previousSelection = $(jq(outlineContainerId)).data("outline-selected");
 		$(jq(outlineContainerId)).remove();
-		$(jq(results[bookCode].bookHeadDivId)).after("<div id='" + outlineContainerId + "'></div>");
+		
 		var bcRange = [bookCode, indexCh];
 		var chSlice = getChapterSlice(outlinesKeyedByBCVRange, bcRange);
-		var dbId = chSlice.outlines[0];
-		var outline = fetchOutline(dbId);
+		
+		// select the next outline
+		var nextOptionId = null;		
+		if (previousSelection && previousSelection.bcRange[0] == bcRange[0] && previousSelection.bcRange[1] == bcRange[1])
+		{
+			for (var i=0; i < chSlice.outlines.length; i++) {
+			  if (chSlice.outlines[i] == previousSelection.outlineId)
+			  {
+			  	var inext = i+1;
+			  	if (inext < chSlice.outlines.length)
+			  	{
+			  		nextOptionId = chSlice.outlines[inext];
+			  		break;
+			  	}		  	 
+			  }
+			}; 
+		}
+		else
+		{
+			// start with the first one
+			nextOptionId = chSlice.outlines[0];
+		}
+		if (nextOptionId == null)
+		{
+			// don't show any (clear/reset)
+			$(jq(outlineContainerId)).data("outline-selected", null);
+			return;
+		}
+		$(jq(results[bookCode].bookHeadDivId)).after("<div id='" + outlineContainerId + "'></div>");
+		$(jq(outlineContainerId)).data("outline-selected", {"outlineId" : nextOptionId, "bcRange": bcRange });
+		var outline = fetchOutline(nextOptionId);
 		DisplayOutlineExpansion(outline, jq(outlineContainerId));
 
 		// find widest range of context

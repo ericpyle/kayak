@@ -198,6 +198,109 @@ test("book only scripture range", function() {
 });
 
 
+module("kayak browse view - nearsighted sort");
+
+test("sort - no outlines", function() {
+    
+  var allOutlinesKeyedByBCVRange = [];
+  var result = nearsightedsort(allOutlinesKeyedByBCVRange);
+  var expected = [];
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+
+test("sort - same chapter", function() {
+    
+    var allOutlinesKeyedByBCVRange = [
+{"id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,3],"chiasm"],"value":{"_id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:3","contentType":"chiasm"}}},
+{"id":"974c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,1],"chiasm"],"value":{"_id":"974c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:1","contentType":"chiasm"}}},
+ ];
+ 
+  var result = nearsightedsort(allOutlinesKeyedByBCVRange, ["GEN",1]);
+  var expected = [
+{"id":"974c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,1],"chiasm"],"value":{"_id":"974c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:1","contentType":"chiasm"}}},
+{"id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,3],"chiasm"],"value":{"_id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:3","contentType":"chiasm"}}},
+  ];
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("sort - single chapter range vs. single chapter verse", function() {
+    
+    var allOutlinesKeyedByBCVRange = [
+{"id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,1,"GEN",1,3],"chiasm"],"value":{"_id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:3-1","contentType":"chiasm"}}},
+{"id":"974c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,1],"chiasm"],"value":{"_id":"974c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:1","contentType":"chiasm"}}},
+ ];
+ 
+  var result = nearsightedsort(allOutlinesKeyedByBCVRange, ["GEN",1]);
+  var expected = [
+{"id":"974c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,1],"chiasm"],"value":{"_id":"974c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:1","contentType":"chiasm"}}},
+{"id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,1,"GEN",1,3],"chiasm"],"value":{"_id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:3-1","contentType":"chiasm"}}},
+  ];
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+
+test("sort - single chapter verse vs. range spanning chapter", function() {
+    
+    var allOutlinesKeyedByBCVRange = [
+{"id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,1,"GEN",3,1],"chiasm"],"value":{"_id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:3-1","contentType":"chiasm"}}},
+{"id":"974c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",2,1],"chiasm"],"value":{"_id":"974c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:1","contentType":"chiasm"}}},
+ ];
+ 
+  var result = nearsightedsort(allOutlinesKeyedByBCVRange, ["GEN",2]);
+  var expected = [
+{"id":"974c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",2,1],"chiasm"],"value":{"_id":"974c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:1","contentType":"chiasm"}}},
+{"id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,1,"GEN",3,1],"chiasm"],"value":{"_id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:3-1","contentType":"chiasm"}}},
+  ];
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("sort - lesser spanning range vs. greater spanning range", function() {
+    
+    var allOutlinesKeyedByBCVRange = [
+{"id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,1,"GEN",4,1],"chiasm"],"value":{"_id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:3-1","contentType":"chiasm"}}},
+{"id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",2,1,"GEN",4,1],"chiasm"],"value":{"_id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:3-1","contentType":"chiasm"}}},
+ ];
+ 
+  var result = nearsightedsort(allOutlinesKeyedByBCVRange, ["GEN",3]);
+  var expected = [
+{"id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",2,1,"GEN",4,1],"chiasm"],"value":{"_id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:3-1","contentType":"chiasm"}}},
+{"id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,1,"GEN",4,1],"chiasm"],"value":{"_id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:3-1","contentType":"chiasm"}}},
+
+  ];
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("sort - lesser spanning range vs. whole book", function() {    
+    var allOutlinesKeyedByBCVRange = [
+{"id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN"],"chiasm"],"value":{"_id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis","contentType":"chiasm"}}},
+{"id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",2,1,"GEN",4,1],"chiasm"],"value":{"_id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:3-1","contentType":"chiasm"}}},
+ ];
+ 
+  var result = nearsightedsort(allOutlinesKeyedByBCVRange, ["GEN",3]);
+  var expected = [
+{"id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",2,1,"GEN",4,1],"chiasm"],"value":{"_id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:3-1","contentType":"chiasm"}}},
+{"id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN"],"chiasm"],"value":{"_id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis","contentType":"chiasm"}}},
+  ];
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+
+test("sort - closer starting spanning range vs. spanning range starting from another book", function() {    
+    var allOutlinesKeyedByBCVRange = [
+{"id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["1SA",1,1,"2SA",4,1],"chiasm"],"value":{"_id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis","contentType":"chiasm"}}},
+{"id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["2SA",1,1,"1KI",1,1],"chiasm"],"value":{"_id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:3-1","contentType":"chiasm"}}},
+ ];
+ 
+  var result = nearsightedsort(allOutlinesKeyedByBCVRange, ["2SA",3]);
+  var expected = [
+{"id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["2SA",1,1,"1KI",1,1],"chiasm"],"value":{"_id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:3-1","contentType":"chiasm"}}},
+{"id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","key":[["1SA",1,1,"2SA",4,1],"chiasm"],"value":{"_id":"A74c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis","contentType":"chiasm"}}},
+  ];
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+
   });
   </script>
   
