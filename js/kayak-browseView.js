@@ -90,46 +90,11 @@
 		$(".ch-options").click(doChapterOptions);
 	}
 	
-	function doChapterOptions()
+	function getNextOptionId(outlinesKeyedByBCVRange, bcRange, outlineContainerId)
 	{
-		var indexCh = parseInt($(this).text());
-		var bookId = $(this).parent(".bv-book");
-		var bookCode = bookId.attr("id").substr(bookId.length - 4, 3);
-		//alert(book + " " + indexCh);
-		
-		var outlinesKeyedByBCVRange = indexOutlinesByBCVRange(getDbRows());
-		
-		var results = GenerateBookAndChaptersHtml(outlinesKeyedByBCVRange, bookCode);
-		$(jq(results[bookCode].bookHeadDivId + " div")).remove();
-		$(jq(results[bookCode].bookTailDivId + " div")).remove();
-		
-		var chapters = results[bookCode].chapters;
-		for (var i=0; i < indexCh; i++) {
-		  $(jq(results[bookCode].bookHeadDivId)).append(chapters[i]);
-		};
-		
-		if (indexCh < chapters.length){
-			if($(jq(results[bookCode].bookTailDivId)).length == 0)
-				$(jq(results[bookCode].bookHeadDivId)).after(results[bookCode].bookTailDiv);
-			for (var i=indexCh; i < chapters.length; i++) {
-			  $(jq(results[bookCode].bookTailDivId)).append(chapters[i]);
-			};
-		} 
-		else
-		{
-			$(jq(results[bookCode].bookTailDivId)).remove();
-		}
-	
-		$(jq(results[bookCode].bookHeadDivId)).find("div.ch-options").click(doChapterOptions);
-		$(jq(results[bookCode].bookTailDivId)).find("div.ch-options").click(doChapterOptions);
-		
-		var outlineContainerId = "bv-outline-selected";
 		var previousSelection = $(jq(outlineContainerId)).data("outline-selected");
 		$(jq(outlineContainerId)).remove();
-		
-		var bcRange = [bookCode, indexCh];
 		var chSlice = getChapterSlice(outlinesKeyedByBCVRange, bcRange);
-		
 		// select the next outline
 		var nextOptionId = null;		
 		if (previousSelection && previousSelection.bcRange[0] == bcRange[0] && previousSelection.bcRange[1] == bcRange[1])
@@ -151,12 +116,54 @@
 			// start with the first one
 			nextOptionId = chSlice.outlines[0];
 		}
+		return nextOptionId;
+	}
+	
+	function doChapterOptions()
+	{
+		var indexCh = parseInt($(this).text());
+		var bookId = $(this).parent(".bv-book");
+		var bookCode = bookId.attr("id").substr(bookId.length - 4, 3);
+		var bcRange = [bookCode, indexCh];
+		//alert(book + " " + indexCh);
+		
+		var outlinesKeyedByBCVRange = indexOutlinesByBCVRange(getDbRows());
+		
+		var results = GenerateBookAndChaptersHtml(outlinesKeyedByBCVRange, bookCode);
+		$(jq(results[bookCode].bookHeadDivId + " div")).remove();
+		$(jq(results[bookCode].bookTailDivId + " div")).remove();
+		
+		var outlineContainerId = "bv-outline-selected";
+		var nextOptionId = getNextOptionId(outlinesKeyedByBCVRange, bcRange, outlineContainerId);
 		if (nextOptionId == null)
 		{
 			// don't show any (clear/reset)
 			$(jq(outlineContainerId)).data("outline-selected", null);
+			DisplayBooksAndChapters();
 			return;
 		}
+		
+		var chapters = results[bookCode].chapters;
+		for (var i=0; i < indexCh; i++) {
+		  $(jq(results[bookCode].bookHeadDivId)).append(chapters[i]);
+		};
+		
+		if (indexCh < chapters.length){
+			if($(jq(results[bookCode].bookTailDivId)).length == 0)
+				$(jq(results[bookCode].bookHeadDivId)).after(results[bookCode].bookTailDiv);
+			for (var i=indexCh; i < chapters.length; i++) {
+			  $(jq(results[bookCode].bookTailDivId)).append(chapters[i]);
+			};
+		} 
+		else
+		{
+			$(jq(results[bookCode].bookTailDivId)).remove();
+		}
+	
+		$(jq(results[bookCode].bookHeadDivId)).find("div.ch-options").click(doChapterOptions);
+		$(jq(results[bookCode].bookTailDivId)).find("div.ch-options").click(doChapterOptions);
+		
+
 		$(jq(results[bookCode].bookHeadDivId)).after("<div id='" + outlineContainerId + "'></div>");
 		$(jq(outlineContainerId)).data("outline-selected", {"outlineId" : nextOptionId, "bcRange": bcRange });
 		var outline = fetchOutline(nextOptionId);
