@@ -39,21 +39,34 @@
 		return results;
 	}
 	
-	function DisplayOutlineExpansion(outline, container)
+	function docIsOutline(outline)
 	{
-		var results = [];
+		return outline._id.substr(outline._id.length - 3, 2) == "ol";
+	}
+	
+	function DisplayOutlineExpansion(outline, container)
+	{	
 		if (outline.head.contentType == "chiasm")
 		{
-			
 			$(outline.body.concepts).each(function(index)
 			{
 				CreateChiasmViewItem(outline.body.concepts, index, "indent-bv", container);
 			});
-			//$("#chiasm-flat").addClass("chiasm");
 		}
-		
-		
-		return results;
+		else if (outline.head.contentType == "outline")
+		{
+			var result = generateHierarchicalFlat(outline);
+			$(container).append(result.html);			
+		}
+		else if (outline.head.contentType == "panel")
+		{			
+			var result = generatePanelTable(outline);
+			$(container).append("<table class='outline-table'></table>");
+			$(container).find("table").append(result.html);
+		}
+		$(container).prepend("<div> (" + outline.head.ScriptureRange + ") </div>");
+		//var combinedTitle = CombineTitleAuthorAndSource(outline);
+		//$(container).append(combinedTitle);
 	}
 
 	function DisplayBooksAndChapters()

@@ -87,7 +87,12 @@ table.tableViewAAB #outlineHead-table tr td {
 	padding:0px;
 }
 
-#outline-table thead tr td {
+.outline-table
+{
+	clear:both;
+}
+
+.outline-table thead tr td {
 	font-weight: 600;
 }
 

@@ -2,6 +2,23 @@
  * @author Pyle
  */
 
+function CombineTitleAuthorAndSource(outline)
+{
+	var combinedSource = fetchSourceProfile(outline._id + "_source");
+	var sourceDetails = formatCombinedSource(combinedSource, "");
+	var author = fetchAuthorProfileByOutline(outline);
+	var title = EmptyIfNull(outline.head.title);
+	var titleCss = title.length > 0 ? '<div class="preview-outline-titleBlock-title">' + title + '</div>' : "";
+	var authorName = formatName(author, "", (title.length > 0 || sourceDetails.length > 0));
+	var authorNameCss = authorName.length > 0 ? '<div class="preview-outline-titleBlock-author">' + "by " + authorName + '</div>' : "";
+	var combinedTitle1 = (title.length > 0 && authorName.length > 0) ? (titleCss + authorNameCss) : 
+		((title.length > 0) ? titleCss : authorNameCss);
+		
+
+	return (combinedTitle1.length > 0 && sourceDetails.length > 0) ? (combinedTitle1 + "<div class='preview-outline-titleBlock-source'> &nbsp;(" + sourceDetails + ")</div>") :
+		((combinedTitle1.length > 0) ? combinedTitle1 : sourceDetails);
+}
+
 function publishContentToSequentialPreviewTabs(concepts, iconcept, newContent)
 {
 	publishSequentialContentInPlace("#chiasm-indent", iconcept, newContent);

@@ -386,7 +386,7 @@
 		$(".chiasm ol").remove();  // outline
 		$("#chiasm-flat").removeClass("chiasm");
 		
-		var combinedTitle = CombineTitleAuthorAndSource();
+		var combinedTitle = CombineTitleAuthorAndSource(mainOutline);
 		updateViewsChiasmContent("-title-chiasm", combinedTitle);
 		updateViewsChiasmContent("-chiasm-scriptureRange", mainOutline.head.ScriptureRange);
 	

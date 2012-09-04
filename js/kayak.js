@@ -576,7 +576,7 @@
 						if (chiasmElementId.indexOf("-title-") != -1)
 						{
 							mainOutline.head.title = newValue;
-							var combinedTitle = CombineTitleAuthorAndSource();
+							var combinedTitle = CombineTitleAuthorAndSource(mainOutline);
 							updateViewsChiasmContent(chiasmElementId, combinedTitle);
 						}
 						else if (chiasmElementId.indexOf("-scriptureRange") != -1)
@@ -589,21 +589,4 @@
   						FitToContent(textAreaId,'','100');
 					})
 				;		
-	}
-	
-	function CombineTitleAuthorAndSource()
-	{
-		var combinedSource = fetchSourceProfile(mainOutline._id + "_source");
-		var sourceDetails = formatCombinedSource(combinedSource, "");
-		var author = fetchAuthorProfileByOutline(mainOutline);
-		var title = EmptyIfNull(mainOutline.head.title);
-		var titleCss = title.length > 0 ? '<div class="preview-outline-titleBlock-title">' + title + '</div>' : "";
-		var authorName = formatName(author, "", (title.length > 0 || sourceDetails.length > 0));
-		var authorNameCss = authorName.length > 0 ? '<div class="preview-outline-titleBlock-author">' + "by " + authorName + '</div>' : "";
-		var combinedTitle1 = (title.length > 0 && authorName.length > 0) ? (titleCss + authorNameCss) : 
-			((title.length > 0) ? titleCss : authorNameCss);
-			
-
-		return (combinedTitle1.length > 0 && sourceDetails.length > 0) ? (combinedTitle1 + "<div class='preview-outline-titleBlock-source'> &nbsp;(" + sourceDetails + ")</div>") :
-			((combinedTitle1.length > 0) ? combinedTitle1 : sourceDetails);
 	}
