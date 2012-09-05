@@ -119,6 +119,55 @@
 		return nextOptionId;
 	}
 	
+	/*
+	 * evaluate: could be faster to parse the ScriptureRange if outlines are many
+	 */
+	function getSelectedBCVRange(outlinesKeyedByBCVRange, selectedOutlineId)
+	{
+		for (var i=0; i < outlinesKeyedByBCVRange.length; i++) {
+		  var outlineRow =	outlinesKeyedByBCVRange[i];
+		  if (outlineRow.id == selectedOutlineId)
+		  	return outlineRow.key[0];
+		}; 
+		return [];
+	}
+	
+	function collectElementsInBCVRange(chaptersContainer, outlinesKeyedByBCVRange, selectedOutlineId, bcRange)
+	{
+		var bookCode = bcRange[0];
+		var headFound = false;
+		var elementsInBcvRange = [];
+		$(chaptersContainer).find(".bv-ch.ch-options").each(function(index)
+			{
+				var indexCh = parseInt($(this).text());
+				bcRangeTest = [bookCode, indexCh];
+			    var chSlice = getChapterSlice(outlinesKeyedByBCVRange, bcRangeTest);
+			    for (var i=0; i < chSlice.outlines.length; i++) {
+				  if (chSlice.outlines[i] == selectedOutlineId)
+				  {
+				  	 headFound = true;
+				  	 elementsInBcvRange.push(this);
+				  	 break;	  	 		  	 
+				  }			  
+				};
+				if (headFound)
+				{
+				  	// we're finished.
+					return elementsInBcvRange;
+				}			    
+				//CreateChiasmViewItem(outline.body.concepts, index, "indent-bv", container);
+			});
+		return elementsInBcvRange;
+	}
+	
+	function highlightElements(elements)
+	{
+		for (var i=0; i < elements.length; i++) {
+		  var selector = elements[i];
+		  $(selector).addClass("ch-selected");
+		};
+	}
+	
 	function doChapterOptions()
 	{
 		var indexCh = parseInt($(this).text());
@@ -132,6 +181,7 @@
 		var results = GenerateBookAndChaptersHtml(outlinesKeyedByBCVRange, bookCode);
 		$(jq(results[bookCode].bookHeadDivId + " div")).remove();
 		$(jq(results[bookCode].bookTailDivId + " div")).remove();
+		$(".ch-selected").removeClass("ch-selected");
 		
 		var outlineContainerId = "bv-outline-selected";
 		var nextOptionId = getNextOptionId(outlinesKeyedByBCVRange, bcRange, outlineContainerId);
@@ -166,6 +216,13 @@
 
 		$(jq(results[bookCode].bookHeadDivId)).after("<div id='" + outlineContainerId + "'></div>");
 		$(jq(outlineContainerId)).data("outline-selected", {"outlineId" : nextOptionId, "bcRange": bcRange });
+		// highlight selected
+		var selectedBcvRange = getSelectedBCVRange(outlinesKeyedByBCVRange, nextOptionId);
+		var collectedChaptersInRangeHead = collectElementsInBCVRange($(jq(results[bookCode].bookHeadDivId)), outlinesKeyedByBCVRange, nextOptionId, bcRange);
+		highlightElements(collectedChaptersInRangeHead);
+		var collectedChaptersInRangeTail = collectElementsInBCVRange($(jq(results[bookCode].bookTailDivId)), outlinesKeyedByBCVRange, nextOptionId, bcRange);
+		highlightElements(collectedChaptersInRangeTail);
+		
 		var outline = fetchOutline(nextOptionId);
 		DisplayOutlineExpansion(outline, jq(outlineContainerId));
 

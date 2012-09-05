@@ -222,6 +222,12 @@ form div label, form div textarea { vertical-align: middle; }
 	background-color: #E9C9FE;
 }
 
+.ch-selected
+{
+	color: azure;
+	/* border-bottom-color: crimson;
+	border-bottom-style: solid; */
+}
     /*
 .chiasm > li:before {
     content: counter(count, upper-latin) ". ";
