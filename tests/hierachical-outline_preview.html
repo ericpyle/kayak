@@ -18,7 +18,6 @@ module("kayak-views.js - hierarchical");
 
 test("empty", function() {
   var outline = createBlankOutline("outline");
-  switchOutlineMode("123");
   var result = generateHierarchicalFlat(outline);
   var expected = {};
   deepEqual(result, expected, "We expect result to be " + expected);
@@ -28,7 +27,6 @@ test("empty", function() {
 test("one line", function() {
   var outline = createBlankOutline("outline");
   outline.body.concepts.push({"content": "one line"});
-  switchOutlineMode("123");
   var result = generateHierarchicalFlat(outline);
   var expected = {
   	"html" :   "<div><span class='itemMarker'>1. </span><span class='conceptContent'>one line</span></div>"
@@ -39,7 +37,6 @@ test("one line", function() {
 
 test("two lines", function() {
   var outline = createBlankOutline("outline");
-  switchOutlineMode("123");
   outline.body.concepts.push({"content": "one line"});
   outline.body.concepts.push({"content": "second line"});
   var result = generateHierarchicalFlat(outline);
@@ -54,7 +51,6 @@ test("two lines", function() {
 
 test("one sub concept", function() {
   var outline = createBlankOutline("outline");
-  switchOutlineMode("123");
   outline.body.concepts.push({"content": "parent concept"});
   insertChildConcept(outline.body.concepts[0], "child concept");
   var result = generateHierarchicalFlat(outline);

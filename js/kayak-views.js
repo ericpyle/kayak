@@ -260,7 +260,7 @@ function generateHierarchicalFlat(outline)
 	getConceptPositions(positionList, -1, null, outline.body.concepts);
 	for (var i=0; i < positionList.length; i++) {
 		var positionObj = positionList[i];
-		var label = formatPositionIntoLabel(positionObj); //, ghostExists(positionList));
+		var label = formatPositionIntoLabel_123(positionObj); //, ghostExists(positionList));
 		
 		html += "<div><span class='itemMarker'>"+ label +" </span><span class='conceptContent'>"+ positionObj.concept.content +"</span></div>";
 	}
