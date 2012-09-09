@@ -266,7 +266,7 @@
 	function getPositionLabel(indexTarget, element)
 	{
 		var positionList = new Array();
-		getConceptPositions(positionList, indexTarget, element);
+		getConceptPositions(positionList, indexTarget, {"element":element});
 		var positionObj = positionList[indexTarget];
 		if (positionObj == undefined || positionObj.position == undefined)
 			return "(?.)";
@@ -299,8 +299,22 @@
 		return positionObj;
 	}
 	
-	function getConceptPositions(positionList, indexTarget, element, concepts, currentIndex, parentPos)
+	/*
+	 * recursionParams: element, concepts, currentIndex, parentPos
+	 */
+	function getConceptPositions(positionList, indexTarget, recursionParams)
 	{
+		var element; 
+		var concepts; 
+		var currentIndex; 
+		var parentPos;
+		if (recursionParams)
+		{
+			element = recursionParams.element; 
+			concepts = recursionParams.concepts; 
+			currentIndex = recursionParams.currentIndex; 
+			parentPos = recursionParams.parentPos;			
+		}		
 		if (concepts == undefined)
 			concepts = mainOutline.body.concepts;
 		if (currentIndex == undefined)
@@ -319,8 +333,8 @@
 			modifyVar(currentIndex, currentIndex + 1);	
 			if (concepts[i].concepts)
 			{				
-				var fFinished = getConceptPositions(positionList, indexTarget, element, concepts[i].concepts, 
-						currentIndex, positionObj);
+				var recursionParams2 = {"element": element, "concepts": concepts[i].concepts, "currentIndex": currentIndex, "parentPos": positionObj};
+				var fFinished = getConceptPositions(positionList, indexTarget, recursionParams2);
 				if (fFinished)
 				{
 					return true;

@@ -363,16 +363,19 @@
 		JSONToPreviewPanel();
 		if (mainOutline.head.contentType == "chiasm")
 		{
-			applyCitationMarkup(mainOutline, publishContentToSequentialPreviewTabs);
+			applyCitationMarkup(mainOutline, publishContentToSequentialPreviewTabs, "", "#chiasm-indent");
+			applyCitationMarkup(mainOutline, publishContentToSequentialPreviewTabs, "", "#chiasm-flat"); 
 			applyCitationMarkup(mainOutline, publishContentToChiasmTablePreviewTab);			
 		}
 		else if (mainOutline.head.contentType == "outline")
 		{
-			applyCitationMarkup(mainOutline, publishContentToSequentialPreviewTabs);
+			applyCitationMarkup(mainOutline, publishContentToSequentialPreviewTabs, "", "#chiasm-indent");
+			applyCitationMarkup(mainOutline, publishContentToSequentialPreviewTabs, "", "#chiasm-flat");
 		}
 		else if (mainOutline.head.contentType == "panel")
 		{
-			applyCitationMarkup(mainOutline, publishContentToSequentialPreviewTabs);
+			applyCitationMarkup(mainOutline, publishContentToSequentialPreviewTabs, "", "#chiasm-indent");
+			applyCitationMarkup(mainOutline, publishContentToSequentialPreviewTabs, "", "#chiasm-flat");
 			applyCitationMarkup(mainOutline, publishContentToPanelTablePreviewTab);
 		}
 		refreshScriptureTagging();		

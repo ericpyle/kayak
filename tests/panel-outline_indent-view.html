@@ -297,6 +297,32 @@ test("four lines - repeat 2 with headers", function() {
 });
 
 
+module("kayak-views.js - browse view table panel");
+test("one line", function() {
+  var outline = createBlankOutline("panel");
+  outline.head["contentParams"] = {"repeat" : 0};
+  outline.body.concepts.push({"content": "one line"});
+  var result = generatePanelTable(outline, "bv");
+  var expected = {
+  	"html" :   "<tbody><tr><td id='bv-table-panel-concept-0'><span class='conceptContent'>one line</span></td></tr></tbody>"
+	};
+   deepEqual(result, expected, "We expect result to be " + expected);
+});
+  
+test("two lines", function() {
+  var outline = createBlankOutline("panel");
+  outline.head["contentParams"] = {"repeat" : 0};
+  outline.body.concepts.push({"content": "one line"});
+  outline.body.concepts.push({"content": "second line"});
+  var result = generatePanelTable(outline, "bv");
+  var expected = {
+  	"html" :   "<tbody><tr><td id='bv-table-panel-concept-0'><span class='conceptContent'>one line</span></td></tr>" +
+  				"<tr><td id='bv-table-panel-concept-1'><span class='conceptContent'>second line</span></td></tr></tbody>"
+  }
+  
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
   });
 
   </script>

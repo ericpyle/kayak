@@ -19,11 +19,9 @@ function CombineTitleAuthorAndSource(outline)
 		((combinedTitle1.length > 0) ? combinedTitle1 : sourceDetails);
 }
 
-function publishContentToSequentialPreviewTabs(concepts, iconcept, newContent)
+function publishContentToSequentialPreviewTabs(conceptsNotUsed, iconcept, newContent, view, containerSelector)
 {
-	publishSequentialContentInPlace("#chiasm-indent", iconcept, newContent);
-	publishSequentialContentInPlace("#chiasm-flat", iconcept, newContent);
-	//publishContent("#tableViewAAB", iconcept, newContent);
+	publishSequentialContentInPlace(containerSelector, iconcept, newContent);
 }
 
 function publishSequentialContentInPlace(containerSelector, iconcept, newContent)
@@ -32,9 +30,9 @@ function publishSequentialContentInPlace(containerSelector, iconcept, newContent
 	$(viewConcept).first().html(newContent);
 }
 
-function publishContentToPanelTablePreviewTab(conceptsNotUsed, iconcept, newContent)
+function publishContentToPanelTablePreviewTab(conceptsNotUsed, iconcept, newContent, view)
 {
-	publishContentToId(newContent, getPanelTableConceptId(iconcept));
+	publishContentToId(newContent, getPanelTableConceptId(iconcept, view));
 }
 
 function publishContentToChiasmTablePreviewTab(concepts, iconcept, newContent)
@@ -166,9 +164,13 @@ function generatePanelVertical(outline, spacing, view)
 	return panelOutput;
 }
 
-function getPanelTableConceptId(iconcept)
+function getPanelTableConceptId(iconcept, view)
 {
-	return "table-panel-concept-" + iconcept;	
+	if (view != undefined)
+		view = view + "-";
+	else
+		view = "";
+	return view + "table-panel-concept-" + iconcept;	
 }
 
 // (if repeat == 2)
@@ -186,7 +188,7 @@ function getPanelTableConceptId(iconcept)
 //   6   7
 //  [3] [7]
 
-function generatePanelTable(outline)
+function generatePanelTable(outline, view)
 {
 	var panelOutput = {};
 	if (outline.head.contentType != "panel" || outline.body.concepts.length == 0)
@@ -229,7 +231,7 @@ function generatePanelTable(outline)
 				
 			html += "<tr>";
 		}
-		var id = getPanelTableConceptId(icell); 
+		var id = getPanelTableConceptId(icell, view); 
 		html += "<td id='"+ id +"'><span class='conceptContent'>"+ concepts[icell].content +"</span></td>";
 	
 		/*
@@ -257,7 +259,7 @@ function generateHierarchicalFlat(outline)
 	
 	var html = "";
 	var positionList = new Array();
-	getConceptPositions(positionList, -1, null, outline.body.concepts);
+	getConceptPositions(positionList, -1, {"concepts" : outline.body.concepts});
 	for (var i=0; i < positionList.length; i++) {
 		var positionObj = positionList[i];
 		var label = formatPositionIntoLabel_123(positionObj); //, ghostExists(positionList));

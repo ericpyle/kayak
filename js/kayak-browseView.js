@@ -52,19 +52,23 @@
 			{
 				CreateChiasmViewItem(outline.body.concepts, index, "indent-bv", container);
 			});
+			applyCitationMarkup(outline, publishContentToSequentialPreviewTabs, "bv", container);
 		}
 		else if (outline.head.contentType == "outline")
 		{
 			var result = generateHierarchicalFlat(outline);
-			$(container).append(result.html);			
+			$(container).append(result.html);
+			applyCitationMarkup(outline, publishContentToSequentialPreviewTabs, "bv", container);		
 		}
 		else if (outline.head.contentType == "panel")
 		{			
-			var result = generatePanelTable(outline);
+			var result = generatePanelTable(outline, "bv");
 			$(container).append("<table class='outline-table'></table>");
 			$(container).find("table").append(result.html);
+			applyCitationMarkup(outline, publishContentToPanelTablePreviewTab, "bv", container);
 		}
 		$(container).prepend("<div> (" + outline.head.ScriptureRange + ") </div>");
+		refreshScriptureTagging();
 		//var combinedTitle = CombineTitleAuthorAndSource(outline);
 		//$(container).append(combinedTitle);
 	}

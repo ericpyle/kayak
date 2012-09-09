@@ -157,27 +157,27 @@
 	/*
 	 * returns false if no update happened, true if so.
 	 */
-	function applyCitationMarkupForItemToViews(concepts, bookName, iconcept, scriptureRange, publishContentToView)
+	function applyCitationMarkupForItemToViews(concepts, bookName, iconcept, scriptureRange, publishContentToView, view, container)
 	{
 		var content = concepts[iconcept].content;
 		var chRange = getChapterRange(scriptureRange);		
 		var newContent = getCitationMarkup(content, bookName, chRange);
 		if (newContent == null)
 			return false; // did nothing
-		publishContentToView(concepts, iconcept, newContent);
+		publishContentToView(concepts, iconcept, newContent, view, container);
 		return true; // did something
 	}
 	
-	function updateScriptureCitation(element, editItemSelector, publishContentToView)
+	function updateScriptureCitation(element, editItemSelector, publishContentToView, view)
 	{
 		var bookName = getBookName(mainOutline.head.ScriptureRange);
 		var indexExited = getIndexOfOwningEditItem(element, editItemSelector);
 		//alert(indexExited + contentExited)
-		applyCitationMarkupForItemToViews(mainOutline.body.concepts, bookName, indexExited, mainOutline.head.ScriptureRange, publishContentToView);
+		applyCitationMarkupForItemToViews(mainOutline.body.concepts, bookName, indexExited, mainOutline.head.ScriptureRange, publishContentToView, view);
 		refreshScriptureTagging();		
 	}
 	
-	function applyCitationMarkup(outline, publishContentToView)
+	function applyCitationMarkup(outline, publishContentToView, view, container)
 	{
 		var scriptureRange = outline.head.ScriptureRange;
 		var bookName1 = getBookName(scriptureRange);
@@ -187,18 +187,18 @@
 			return;
 		}
 		// next go through each of the items, and identify the verses
-		var concepts = serializeConcepts();
+		var concepts = serializeConcepts(outline);
 		for (i = 0; i < concepts.length; i++)
 		{
-			applyCitationMarkupForItemToViews(concepts, bookName1, i, scriptureRange, publishContentToView);
+			applyCitationMarkupForItemToViews(concepts, bookName1, i, scriptureRange, publishContentToView, view, container);
 		}
 	}
 	
-	function serializeConcepts()
+	function serializeConcepts(outline)
 	{
 		var concepts = [];
 		var positionList = new Array();
-		getConceptPositions(positionList, -1);
+		getConceptPositions(positionList, -1, {"concepts": outline.body.concepts});
 		for (var i=0; i < positionList.length; i++) {
 		  	concepts.push(positionList[i].concept);
 		};
