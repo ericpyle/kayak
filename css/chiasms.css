@@ -23,16 +23,18 @@ button[href='#']:hover, button[type='button']:hover, button[type='submit']:hover
 
 .preview-outline-titleBlock-title {
 	font-weight: 600;
+	color: SlateGray;
 }
 
 .preview-outline-titleBlock-author {
 	display:block;
 	float:left;
-	
+	color: SlateGray;
 }
 
 .preview-outline-titleBlock-source {
 	float:left;
+	color: SlateGray;
 }
 
 .panel-header {

@@ -46,31 +46,48 @@
 	
 	function DisplayOutlineExpansion(outline, container)
 	{	
+		$(container).append("<div id='bv-outline-selected-body' style='overflow:auto; width:100%;'></div>");
+		var bodySelector = $(jq("bv-outline-selected-body"));
 		if (outline.head.contentType == "chiasm")
 		{
 			$(outline.body.concepts).each(function(index)
 			{
-				CreateChiasmViewItem(outline.body.concepts, index, "indent-bv", container);
+				CreateChiasmViewItem(outline.body.concepts, index, "indent-bv", bodySelector);
 			});
 			applyCitationMarkup(outline, publishContentToSequentialPreviewTabs, "bv", container);
 		}
 		else if (outline.head.contentType == "outline")
 		{
 			var result = generateHierarchicalFlat(outline);
-			$(container).append(result.html);
+			$(bodySelector).append(result.html);
 			applyCitationMarkup(outline, publishContentToSequentialPreviewTabs, "bv", container);		
 		}
 		else if (outline.head.contentType == "panel")
 		{			
 			var result = generatePanelTable(outline, "bv");
-			$(container).append("<table class='outline-table'></table>");
-			$(container).find("table").append(result.html);
+			$(bodySelector).append("<table class='outline-table'></table>");
+			$(bodySelector).find("table").append(result.html);
 			applyCitationMarkup(outline, publishContentToPanelTablePreviewTab, "bv", container);
 		}
-		$(container).prepend("<div> (" + outline.head.ScriptureRange + ") </div>");
+		$(container).prepend("<div id='bv-outline-selected-head'> (" + outline.head.ScriptureRange + ") <a id='bv-head-details-toggle' href='#' style='font-size:small;'>Show details...</a> </div>");
+		$(jq("bv-head-details-toggle")).click(toggleHeadDetails);		
 		refreshScriptureTagging();
-		//var combinedTitle = CombineTitleAuthorAndSource(outline);
-		//$(container).append(combinedTitle);
+	}
+	
+	function toggleHeadDetails()
+	{
+		var headDetails = $(jq("bv-head-details"));
+		if (headDetails.length == 0){
+			var data = $(jq("bv-outline-selected")).data("outline-selected");
+			var combinedTitle = CombineTitleAuthorAndSource(data.outline);
+			$(this).after("<div id='bv-head-details'>" + combinedTitle + "</div>");
+			$(jq("bv-head-details-toggle")).text("Hide details");
+		}
+		else{			
+			headDetails.remove();
+			$(jq("bv-head-details-toggle")).text("Show details...");
+		}
+		return false;
 	}
 
 	function DisplayBooksAndChapters()
@@ -219,7 +236,8 @@
 		
 
 		$(jq(results[bookCode].bookHeadDivId)).after("<div id='" + outlineContainerId + "'></div>");
-		$(jq(outlineContainerId)).data("outline-selected", {"outlineId" : nextOptionId, "bcRange": bcRange });
+		var outline = fetchOutline(nextOptionId);
+		$(jq(outlineContainerId)).data("outline-selected", {"outlineId" : nextOptionId, "bcRange": bcRange, "outline": outline });
 		// highlight selected
 		var selectedBcvRange = getSelectedBCVRange(outlinesKeyedByBCVRange, nextOptionId);
 		var collectedChaptersInRangeHead = collectElementsInBCVRange($(jq(results[bookCode].bookHeadDivId)), outlinesKeyedByBCVRange, nextOptionId, bcRange);
@@ -227,7 +245,6 @@
 		var collectedChaptersInRangeTail = collectElementsInBCVRange($(jq(results[bookCode].bookTailDivId)), outlinesKeyedByBCVRange, nextOptionId, bcRange);
 		highlightElements(collectedChaptersInRangeTail);
 		
-		var outline = fetchOutline(nextOptionId);
 		DisplayOutlineExpansion(outline, jq(outlineContainerId));
 
 		// find widest range of context
