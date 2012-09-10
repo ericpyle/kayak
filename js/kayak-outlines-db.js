@@ -1169,11 +1169,13 @@
 		}
 	}
 	
-	function pageToAndSelectOutline(dbId)
+	function pageToAndSelectOutline(dbId, goToTabSelector)
 	{
 		var newRow = pageToRow(jq("exampleTable"), jq(dbId));
 		selectOutlineRow(newRow);
-		$("#tabsMain").tabs('select',"#View");
+		if (!goToTabSelector)
+			goToTabSelector = "#View";
+		$("#tabsMain").tabs('select', goToTabSelector);
 	}
 	
 	function changeUrlToSelectedId(rowId)

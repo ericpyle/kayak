@@ -69,9 +69,19 @@
 			$(bodySelector).find("table").append(result.html);
 			applyCitationMarkup(outline, publishContentToPanelTablePreviewTab, "bv", container);
 		}
-		$(container).prepend("<div id='bv-outline-selected-head'> (" + outline.head.ScriptureRange + ") <a id='bv-head-details-toggle' href='#' style='font-size:small;'>Show details...</a> </div>");
+		$(container).prepend("<div id='bv-outline-selected-head'> (" + outline.head.ScriptureRange + ") "+
+			" <a id='bv-head-goEdit' href='#' style='font-size:small;'>Go edit...</a> " +
+			" <a id='bv-head-details-toggle' href='#' style='font-size:small;'>Show details...</a> " +
+			 "</div>");
+		$(jq("bv-head-goEdit")).click(goEdit);
 		$(jq("bv-head-details-toggle")).click(toggleHeadDetails);		
 		refreshScriptureTagging();
+	}
+	
+	function goEdit()
+	{
+		var data = $(jq("bv-outline-selected")).data("outline-selected");
+		pageToAndSelectOutline(data.outlineId, "#EditView");		
 	}
 	
 	function toggleHeadDetails()
@@ -254,9 +264,7 @@
 		// (alternatively, split after first chapter in range?)
 		
 		// TODO: pick outline by fewest number of verses in range
-		// TODO:
-		
-		//pageToAndSelectOutline(dbId);
+		// TODO:		
 		return false;
 	}
 	
