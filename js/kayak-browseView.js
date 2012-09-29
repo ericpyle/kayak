@@ -160,7 +160,7 @@
 		$(jq('bv-book-head-2CH')).parent().next().append("<div class='runner atomicPair'></div><div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
 		$(jq('bv-book-head-EZR')).parent().next().append("<div class='runner atomicPair'></div><div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
 		$(jq('bv-book-head-NEH')).parent().next().append("<div class='runner atomicPair'></div><div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-EST')).parent().next().append("<div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-EST')).parent().next().append("<div class='runner'></div><div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
 		
 		$(jq('bv-book-head-ISA')).parent().next().append("<div class='runner'></div><div class='runner'></div><div class='runner'></div><div class='runner-header'>The Book of the Eagle/Prophet (am 3200 to 3300) Writings</div><div class='runner atomicSeries'></div>")
 		$(jq('bv-book-head-JER')).parent().next().append("<div class='runner atomicPair'></div><div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
