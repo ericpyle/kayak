@@ -271,6 +271,11 @@ form div label, form div textarea { vertical-align: middle; }
 	height: auto;
 }
 
+.runner-head
+{
+	margin-top: 5px;
+}
+
 .runner-container
 {
 	width: 250px;

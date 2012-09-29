@@ -136,49 +136,49 @@
 		}
 				
 		$(".ch-options").click(doChapterOptions);
-		$(jq('bv-book-head-GEN')).parent().next().append("<div class='runner-header'>The Book of the Ox/Priest (am ~2553)</div><div class='runner atomicSeries'></div>")
-		$(jq('bv-book-head-EXO')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-LEV')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-NUM')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-DEU')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-JOS')).parent().next().append("<div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-GEN')).parent().next().append("<div class='runner'></div><div class='runner-header'>The Book of the Ox/Priest (am ~2553)</div><div class='runner atomicSeries'></div>")
+		$(jq('bv-book-head-EXO')).parent().next().append("<div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-LEV')).parent().next().append("<div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-NUM')).parent().next().append("<div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-DEU')).parent().next().append("<div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-JOS')).parent().next().append("<div class='runner'></div><div class='runner atomicSeries'></div>");
 		
-		$(jq('bv-book-head-JDG')).parent().next().append("<div class='runner-header'>The Book of the Lion/King (am 2905 to 3020) History</div><div class='runner atomicSeries'></div>")
-		$(jq('bv-book-head-RUT')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-1SA')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-2SA')).parent().next().append("<div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-JDG')).parent().next().append("<div class='runner'></div><div class='runner'></div><div class='runner-header'>The Book of the Lion/King (am 2905 to 3020) History</div><div class='runner atomicSeries'></div>")
+		$(jq('bv-book-head-RUT')).parent().next().append("<div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-1SA')).parent().next().append("<div class='runner atomicPair'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-2SA')).parent().next().append("<div class='runner atomicPair'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
 		
-		$(jq('bv-book-head-JOB')).parent().next().append("<div class='runner-header'>The Book of the Lion/King (am 2905 to 3020) Wisdom</div><div class='runner atomicSeries'></div>")
-		$(jq('bv-book-head-PSA')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-PRO')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-ECC')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-SNG')).parent().next().append("<div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-JOB')).parent().next().append("<div class='runner'></div><div class='runner'></div><div class='runner-header'>The Book of the Lion/King (am 2905 to 3020) Wisdom</div><div class='runner atomicSeries'></div>")
+		$(jq('bv-book-head-PSA')).parent().next().append("<div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-PRO')).parent().next().append("<div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-ECC')).parent().next().append("<div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-SNG')).parent().next().append("<div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
 		
-		$(jq('bv-book-head-1KI')).parent().next().append("<div class='runner-header'>The Book of the Eagle/Prophet (am 3200 to 3300) History</div><div class='runner atomicSeries'></div>")
-		$(jq('bv-book-head-2KI')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-1CH')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-2CH')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-EZR')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-NEH')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-EST')).parent().next().append("<div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-1KI')).parent().next().append("<div class='runner atomicPair runner-head'></div><div class='runner'></div><div class='runner'></div><div class='runner-header'>The Book of the Eagle/Prophet (am 3200 to 3300) History</div><div class='runner atomicSeries'></div>")
+		$(jq('bv-book-head-2KI')).parent().next().append("<div class='runner atomicPair'></div><div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-1CH')).parent().next().append("<div class='runner atomicPair runner-head'></div><div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-2CH')).parent().next().append("<div class='runner atomicPair'></div><div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-EZR')).parent().next().append("<div class='runner atomicPair'></div><div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-NEH')).parent().next().append("<div class='runner atomicPair'></div><div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-EST')).parent().next().append("<div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
 		
-		$(jq('bv-book-head-ISA')).parent().next().append("<div class='runner-header'>The Book of the Eagle/Prophet (am 3200 to 3300) Writings</div><div class='runner atomicSeries'></div>")
-		$(jq('bv-book-head-JER')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-LAM')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-EZK')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-DAN')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-HOS')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-JOL')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-AMO')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-OBA')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-JON')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-MIC')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-NAM')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-HAB')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-ZEP')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-HAG')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-ZEC')).parent().next().append("<div class='runner atomicSeries'></div>");
-		$(jq('bv-book-head-MAL')).parent().next().append("<div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-ISA')).parent().next().append("<div class='runner'></div><div class='runner'></div><div class='runner'></div><div class='runner-header'>The Book of the Eagle/Prophet (am 3200 to 3300) Writings</div><div class='runner atomicSeries'></div>")
+		$(jq('bv-book-head-JER')).parent().next().append("<div class='runner atomicPair'></div><div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-LAM')).parent().next().append("<div class='runner atomicPair'></div><div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-EZK')).parent().next().append("<div class='runner'></div><div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-DAN')).parent().next().append("<div class='runner'></div><div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-HOS')).parent().next().append("<div class='runner atomicPair'></div><div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-JOL')).parent().next().append("<div class='runner atomicPair'></div><div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-AMO')).parent().next().append("<div class='runner atomicPair'></div><div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-OBA')).parent().next().append("<div class='runner atomicPair'></div><div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-JON')).parent().next().append("<div class='runner atomicPair'></div><div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-MIC')).parent().next().append("<div class='runner atomicPair'></div><div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-NAM')).parent().next().append("<div class='runner atomicPair'></div><div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-HAB')).parent().next().append("<div class='runner atomicPair'></div><div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-ZEP')).parent().next().append("<div class='runner atomicPair'></div><div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-HAG')).parent().next().append("<div class='runner atomicPair'></div><div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-ZEC')).parent().next().append("<div class='runner atomicPair'></div><div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
+		$(jq('bv-book-head-MAL')).parent().next().append("<div class='runner atomicPair'></div><div class='runner'></div><div class='runner'></div><div class='runner atomicSeries'></div>");
 
 		//adjustHeightOfRunnerContainers();
 	}
