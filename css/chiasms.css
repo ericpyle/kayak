@@ -230,6 +230,76 @@ form div label, form div textarea { vertical-align: middle; }
 	/* border-bottom-color: crimson;
 	border-bottom-style: solid; */
 }
+
+/*
+.table {
+	display:block;
+}
+
+.row {
+	clear: both;
+	overflow:auto;
+	display:block;
+}
+
+.cell {
+	float:left;
+}*/
+
+.table {
+	overflow-x:auto; overflow-y:hidden; 
+}
+
+.row {
+	/* width: 500px; */
+}
+
+.cell {
+	/* width: 250px; */ float:left; 
+}
+
+/*
+.container { overflow-x:auto; overflow-y:hidden; }
+.wrapper { width: 500px; }
+.element { width: 250px; float:left; }
+*/
+
+.runner-header
+{
+	color: darkgrey;
+	float: top;
+	height: auto;
+}
+
+.runner-container
+{
+	width: 250px;
+	overflow: hidden;
+}
+
+.runner
+{
+	float: left;
+	/* padding-bottom:-5000px; margin-bottom:5000px; */ 
+ 	height:100%;
+	width: 10px;
+}
+
+.atomicPair
+{
+	background-color: grey;	
+}
+
+.atomicSeries
+{
+	background-color: darkgrey;
+}
+
+.container { width:200px; overflow-x:auto; overflow-y:hidden; }
+.wrapper { width: 400px; }
+.element { width:100px; float:left; }
+
+
     /*
 .chiasm > li:before {
     content: counter(count, upper-latin) ". ";

@@ -340,6 +340,10 @@
 		{
 			$("#save-outline-title").text(AorB(mainOutline.head.title, "") );
 			$("#save-outline-scriptureRange").text(AorB(mainOutline.head.ScriptureRange, ""));
+		}
+		else if (tabSelect == "#BrowseByBook")
+		{
+			adjustHeightOfRunnerContainers();
 		}		
 	}
 	
