@@ -270,6 +270,7 @@ form div label, form div textarea { vertical-align: middle; }
 	color: darkgrey;
 	float: top;
 	height: auto;
+	margin-bottom: 5px;
 }
 
 .runner-head
@@ -285,6 +286,7 @@ form div label, form div textarea { vertical-align: middle; }
 
 .runner
 {
+	margin-left: 10px;
 	float: left;
 	/* padding-bottom:-5000px; margin-bottom:5000px; */ 
  	height:100%;
