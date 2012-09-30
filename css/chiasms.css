@@ -252,6 +252,7 @@ form div label, form div textarea { vertical-align: middle; }
 
 .row {
 	/* width: 500px; */
+	overflow:auto;
 }
 
 .cell {

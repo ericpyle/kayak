@@ -187,19 +187,23 @@
 	{
 		// adjust column widths
 	  	var widthCol0px = $(jq("bv-outline-selected")).parent().css('width');
-	  	var widthCol0 = $(jq("bv-outline-selected")).parent().width();
-	  	if (widthCol0px){	  	
+	  	var widthCol0 = $(jq("bv-outline-selected")).parent().width();	  	
+	  	if (widthCol0px){
+	  		var rowWidth = widthCol0 + 300;	  	
 		  	$(".row").each(function(index) {
 		    	$(this).children(".cell").first().css('width', widthCol0px);
-		    	$(this).width(widthCol0 + 250);	
+		    	$(this).width(rowWidth);	
 		  	});
+		  	//$(".table").width(rowWidth);
 		  	
 	  	}
 	  	else
 	  	{
+	  		var rowWidth = 550;	
 	  		$(".row").each(function(index) {
-		    	$(this).css('width', "500px");		    	
+		    	$(this).width(rowWidth);		    	
 		  	});
+		  	//$(".table").width(rowWidth);
 	  	}
 	  	
 		$(".row").each(function(index) {
