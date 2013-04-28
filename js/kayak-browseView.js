@@ -81,7 +81,8 @@
 	function goEdit()
 	{
 		var data = $(jq("bv-outline-selected")).data("outline-selected");
-		pageToAndSelectOutline(data.outlineId, "#EditView");		
+		pageToAndSelectOutline(data.outlineId, "#EditView");
+		return false;
 	}
 	
 	function toggleHeadDetails()
