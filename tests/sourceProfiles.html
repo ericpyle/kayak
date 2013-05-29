@@ -7,64 +7,9 @@
 <script type="text/javascript" src="js/qunit-git.js"></script>
 <script type="text/javascript" src="../js/jquery-extensions-utils.js"></script>
 <script type="text/javascript" src="../js/kayak-common.js"></script>
+<script type="text/javascript" src="../js/kayak-outlines-db.js"></script>
 
   <script type="text/javascript">
-      function mergeDuplicateSourceProfiles(combinedSourceProfiles)
-      {
-          if (combinedSourceProfiles.length <= 1)
-              return combinedSourceProfiles;
-          // first sort them by content
-          var sortedSourceProfiles = combinedSourceProfiles.sort(compareSourceProfileContent);
-          // now see if we can find matching ones.
-          var mergedSourceProfiles = [];
-          var mergedSourceProfile = null;
-          var prevProfile = combinedSourceProfiles[0];
-          for (var i = 1; i < combinedSourceProfiles.length; i++) {
-              var currentProfile = combinedSourceProfiles[i];
-              if (compareSourceProfileContent(prevProfile, currentProfile) == 0) {
-                  if (mergedSourceProfile != prevProfile)
-                      mergedSourceProfile = clone(prevProfile);
-                  if (typeof mergedSourceProfile._id == "string") {
-                      mergedSourceProfile._id = [mergedSourceProfile._id, currentProfile._id];                      
-                      mergedSourceProfile.source._id = mergedSourceProfile._id;
-                      mergedSourceProfiles.push(mergedSourceProfile);
-                  }
-                  else {
-                      mergedSourceProfile._id.push(currentProfile._id);
-                  }
-                  prevProfile = mergedSourceProfile;
-              }
-              else {
-                  if (mergedSourceProfiles.indexOf(prevProfile) == -1)
-                      mergedSourceProfiles.push(prevProfile);
-                  mergedSourceProfiles.push(currentProfile);
-                  prevProfile = currentProfile;
-              }
-          }
-
-          return mergedSourceProfiles;
-      }
-
-      function compareSourceProfileContent(a, b) {
-          // remove id fields, and stringify for string compare.
-          var acontent = deleteIdFieldsAndReturnStringifiedContent(a);
-          var bcontent = deleteIdFieldsAndReturnStringifiedContent(b);
-          return acontent.localeCompare(bcontent);
-      }
-
-      function compareStrings(a, b) {
-          return a.localeCompare(b);
-      }
-
-
-      function deleteIdFieldsAndReturnStringifiedContent(a) {
-          var aclone = clone(a);
-          delete aclone._id;
-          delete aclone.outline._id;
-          delete aclone.source._id;
-          return JSON.stringify(aclone);
-      }
-
 
       $(document).ready(function () {
 
@@ -182,6 +127,21 @@
               var expected = [
                   { "_id": ["si1a", "si1b"], "outline": { "_id": "oi1", "source": { "details": "osd1", "website": "osw1" } }, "source": { "_id": ["si1a", "si1b"], "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } },
                   { "_id": "si2", "outline": { "_id": "oi2", "source": { "details": "osd2", "website": "osw2" } }, "source": { "_id": "si2", "media": "sm2", "details": "sd2", "website": "sw2", "publisherDetails": "sp2" } }
+              ];
+              deepEqual(result, expected, "We expect result to be " + expected);
+          });
+
+          test("show one different and two identical source profiles as one", function () {
+              var combinedSourceProfiles = [
+                  { "_id": "si2", "outline": { "_id": "oi2", "source": { "details": "osd1", "website": "osw2" } }, "source": { "_id": "si2", "media": "sm2", "details": "sd2", "website": "sw2", "publisherDetails": "sp2" } },
+                  { "_id": "si1a", "outline": { "_id": "oi1", "source": { "details": "osd2", "website": "osw1" } }, "source": { "_id": "si1a", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } },
+                  { "_id": "si1b", "outline": { "_id": "oi1", "source": { "details": "osd2", "website": "osw1" } }, "source": { "_id": "si1b", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } }
+                  
+              ];
+              var result = mergeDuplicateSourceProfiles(combinedSourceProfiles);
+              var expected = [
+                  { "_id": "si2", "outline": { "_id": "oi2", "source": { "details": "osd1", "website": "osw2" } }, "source": { "_id": "si2", "media": "sm2", "details": "sd2", "website": "sw2", "publisherDetails": "sp2" } },
+                  { "_id": ["si1a", "si1b"], "outline": { "_id": "oi1", "source": { "details": "osd2", "website": "osw1" } }, "source": { "_id": ["si1a", "si1b"], "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } }                  
               ];
               deepEqual(result, expected, "We expect result to be " + expected);
           });

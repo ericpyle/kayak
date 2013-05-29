@@ -1063,38 +1063,66 @@
 			PrepareNewSourceSearchResults();
 			// TODO: factor in the search keywords here
 			// but for now just show all
-			// TODO: Add sort as well
+		    // TODO: Add sort as well
+			var combinedSourceProfiles = [];
 			var profiles = findOutlinesAndUnreferencedSources(exampleRows);
 			for (var i=0; i < profiles.length; ++i) {
-				var doc = profiles[i];
-				var authorDetails = "";
-				var sourceDetails = "";
-				var rowId = "";
-				if (doc.head.contentType == "chiasm" || doc.head.contentType == "outline" || doc.head.contentType == "panel")
-				{
-					var authorProfile = fetchAuthorProfileByOutline(doc);
-					authorDetails = formatName(authorProfile, "");
-					sourceDetails = formatSource(doc, "");
-					rowId = doc._id;
-				}
-				if (doc.head.contentType == "sourceProfile")
-				{
-					// this is unreferenced source, so it doesn't have any associated outline details
-					var sourceFormFields = CreateEmptySourceFormData();
-					var combinedSource = fillCommonSourceData(sourceFormFields, doc);				
-					rowId = combinedSource.source._id; 
-					sourceDetails = formatCombinedSource(combinedSource, "");
-				}
-				// TODO: add source rows not referenced in document, findOutlinesAndUnreferencedSources
+			    var doc = profiles[i];
+			    var sourceDetails = "";
+			    if (doc.head.contentType == "chiasm" || doc.head.contentType == "outline" || doc.head.contentType == "panel")
+			    {
+			        sourceDetails = formatSource(doc, "");
+			    }
+			    if (doc.head.contentType == "sourceProfile")
+			    {
+			        // this is unreferenced source, so it doesn't have any associated outline details
+			        var sourceFormFields = CreateEmptySourceFormData();
+			        var combinedSource = fillCommonSourceData(sourceFormFields, doc);
+			        sourceDetails = formatCombinedSource(combinedSource, "");
+			    }
+			    // TODO: add source rows not referenced in document, findOutlinesAndUnreferencedSources
 				
-				// TODO: use "resp.rows" for sourceRows
-				//var sourceDoc = getCommonSourceProfile(doc, sourceRows);
+			    // TODO: use "resp.rows" for sourceRows
+			    //var sourceDoc = getCommonSourceProfile(doc, sourceRows);
 				
-				// skip blank source
-				if (sourceDetails.length == 0)
-					continue;
+			    // skip blank source
+			    if (sourceDetails.length == 0)
+			        continue;
+			    var combinedSourceprofile = fetchSourceProfile(doc._id + "_source");
+			    combinedSourceProfiles.push(combinedSourceprofile);
+			}
+
+			var mergedSourceProfiles = mergeDuplicateSourceProfiles(combinedSourceProfiles);
+			for (var i = 0; i < mergedSourceProfiles.length; ++i) {
+			    var profile = mergedSourceProfiles[i];
+			    var authorDetails = "";			    
+			    if (profile.outline._id != "") {
+			        if (typeof profile.outline._id == "string") {
+			            var doc = fetchOutline(profile.outline._id);
+			            var authorProfile = fetchAuthorProfileByOutline(doc);
+			            authorDetails = formatName(authorProfile, "");
+			        }
+			        else {
+			            var authorProfilesUsed = {};
+			            for (var ioutline = 0; ioutline < profile.outline._id.length; ++ioutline) {
+			                var outlineId = profile.outline._id[ioutline];
+			                var doc = fetchOutline(outlineId);
+			                var authorProfile = fetchAuthorProfileByOutline(doc);
+			                if (!authorProfilesUsed[authorProfile._id])
+			                    authorProfilesUsed[authorProfile._id] = true;
+			                else
+			                    continue;
+			                var formattedAuthorDetails = formatName(authorProfile, "", true);
+			                if (formattedAuthorDetails.length > 0 && authorDetails.length > 0) {
+			                    authorDetails += "; ";			                    
+			                }
+			                authorDetails += formattedAuthorDetails;
+			            }
+			        }
+			    }
+			    var rowId = profile._id;
+
 				var dataTable1 = $("#sourceSearchResults").data("dataTable");
-				var profile = fetchSourceProfile(doc._id + "_source");
 				var iSettings = dataTable1.fnAddData(
 					[	EmptyIfNull(profile.source.details), 
 						EmptyIfNull(profile.outline.source.details), 
@@ -1119,7 +1147,61 @@
 				dataTable1.fnDraw();
 			};
 		}
-		
+
+		function mergeDuplicateSourceProfiles(combinedSourceProfiles) {
+		    if (combinedSourceProfiles.length <= 1)
+		        return combinedSourceProfiles;
+		    // first sort them by content
+		    var sortedSourceProfiles = combinedSourceProfiles.sort(compareSourceProfileContent);
+		    // now see if we can find matching ones.
+		    var mergedSourceProfiles = [];
+		    var mergedSourceProfile = null;
+		    var prevProfile = clone(combinedSourceProfiles[0]);
+		    for (var i = 1; i < combinedSourceProfiles.length; i++) {
+		        var currentProfile = clone(combinedSourceProfiles[i]);
+		        if (compareSourceProfileContent(prevProfile, currentProfile) == 0) {
+		            if (mergedSourceProfile != prevProfile) {
+		                mergedSourceProfile = prevProfile;
+		            }		                
+		            if (typeof mergedSourceProfile._id == "string") {
+		                mergedSourceProfile._id = [mergedSourceProfile._id, currentProfile._id];
+		                mergedSourceProfile.outline._id = mergedSourceProfile._id;
+		                if (mergedSourceProfiles.indexOf(mergedSourceProfile) == -1)
+		                    mergedSourceProfiles.push(mergedSourceProfile);
+		            }
+		            else {
+		                mergedSourceProfile._id.push(currentProfile._id);
+		                mergedSourceProfile.outline._id = mergedSourceProfile._id;
+		            }
+		            prevProfile = mergedSourceProfile;
+		        }
+		        else {
+		            if (mergedSourceProfiles.indexOf(prevProfile) == -1)
+		                mergedSourceProfiles.push(prevProfile);
+		            mergedSourceProfiles.push(currentProfile);
+		            prevProfile = currentProfile;
+		        }
+		    }
+
+		    return mergedSourceProfiles;
+		}
+
+		function compareSourceProfileContent(a, b) {
+		    // remove id fields, and stringify for string compare.
+		    var acontent = deleteIdFieldsAndReturnStringifiedContent(a);
+		    var bcontent = deleteIdFieldsAndReturnStringifiedContent(b);
+		    return acontent.localeCompare(bcontent);
+		}
+
+		function deleteIdFieldsAndReturnStringifiedContent(a) {
+		    var aclone = clone(a);
+		    delete aclone._id;
+		    delete aclone.outline._id;
+		    delete aclone.source._id;
+		    return JSON.stringify(aclone);
+		}
+
+
 	function injectSearchButton(idDtFilter, idbtnSearch, placeholder)
 	{
 		
