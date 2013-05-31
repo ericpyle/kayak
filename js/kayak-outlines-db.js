@@ -716,16 +716,31 @@
 		
 		function fetchSourceProfile(idProfile)
 		{
+		    var guid = "";
+		    var sourceguid = "";
+		    var outlineSourceDetails = "";
+		    var components = idProfile.split("_");
+		    if (components.length == 2)
+		        guid = components[0];
+		    else if (components.length == 3) {
+		        sourceguid = components[0];
+		        outlineSourceDetails = unescape(components[1]);
+		    }
 			var exampleRows = getDbRows();
 			for (var i=0; i < exampleRows.length; ++i) {
 				var doc = exampleRows[i].value;
 				if (!doc)
-					continue;
-				var guid = idProfile.substring(0, idProfile.length - "_source".length);
-				if (doc._id != guid)
+				    continue;
+				if (sourceguid == "" && doc._id != guid)
 					continue;
 				if (doc.head.contentType == "chiasm" || doc.head.contentType == "outline" || doc.head.contentType == "panel")
 				{
+				    if (sourceguid != ""){
+				        if (doc.head.source && doc.head.source.guid == sourceguid && doc.head.source.details == outlineSourceDetails)
+				            guid = doc._id;
+				        else
+				            continue;
+				    }
 					//alert(JSON.stringify(doc));
 					// create a profile
 					var sourceFormFields = CreateEmptySourceFormData();
@@ -744,6 +759,8 @@
 				}
 				if (doc.head.contentType == "sourceProfile")
 				{
+				    if (sourceguid != "")
+				        continue;
 					//alert(JSON.stringify(doc));
 					// create a profile
 					var sourceFormFields = CreateEmptySourceFormData();
@@ -1120,7 +1137,7 @@
 			            }
 			        }
 			    }
-			    var rowId = profile._id;
+			    var rowId = createSourceRowId(profile);
 
 				var dataTable1 = $("#sourceSearchResults").data("dataTable");
 				var iSettings = dataTable1.fnAddData(
@@ -1131,7 +1148,7 @@
 				);
 				var drow = dataTable1.fnSettings().aoData[iSettings[0]];
 				$(drow.nTr)
-					.attr("id", rowId + "_source")
+					.attr("id", rowId)
 					.addClass("creditRow")
 					.click(function(event) {
 						// first turn off any other selected Row.
@@ -1197,8 +1214,14 @@
 		    var aclone = clone(a);
 		    delete aclone._id;
 		    delete aclone.outline._id;
-		    delete aclone.source._id;
+		    //delete aclone.source._id;
 		    return JSON.stringify(aclone);
+		}
+
+		function createSourceRowId(combinedSourceProfile) {
+		    if (typeof combinedSourceProfile._id == "string")
+		        return combinedSourceProfile._id + "_source";
+		    return combinedSourceProfile.source._id + "_" + escape(combinedSourceProfile.outline.source.details) + "_source";
 		}
 
 
@@ -2123,7 +2146,14 @@
 				LoadSourceResultsCallback(getDbRows());
 				if (profile)
 				{
-					var parentRow = pageToRow(jq("sourceSearchResults"), jq(profile._id + "_source"));
+				    var parentRow = pageToRow(jq("sourceSearchResults"), jq(createSourceRowId(profile)));
+				    if (!parentRow) {
+				        var profileFakeMerged = clone(profile);
+				        profileFakeMerged._id = [profileFakeMerged._id, profileFakeMerged._id];
+				        profileFakeMerged.outline.source._id = profileFakeMerged._id;
+                        parentRow = pageToRow(jq("sourceSearchResults"), jq(createSourceRowId(profileFakeMerged)));
+				    }
+
 					selectCreditRow(parentRow);
 				}
 			}

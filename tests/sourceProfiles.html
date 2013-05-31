@@ -82,24 +82,24 @@
 
           test("show two identical source profiles as one", function () {
               var combinedSourceProfiles = [
-                  { "_id": "si1", "outline": { "_id": "oi1", "source": { "details": "osd1", "website": "osw1" } }, "source": { "_id": "si1", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } },
-                  { "_id": "si2", "outline": { "_id": "oi1", "source": { "details": "osd1", "website": "osw1" } }, "source": { "_id": "si2", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } }
+                  { "_id": "oi1", "outline": { "_id": "oi1", "source": { "details": "osd1", "website": "osw1" } }, "source": { "_id": "si1", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } },
+                  { "_id": "oi2", "outline": { "_id": "oi2", "source": { "details": "osd1", "website": "osw1" } }, "source": { "_id": "si1", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } }
               ];
               var result = mergeDuplicateSourceProfiles(combinedSourceProfiles);
               var expected = [
-                  { "_id": ["si1", "si2"], "outline": { "_id": "oi1", "source": { "details": "osd1", "website": "osw1" } }, "source": { "_id": ["si1", "si2"], "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } }
+                  { "_id": ["oi1", "oi2"], "outline": { "_id": ["oi1", "oi2"], "source": { "details": "osd1", "website": "osw1" } }, "source": { "_id": "si1", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } }
               ];
               deepEqual(result, expected, "We expect result to be " + expected);
           });
           test("show three identical source profiles as one", function () {
               var combinedSourceProfiles = [
-                  { "_id": "si1", "outline": { "_id": "oi1", "source": { "details": "osd1", "website": "osw1" } }, "source": { "_id": "si1", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } },
-                  { "_id": "si2", "outline": { "_id": "oi1", "source": { "details": "osd1", "website": "osw1" } }, "source": { "_id": "si2", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } },
-                  { "_id": "si3", "outline": { "_id": "oi1", "source": { "details": "osd1", "website": "osw1" } }, "source": { "_id": "si3", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } }
+                  { "_id": "oi1", "outline": { "_id": "oi1", "source": { "details": "osd1", "website": "osw1" } }, "source": { "_id": "si1", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } },
+                  { "_id": "oi2", "outline": { "_id": "oi2", "source": { "details": "osd1", "website": "osw1" } }, "source": { "_id": "si1", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } },
+                  { "_id": "oi3", "outline": { "_id": "oi3", "source": { "details": "osd1", "website": "osw1" } }, "source": { "_id": "si1", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } }
               ];
               var result = mergeDuplicateSourceProfiles(combinedSourceProfiles);
               var expected = [
-                  { "_id": ["si1", "si2", "si3"], "outline": { "_id": "oi1", "source": { "details": "osd1", "website": "osw1" } }, "source": { "_id": ["si1", "si2", "si3"], "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } }
+                  { "_id": ["oi1", "oi2", "oi3"], "outline": { "_id": ["oi1", "oi2", "oi3"], "source": { "details": "osd1", "website": "osw1" } }, "source": { "_id": "si1", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } }
               ];
               deepEqual(result, expected, "We expect result to be " + expected);
           });
@@ -107,45 +107,81 @@
 
           test("show two identical source profiles as one - no common source", function () {
               var combinedSourceProfiles = [
-                  { "_id": "si1", "outline": { "_id": "", "source": { } }, "source": { "_id": "si1", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } },
-                  { "_id": "si2", "outline": { "_id": "", "source": { } }, "source": { "_id": "si2", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } }
+                  { "_id": "oi1", "outline": { "_id": "oi1", "source": {} }, "source": { "_id": "si1", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } },
+                  { "_id": "oi2", "outline": { "_id": "oi2", "source": { } }, "source": { "_id": "si1", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } }
               ];
               var result = mergeDuplicateSourceProfiles(combinedSourceProfiles);
               var expected = [
-                  { "_id": ["si1", "si2"], "outline": { "_id": "", "source": { } }, "source": { "_id": ["si1", "si2"], "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } }
+                  { "_id": ["oi1", "oi2"], "outline": { "_id": ["oi1", "oi2"], "source": {} }, "source": { "_id": "si1", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } }
               ];
               deepEqual(result, expected, "We expect result to be " + expected);
           });
 
           test("show two identical source profiles as one and one different", function () {
               var combinedSourceProfiles = [
-                  { "_id": "si1a", "outline": { "_id": "oi1", "source": { "details": "osd1", "website": "osw1" } }, "source": { "_id": "si1a", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } },
-                  { "_id": "si1b", "outline": { "_id": "oi1", "source": { "details": "osd1", "website": "osw1" } }, "source": { "_id": "si1b", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } },
-                  { "_id": "si2", "outline": { "_id": "oi2", "source": { "details": "osd2", "website": "osw2" } }, "source": { "_id": "si2", "media": "sm2", "details": "sd2", "website": "sw2", "publisherDetails": "sp2" } }
+                  { "_id": "oi1a", "outline": { "_id": "oi1a", "source": { "details": "osd1", "website": "osw1" } }, "source": { "_id": "si1", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } },
+                  { "_id": "oi1b", "outline": { "_id": "oi1b", "source": { "details": "osd1", "website": "osw1" } }, "source": { "_id": "si1", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } },
+                  { "_id": "oi2", "outline": { "_id": "oi2", "source": { "details": "osd2", "website": "osw2" } }, "source": { "_id": "si2", "media": "sm2", "details": "sd2", "website": "sw2", "publisherDetails": "sp2" } }
               ];
               var result = mergeDuplicateSourceProfiles(combinedSourceProfiles);
               var expected = [
-                  { "_id": ["si1a", "si1b"], "outline": { "_id": "oi1", "source": { "details": "osd1", "website": "osw1" } }, "source": { "_id": ["si1a", "si1b"], "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } },
-                  { "_id": "si2", "outline": { "_id": "oi2", "source": { "details": "osd2", "website": "osw2" } }, "source": { "_id": "si2", "media": "sm2", "details": "sd2", "website": "sw2", "publisherDetails": "sp2" } }
+                  { "_id": ["oi1a", "oi1b"], "outline": { "_id": ["oi1a", "oi1b"], "source": { "details": "osd1", "website": "osw1" } }, "source": { "_id": "si1", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } },
+                  { "_id": "oi2", "outline": { "_id": "oi2", "source": { "details": "osd2", "website": "osw2" } }, "source": { "_id": "si2", "media": "sm2", "details": "sd2", "website": "sw2", "publisherDetails": "sp2" } }
               ];
               deepEqual(result, expected, "We expect result to be " + expected);
           });
 
           test("show one different and two identical source profiles as one", function () {
               var combinedSourceProfiles = [
-                  { "_id": "si2", "outline": { "_id": "oi2", "source": { "details": "osd1", "website": "osw2" } }, "source": { "_id": "si2", "media": "sm2", "details": "sd2", "website": "sw2", "publisherDetails": "sp2" } },
-                  { "_id": "si1a", "outline": { "_id": "oi1", "source": { "details": "osd2", "website": "osw1" } }, "source": { "_id": "si1a", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } },
-                  { "_id": "si1b", "outline": { "_id": "oi1", "source": { "details": "osd2", "website": "osw1" } }, "source": { "_id": "si1b", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } }
+                  { "_id": "oi2", "outline": { "_id": "oi2", "source": { "details": "osd1", "website": "osw2" } }, "source": { "_id": "si2", "media": "sm1", "details": "sd2", "website": "sw2", "publisherDetails": "sp2" } },
+                  { "_id": "oi1a", "outline": { "_id": "oi1a", "source": { "details": "osd2", "website": "osw1" } }, "source": { "_id": "si1", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } },
+                  { "_id": "oi1b", "outline": { "_id": "oi1b", "source": { "details": "osd2", "website": "osw1" } }, "source": { "_id": "si1", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } }
                   
               ];
               var result = mergeDuplicateSourceProfiles(combinedSourceProfiles);
               var expected = [
-                  { "_id": "si2", "outline": { "_id": "oi2", "source": { "details": "osd1", "website": "osw2" } }, "source": { "_id": "si2", "media": "sm2", "details": "sd2", "website": "sw2", "publisherDetails": "sp2" } },
-                  { "_id": ["si1a", "si1b"], "outline": { "_id": "oi1", "source": { "details": "osd2", "website": "osw1" } }, "source": { "_id": ["si1a", "si1b"], "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } }                  
+                  { "_id": "oi2", "outline": { "_id": "oi2", "source": { "details": "osd1", "website": "osw2" } }, "source": { "_id": "si2", "media": "sm1", "details": "sd2", "website": "sw2", "publisherDetails": "sp2" } },
+                  { "_id": ["oi1a", "oi1b"], "outline": { "_id": ["oi1a", "oi1b"], "source": { "details": "osd2", "website": "osw1" } }, "source": { "_id": "si1", "media": "sm1", "details": "sd1", "website": "sw1", "publisherDetails": "sp1" } }
               ];
               deepEqual(result, expected, "We expect result to be " + expected);
           });
 
+          module("encode source table row id");
+
+          test("common source only", function () {
+              var combinedSourceProfile = {
+                  "_id": "si",
+                  "outline": { "_id": "", "source": { "details": "", "website": "" } },
+                  "source": { "_id": "si", "media": "sm", "details": "sd", "website": "sw", "publisherDetails": "sp" }
+              };
+              var result = createSourceRowId(combinedSourceProfile);
+              var expected = "si_source";
+              deepEqual(result, expected, "We expect result to be " + expected);
+          });
+
+          test("specific only", function () {
+              var combinedSourceProfile = {
+                  "_id": "oi1",
+                  "outline": { "_id": "oi1", "source": { "details": "details with commas(,) periods(.) and spaces( )", "website": "" } },
+                  "source": { "_id": "", "media": "", "details": "", "website": "", "publisherDetails": "" }
+              };
+              var result = createSourceRowId(combinedSourceProfile);
+              var expected = "oi1_source";
+              deepEqual(result, expected, "We expect result to be " + expected);
+          });
+
+          test("common and specific", function () {
+              var combinedSourceProfile = {
+                  "_id": ["oi1", "oi2"],
+                  "outline": { "_id": ["oi1", "oi2"], "source": { "details": "details with commas(,) periods(.) and spaces( )", "website": "" } },
+                  "source": { "_id": "si1", "media": "", "details": "", "website": "", "publisherDetails": "" }
+              };
+              var result = createSourceRowId(combinedSourceProfile);
+              var expected = "si1_details%20with%20commas%28%2C%29%20periods%28.%29%20and%20spaces%28%20%29_source";
+              deepEqual(result, expected, "We expect result to be " + expected);
+          });
+
+          /*
           test("show two equivalent source profiles on surface as one", function () {
               var result;
               var expected = { "": [] };
@@ -169,6 +205,7 @@
               var expected = { "": [] };
               deepEqual(result, expected, "We expect result to be " + expected);
           });
+          */
 
       });
   </script>
@@ -181,5 +218,6 @@
  <h2 id="qunit-userAgent"></h2>
  <ol id="qunit-tests"></ol>
  <div id="qunit-fixture">test markup, will be hidden</div>
+    <div id="si1_details*@-_+./_source">* @ - _ + . /</div>
 </body>
 </html>
