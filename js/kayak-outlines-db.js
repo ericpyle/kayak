@@ -1125,7 +1125,7 @@
 			                var outlineId = profile.outline._id[ioutline];
 			                var doc = fetchOutline(outlineId);
 			                var authorProfile = fetchAuthorProfileByOutline(doc);
-			                if (!authorProfilesUsed[authorProfile._id])
+			                if (authorProfile!= null && !authorProfilesUsed[authorProfile._id])
 			                    authorProfilesUsed[authorProfile._id] = true;
 			                else
 			                    continue;
