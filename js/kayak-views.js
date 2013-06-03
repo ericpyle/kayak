@@ -24,6 +24,16 @@ function wrapInHyperlink(stuff, combinedSource) {
     }
     var href = EmptyIfNull(combinedSource.outline.source.website).length > 0 ? combinedSource.outline.source.website : combinedSource.source.website;
     href = encodeURI(href);
+    try
+    {
+        var url = $.url(href);
+        var protocol = EmptyIfNull(url.attr('protocol'));
+        if (protocol.length == 0)
+            protocol = "http://";
+        href = protocol + url.attr('host') + url.attr('path');
+    }
+    catch (err) {
+    }
     return "<a href='"+ href + "'>" + stuff + "</a>";
 }
 
