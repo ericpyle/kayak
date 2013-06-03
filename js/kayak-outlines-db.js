@@ -114,6 +114,12 @@
 		{
 			return getDb().rows;
 		}
+
+		function getUserFriendlyContentType(contentType) {
+		    if (contentType == "outline")
+		        return "hierarchical";
+		    return contentType;
+		}
 		
 		function LoadExamplesToTableCallback(exampleRows)
 		{
@@ -136,10 +142,11 @@
 						    	return false;
 						}, true );
 				
-				var dataTable1 = $("#exampleTable").data("dataTable");
+  				var dataTable1 = $("#exampleTable").data("dataTable");
+  				var contentType = getUserFriendlyContentType(doc.head.contentType);
 				var iSettings = dataTable1.fnAddData(
 					[	
-						formatScriptureRange(doc.head.ScriptureRange, "") + "<br/>" + doc.head.contentType, 
+						formatScriptureRange(doc.head.ScriptureRange, "") + "<br/>" + "<i>" + contentType + "</i>",
 						doc.head.title,
 						formatName(authorProfile, ""), 
 						formatSource(doc, ""), 
