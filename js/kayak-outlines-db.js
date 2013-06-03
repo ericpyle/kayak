@@ -315,8 +315,11 @@
 		function formatSubmissionTimestamp(timestamp)
 		{
 			if (!timestamp)
-				return "";
-			return timestamp[1] + "/" + timestamp[2] + "/" + timestamp[0];
+			    return "";
+			var timeArray = timestamp[3].split(':');
+			var dateTime = new Date(timestamp[0], timestamp[1], timestamp[2], timeArray[0], timeArray[1]);
+			var timeAMPM = formatAMPM(dateTime);
+			return timestamp[1] + "/" + timestamp[2] + "/" + timestamp[0] + " " + timeAMPM;
 		}
 		
 		var authorColumns = function(doc, key)
