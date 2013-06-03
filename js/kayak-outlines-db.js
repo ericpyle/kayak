@@ -1115,19 +1115,12 @@
 			    var authorProfilesUsed = {};
 			    if (profile.outline._id != "") {
 			        if (typeof profile.outline._id == "string") {
-			            var doc = fetchOutline(profile.outline._id);
-			            var authorProfile = fetchAuthorProfileByOutline(doc);
-			            authorProfilesUsed[authorProfile._id] = authorProfile;
+			            collectAuthorProfilesUsed(profile.outline._id, authorProfilesUsed);
 			        }
 			        else {
 			            for (var ioutline = 0; ioutline < profile.outline._id.length; ++ioutline) {
 			                var outlineId = profile.outline._id[ioutline];
-			                var doc = fetchOutline(outlineId);
-			                var authorProfile = fetchAuthorProfileByOutline(doc);
-			                if (authorProfile!= null && !authorProfilesUsed[authorProfile._id])
-			                    authorProfilesUsed[authorProfile._id] = authorProfile;
-			                else
-			                    continue;
+			                collectAuthorProfilesUsed(outlineId, authorProfilesUsed);
 			            }
 			        }
 			    }
@@ -1158,6 +1151,13 @@
 				$((cells)[1]).addClass("sourceDetails");
 				dataTable1.fnDraw();
 			};
+		}
+
+		function collectAuthorProfilesUsed(outlineId, authorProfilesUsed) {
+		    var doc = fetchOutline(outlineId);
+		    var authorProfile = fetchAuthorProfileByOutline(doc);
+		    if (authorProfile != null && !authorProfilesUsed[authorProfile._id])
+		        authorProfilesUsed[authorProfile._id] = authorProfile;
 		}
 
 		function combineAuthorsInCell(dict) {
