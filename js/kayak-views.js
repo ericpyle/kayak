@@ -13,10 +13,18 @@ function CombineTitleAuthorAndSource(outline)
 	var authorNameCss = authorName.length > 0 ? '<div class="preview-outline-titleBlock-author">' + "by " + authorName + '</div>' : "";
 	var combinedTitle1 = (title.length > 0 && authorName.length > 0) ? (titleCss + authorNameCss) : 
 		((title.length > 0) ? titleCss : authorNameCss);
-		
-
+	sourceDetails = wrapInHyperlink(sourceDetails, combinedSource);
 	return (combinedTitle1.length > 0 && sourceDetails.length > 0) ? (combinedTitle1 + "<div class='preview-outline-titleBlock-source'> &nbsp;(" + sourceDetails + ")</div>") :
 		((combinedTitle1.length > 0) ? combinedTitle1 : sourceDetails);
+}
+
+function wrapInHyperlink(stuff, combinedSource) {
+    if (!combinedSource || (EmptyIfNull(combinedSource.outline.source.website).length == 0 && EmptyIfNull(combinedSource.source.website).length == 0)) {
+        return stuff;
+    }
+    var href = EmptyIfNull(combinedSource.outline.source.website).length > 0 ? combinedSource.outline.source.website : combinedSource.source.website;
+    href = encodeURI(href);
+    return "<a href='"+ href + "'>" + stuff + "</a>";
 }
 
 function publishContentToSequentialPreviewTabs(conceptsNotUsed, iconcept, newContent, view, containerSelector)
