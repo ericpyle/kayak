@@ -90,9 +90,12 @@
 	}
 	
 	function highlightItem() {
+	    var fWasMainFocus = $(this).hasClass("chiasmItemHighlightedMainFocus");
 		RemoveAllHighlighting();
 		if ($("#itemHighlighting").attr("checked") == false)
-			return false;
+		    return false;
+		if (fWasMainFocus)
+		    return false;
         var viewMatchingClass = $(this).attr("class");
         var view = viewMatchingClass.split("-")[0];
         var matchingClass = viewMatchingClass.substr(view.length);
