@@ -17,8 +17,8 @@
     	
     	<script type="text/javascript" src="js/jquery.js"></script> 
     	<script type="text/javascript" src="js/jquery.url.js"></script> 
-    	<script type="text/javascript" src="js/jquery-ui-1.8.1.custom.min.js"></script> 
-    	<script type="text/javascript" src="js/jquery.dataTables.min.js"></script> 
+    	<script type="text/javascript" src="js/jquery-ui-1.8.1.custom.min.js"></script>
+    	<script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
 		<script type="text/javascript" src="js/fitToContent.js"></script>
 		<script type="text/javascript" src="js/jquery-extensions-utils.js"></script>
 		<title>kayak - sharing outlines of scripture</title>
@@ -275,22 +275,22 @@
 
 		<div id="sourceSpecification" style="display:none;"> <!-- style="display:none;" -->
 			<b>Source</b>
-			<p>
-				<table id="sourceSearchResults" class="sourceSearchResults" width="100%">
-					<thead><td class="sourceDetails" colspan="2">Source Details</td><td></td></tr>
-						<tr>
-							<td class="sourceDetails">Common</td>
-							<td class="sourceDetails">Specific</td>
-							<td>Author</td>
-						</tr>
-					</thead>
-					<tbody></tbody>
-					<tfoot><tr><td colspan="3"><a id="btnCreateNewSource" href="#"><b>Specify source</b></a></td></tr>
-						<tr><td colspan="3"><a id="btnAuthoredWithKayak" href="#"><b>I authored this outline with <em>kayak</em></b></a></td></tr>
-						<tr><td colspan="3"><button id="btnSourceOk" type="button">OK</button> <button id="btnSourceCancel" type="button">Cancel</button></td></tr>						
-					</tfoot>
-				</table>
-			</p>
+			<p></p>
+			<table id="sourceSearchResults" class="sourceSearchResults" width="100%">
+				<thead><tr><td class="sourceDetails" colspan="2">Source Details</td><td></td></tr>
+					<tr>
+						<th class="sourceDetails">Common</th>
+						<th class="sourceDetails">Specific</th>
+						<th>Author</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+				<tfoot><tr><td colspan="3"><a id="btnCreateNewSource" href="#"><b>Specify source</b></a></td></tr>
+					<tr><td colspan="3"><a id="btnAuthoredWithKayak" href="#"><b>I authored this outline with <em>kayak</em></b></a></td></tr>
+					<tr><td colspan="3"><button id="btnSourceOk" type="button">OK</button> <button id="btnSourceCancel" type="button">Cancel</button></td></tr>						
+				</tfoot>
+			</table>
+			
 			<form id="sourceDetailBlock" action="#" onsubmit="return false;" name="updateSourceDetails" style="display: none;"> <!-- -->
 				<input type="hidden" name="_id"></input>
 				<div style="background-color:#AABCFE;">

@@ -1112,31 +1112,26 @@
 			var mergedSourceProfiles = mergeDuplicateSourceProfiles(combinedSourceProfiles);
 			for (var i = 0; i < mergedSourceProfiles.length; ++i) {
 			    var profile = mergedSourceProfiles[i];
-			    var authorDetails = "";			    
+			    var authorProfilesUsed = {};
 			    if (profile.outline._id != "") {
 			        if (typeof profile.outline._id == "string") {
 			            var doc = fetchOutline(profile.outline._id);
 			            var authorProfile = fetchAuthorProfileByOutline(doc);
-			            authorDetails = formatName(authorProfile, "");
+			            authorProfilesUsed[authorProfile._id] = authorProfile;
 			        }
 			        else {
-			            var authorProfilesUsed = {};
 			            for (var ioutline = 0; ioutline < profile.outline._id.length; ++ioutline) {
 			                var outlineId = profile.outline._id[ioutline];
 			                var doc = fetchOutline(outlineId);
 			                var authorProfile = fetchAuthorProfileByOutline(doc);
 			                if (authorProfile!= null && !authorProfilesUsed[authorProfile._id])
-			                    authorProfilesUsed[authorProfile._id] = true;
+			                    authorProfilesUsed[authorProfile._id] = authorProfile;
 			                else
 			                    continue;
-			                var formattedAuthorDetails = formatName(authorProfile, "", true);
-			                if (formattedAuthorDetails.length > 0 && authorDetails.length > 0) {
-			                    authorDetails += "; ";			                    
-			                }
-			                authorDetails += formattedAuthorDetails;
 			            }
 			        }
 			    }
+			    var authorDetails = combineAuthorsInCell(authorProfilesUsed);
 			    var rowId = createSourceRowId(profile);
 
 				var dataTable1 = $("#sourceSearchResults").data("dataTable");
@@ -1163,6 +1158,29 @@
 				$((cells)[1]).addClass("sourceDetails");
 				dataTable1.fnDraw();
 			};
+		}
+
+		function combineAuthorsInCell(dict) {
+		    var authorDetails = "";
+		    var authors = [];
+		    for (var id in dict) {
+		        var authorProfile = dict[id];
+		        authors.push(authorProfile);
+		    }
+		    authors.sort(sortByFirstName);
+		    for (i = 0; i < authors.length; i++ ){
+                var authorProfile = authors[i];
+                var formattedAuthorDetails = formatName(authorProfile, "", true);
+                if (i == 3) {
+                    authorDetails += "... (" + (authors.length - i) + " more)";
+                    break;
+                }
+		        if (formattedAuthorDetails.length > 0 && authorDetails.length > 0) {
+		            authorDetails += "; ";
+		        }
+		        authorDetails += formattedAuthorDetails;
+		    }
+		    return authorDetails;
 		}
 
 		function mergeDuplicateSourceProfiles(combinedSourceProfiles) {
@@ -2126,9 +2144,7 @@
 				{
 					keywords = convertToKeywordString(
 						[profile.source.details,
-						profile.source.website,
-						profile.outline.source.details,
-						profile.outline.source.website]);
+						profile.outline.source.details]);
 				}
 				// TODO: calculate keywords for sources
 			}			
