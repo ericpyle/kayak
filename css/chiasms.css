@@ -213,13 +213,13 @@ form div { padding-left: 10px; padding-right: 10px; padding-top: 10px; }
 form div p { padding: 10px; }
 form div label, form div textarea { vertical-align: middle; }
 
-.ch-options
+.ch-options, .vs-options
 {
 	background-color: #B9C9FE; 
 	cursor: pointer;
 }
 
-.ch-options-multiple
+.ch-options-multiple, .vs-options-multiple
 {
 	background-color: #E9C9FE;
 }
@@ -307,6 +307,18 @@ form div label, form div textarea { vertical-align: middle; }
 .wrapper { width: 400px; }
 .element { width:100px; float:left; }
 
+.bv-ch {
+    padding:5px;display:run-in;float:left;
+}
+.bv-ch-underten {
+    padding-left:10.5px;padding-right:10.5px;
+}
+.bv-vs {
+    padding:5px;display:run-in;float:left;
+}
+.bv-vs-underten {
+    padding-left:10.5px;padding-right:10.5px;
+}
 
     /*
 .chiasm > li:before {

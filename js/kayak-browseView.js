@@ -11,10 +11,11 @@
 		var bookHeadDivId = "bv-book-head-"+ bookCode;
 		var bookTailDivId = "bv-book-tail-"+ bookCode;		
 		results[bookCode] = { "bookHeadDivId": bookHeadDivId, 
-							 "bookHeadDiv" : "<div id='"+ bookHeadDivId + "' class='bv-book' style='overflow:auto; width:250px;'><h3>" + bookNameLong + "</h3> <div></div></div>",
+		    "bookHeadDiv": "<div id='" + bookHeadDivId + "' class='bv-book' style='overflow:auto; width:250px;'><p><b> " + bookNameLong + " </b><a class='bv-book-show-verses' href='#'>Show verses</a><div></div></div>",
 							 "bookTailDivId": bookTailDivId,
 							 "bookTailDiv" : "<div id='"+ bookTailDivId + "' class='bv-book' style='overflow:auto; width:250px;'><div></div></div>",
-							 "chapters" : []
+							 "chapters": [],
+                             "chaptersAndVerses": []
 							 };
 		// see if book has any outlines
 		var bookSlice = getBookSlice(outlinesKeyedByBCVRange, [bookCode]);
@@ -22,21 +23,50 @@
 			return results;
 		for (var i=1; i <= chapters; i++) {
 			
-			var cssChapter = "bv-ch";
+			var cssChapterOptions = "";
+			if (i < 10)
+			    cssChapterOptions += " bv-ch-underten";
 			var bcRange = [bookCode, i];
 			var chSlice = getChapterSlice(outlinesKeyedByBCVRange, bcRange);
 			if (chSlice.outlines.length > 0)
 			{
-				cssChapter += " ch-options";
+			    cssChapterOptions += " ch-options";
 				if (chSlice.outlines.length > 1)
-					cssChapter += " ch-options-multiple";
+				    cssChapterOptions += " ch-options-multiple";
 			}
-			var paddingLR = "5px";
-			if (i < 10)
-				paddingLR = "10.5px";
-			results[bookCode].chapters.push("<div class='"+ cssChapter + "' style='padding:5px;padding-left:"+paddingLR+";padding-right:"+paddingLR+";display:run-in;float:left;'> " + i + " </div>")
+			results[bookCode].chapters.push("<div class='bv-ch" + cssChapterOptions + "'> " + i + " </div>");
+
+			var bchCode = formatBookAndChapterCode(bookCode, i, chapters);
+			var verses = BookStats[bchCode].verses;
+			var versesDivs = "";
+			for (var v = 1; v <= verses; v++) {
+			    var cssVerseOptions = "";
+			    if (v < 10)
+			        cssVerseOptions = " bv-vs-underten";
+			    var bcvRange = [bookCode, i, v];
+			    var chvSlice = getVerseSlice(outlinesKeyedByBCVRange, bcvRange);
+			    if (chvSlice.outlines.length > 0) {
+			        cssVerseOptions += " vs-options";
+			        if (chvSlice.outlines.length > 1)
+			            cssVerseOptions += " vs-options-multiple";
+			    }
+			    versesDivs += "<div class='bv-vs" + cssVerseOptions + "'> " + v + " </div>";
+			}
+			results[bookCode].chaptersAndVerses.push(versesDivs);
+
 		}
 		return results;
+	}
+    
+	function formatBookAndChapterCode(bookCode, ch, chapters) {
+	    var chFormatted = ch;
+	    if (ch < 10) {
+	        chFormatted = "0" + chFormatted;
+	    }
+	    if (chapters > 100 && ch < 100) {
+	        chFormatted = "0" + chFormatted;
+	    }
+	    return bookCode + chFormatted;
 	}
 	
 	function docIsOutline(outline)
@@ -126,17 +156,33 @@
 			if(typeof BookStats[property] == "string" || property.length == 3) {
 				var bookCode = property;
 				var results = GenerateBookAndChaptersHtml(outlinesKeyedByBCVRange, bookCode);
-				var row = "<div class='row'><div class='cell'>"+ results[bookCode].bookHeadDiv +"</div><div class='cell runner-container'></div></div>";		
+				var row = "<div class='row'><div class='cell'>" + results[bookCode].bookHeadDiv + "</div><div class='cell runner-container'></div></div>";
 				//var row = "<tr><td>"+ results[bookCode].bookHeadDiv +"</td><td></td></tr>";				
 				$("#BrowseByBook .table").append(row);				
 				var chapters = results[bookCode].chapters;
 				for (var i=0; i < chapters.length; i++) {
-				  $(jq(results[bookCode].bookHeadDivId)).append(chapters[i]);
-				};				
-			}
+				    $(jq(results[bookCode].bookHeadDivId)).append(chapters[i]);
+				};
+		    }
+            /*
+		    if (typeof BookStats[property] == "string" || property.length == 3) {
+		        var bookCode = property;
+		        var results = GenerateBookAndChaptersHtml(outlinesKeyedByBCVRange, bookCode);
+
+		        var chapters = results[bookCode].chapters;
+		        var chaptersAndVerses = results[bookCode].chaptersAndVerses;
+		        var row = "<div class='row'><div class='cell'>" + results[bookCode].bookHeadDiv + "</div><div class='cell runner-container'></div></div>";
+		        $("#BrowseByBook .table").append(row);
+		        for (var i = 0; i < chapters.length; i++) {
+		            $(jq(results[bookCode].bookHeadDivId)).append("<div class='row'><div class='cell'><div class='bv-ch'><b>" + (i + 1) + "</b></div></div><div class='cell'>" + chaptersAndVerses[i] + "</div>"); // <div style='clear:both;'/>
+		        };
+		        //var row = "<tr><td>"+ results[bookCode].bookHeadDiv +"</td><td></td></tr>";		
+        
+		    } */
 		}
 				
 		$(".ch-options").click(doChapterOptions);
+		$(".bv-book-show-verses").click(showVerses);
 		$(jq('bv-book-head-GEN')).parent().next().append("<div class='runner'></div><div class='runner-header'>The Book of the Ox/Priest (am ~2553)</div><div class='runner atomicSeries'></div>")
 		$(jq('bv-book-head-EXO')).parent().next().append("<div class='runner'></div><div class='runner atomicSeries'></div>");
 		$(jq('bv-book-head-LEV')).parent().next().append("<div class='runner'></div><div class='runner atomicSeries'></div>");
@@ -183,7 +229,31 @@
 
 		//adjustHeightOfRunnerContainers();
 	}
+
+	function showVerses() {
+	    var bookHeadDivId = $(this).closest('.bv-book').attr('id');
+	    var bookCode = extractBookCode(bookHeadDivId);
+	    var outlinesKeyedByBCVRange = indexOutlinesByBCVRange(getDbRows());
+	    var results = GenerateBookAndChaptersHtml(outlinesKeyedByBCVRange, bookCode);
+
+	    var chapters = results[bookCode].chapters;
+	    var chaptersAndVerses = results[bookCode].chaptersAndVerses;
+	    // remove bookHeadDiv children (chapters)
+	    removeChapters(results[bookCode]);
+	    for (var i = 0; i < chapters.length; i++) {
+	        $(jq(results[bookCode].bookHeadDivId)).append("<table><tr><td><div class='bv-ch'><b>" + (i + 1) + "</b></div></td><td>" + chaptersAndVerses[i] + "</td></tr></table>"); // <div style='clear:both;'/>
+	    };
+	    $(this).unbind('click');
+	    $(this).text("Show chapters");
+	    $(this).click(showChapters);
+	}
 	
+	function showChapters() {
+	    $(this).unbind('click');
+	    $(this).text("Show verses");
+	    $(this).click(showVerses);
+	}
+
 	function adjustHeightOfRunnerContainers()
 	{
 		// adjust column widths
@@ -200,7 +270,7 @@
 	  	}
 	  	else
 	  	{
-	  		var rowWidth = 550;	
+	  		var rowWidth = "auto";	
 	  		$(".row").each(function(index) {
 		    	$(this).width(rowWidth);		    	
 		  	});
@@ -293,21 +363,28 @@
 		};
 	}
 	
+	function extractBookCode(bookId) {
+	    return bookId.substr(bookId.length - 3, 3);
+	}
+
+	function removeChapters(bookDiv) {
+	    $(jq(bookDiv.bookHeadDivId + " div")).remove();
+	    $(jq(bookDiv.bookTailDivId + " div")).remove();
+	    $(".ch-selected").removeClass("ch-selected");
+	}
+
 	function doChapterOptions()
 	{
 		var indexCh = parseInt($(this).text());
-		var bookId = $(this).parent(".bv-book");
-		var bookCode = bookId.attr("id").substr(bookId.length - 4, 3);
+		var bookId = $(this).parent(".bv-book").attr("id");
+		var bookCode = extractBookCode(bookId);
 		var bcRange = [bookCode, indexCh];
 		//alert(book + " " + indexCh);
 		
 		var outlinesKeyedByBCVRange = indexOutlinesByBCVRange(getDbRows());
 		
 		var results = GenerateBookAndChaptersHtml(outlinesKeyedByBCVRange, bookCode);
-		$(jq(results[bookCode].bookHeadDivId + " div")).remove();
-		$(jq(results[bookCode].bookTailDivId + " div")).remove();
-		$(".ch-selected").removeClass("ch-selected");
-		
+		removeChapters(results[bookCode]);
 		// clear the widths before re-establishing it
 		
 		$(".row").each(function(index) {
