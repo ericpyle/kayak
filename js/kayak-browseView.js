@@ -246,12 +246,14 @@
 	    $(this).unbind('click');
 	    $(this).text("Show chapters");
 	    $(this).click(showChapters);
+	    return false;
 	}
 	
 	function showChapters() {
 	    $(this).unbind('click');
 	    $(this).text("Show verses");
 	    $(this).click(showVerses);
+	    return false;
 	}
 
 	function adjustHeightOfRunnerContainers()
