@@ -164,21 +164,6 @@
 				    $(jq(results[bookCode].bookHeadDivId)).append(chapters[i]);
 				};
 		    }
-            /*
-		    if (typeof BookStats[property] == "string" || property.length == 3) {
-		        var bookCode = property;
-		        var results = GenerateBookAndChaptersHtml(outlinesKeyedByBCVRange, bookCode);
-
-		        var chapters = results[bookCode].chapters;
-		        var chaptersAndVerses = results[bookCode].chaptersAndVerses;
-		        var row = "<div class='row'><div class='cell'>" + results[bookCode].bookHeadDiv + "</div><div class='cell runner-container'></div></div>";
-		        $("#BrowseByBook .table").append(row);
-		        for (var i = 0; i < chapters.length; i++) {
-		            $(jq(results[bookCode].bookHeadDivId)).append("<div class='row'><div class='cell'><div class='bv-ch'><b>" + (i + 1) + "</b></div></div><div class='cell'>" + chaptersAndVerses[i] + "</div>"); // <div style='clear:both;'/>
-		        };
-		        //var row = "<tr><td>"+ results[bookCode].bookHeadDiv +"</td><td></td></tr>";		
-        
-		    } */
 		}
 				
 		$(".ch-options").click(doChapterOptions);
@@ -241,7 +226,7 @@
 	    // remove bookHeadDiv children (chapters)
 	    removeChapters(results[bookCode]);
 	    for (var i = 0; i < chapters.length; i++) {
-	        $(jq(results[bookCode].bookHeadDivId)).append("<table><tr><td><div class='bv-ch'><b>" + (i + 1) + "</b></div></td><td>" + chaptersAndVerses[i] + "</td></tr></table>"); // <div style='clear:both;'/>
+	        $(jq(results[bookCode].bookHeadDivId)).append("<table><tr><td style='vertical-align:top;'><div class='bv-ch'><b>" + (i + 1) + "</b></div></td><td>" + chaptersAndVerses[i] + "</td></tr></table>"); // <div style='clear:both;'/>
 	    };
 	    $(this).unbind('click');
 	    $(this).text("Show chapters");
@@ -378,7 +363,7 @@
 	function doChapterOptions()
 	{
 		var indexCh = parseInt($(this).text());
-		var bookId = $(this).parent(".bv-book").attr("id");
+		var bookId = $(this).closest(".bv-book").attr("id");
 		var bookCode = extractBookCode(bookId);
 		var bcRange = [bookCode, indexCh];
 		//alert(book + " " + indexCh);
@@ -402,7 +387,7 @@
 			$(jq(outlineContainerId)).data("outline-selected", null);
 			DisplayBooksAndChapters();
 			adjustHeightOfRunnerContainers();
-			return;
+			return false;
 		}
 		
 		var chapters = results[bookCode].chapters;
