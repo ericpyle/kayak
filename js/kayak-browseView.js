@@ -224,9 +224,10 @@
 	    var chapters = results[bookCode].chapters;
 	    var chaptersAndVerses = results[bookCode].chaptersAndVerses;
 	    // remove bookHeadDiv children (chapters)
+	    $(jq("bv-outline-selected")).remove();
 	    removeChapters(results[bookCode]);
 	    for (var i = 0; i < chapters.length; i++) {
-	        $(jq(results[bookCode].bookHeadDivId)).append("<table><tr><td style='vertical-align:top;'><div class='bv-ch'><b>" + (i + 1) + "</b></div></td><td>" + chaptersAndVerses[i] + "</td></tr></table>"); // <div style='clear:both;'/>
+	        $(jq(results[bookCode].bookHeadDivId)).append("<table class='bv-chvss'><tr><td style='vertical-align:top;'><div class='bv-ch'><b>" + (i + 1) + "</b></div></td><td>" + chaptersAndVerses[i] + "</td></tr></table>"); // <div style='clear:both;'/>
 	    };
 	    $(this).unbind('click');
 	    $(this).text("Show chapters");
@@ -235,6 +236,15 @@
 	}
 	
 	function showChapters() {
+	    var bookHeadDivId = $(this).closest('.bv-book').attr('id');
+	    var bookCode = extractBookCode(bookHeadDivId);
+	    var outlinesKeyedByBCVRange = indexOutlinesByBCVRange(getDbRows());
+	    var results = GenerateBookAndChaptersHtml(outlinesKeyedByBCVRange, bookCode);
+
+	    var chapters = results[bookCode].chapters;
+	    removeVerses(results[bookCode]);
+	    doChapterOptions.call(this);
+
 	    $(this).unbind('click');
 	    $(this).text("Show verses");
 	    $(this).click(showVerses);
@@ -355,14 +365,28 @@
 	}
 
 	function removeChapters(bookDiv) {
-	    $(jq(bookDiv.bookHeadDivId + " div")).remove();
-	    $(jq(bookDiv.bookTailDivId + " div")).remove();
+	    removeBookDivs(bookDiv, "div");
 	    $(".ch-selected").removeClass("ch-selected");
+	}
+
+	function removeBookDivs(bookDiv, childContainer) {
+	    $(jq(bookDiv.bookHeadDivId + " " + childContainer)).remove();
+	    $(jq(bookDiv.bookTailDivId + " " + childContainer)).remove();
+	}
+
+	function removeVerses(bookDiv) {
+	    removeBookDivs(bookDiv, "table");
+	    $(".vs-selected").removeClass("vs-selected");
 	}
 
 	function doChapterOptions()
 	{
-		var indexCh = parseInt($(this).text());
+	    var indexCh = parseInt($(this).text());
+	    var fResetChapters = false;
+	    if (!indexCh) {
+	        indexCh = 1;
+	        fResetChapters = true;
+	    }
 		var bookId = $(this).closest(".bv-book").attr("id");
 		var bookCode = extractBookCode(bookId);
 		var bcRange = [bookCode, indexCh];
@@ -379,26 +403,33 @@
 	    	$(this).children(".cell").first().css('width', "");
 	  	});
 		
+		var indexHeadEnd = indexCh;
+		var chapters = results[bookCode].chapters;
 		var outlineContainerId = "bv-outline-selected";
-		var nextOptionId = getNextOptionId(outlinesKeyedByBCVRange, bcRange, outlineContainerId);
-		if (nextOptionId == null)
+		var nextOptionId;
+		if (fResetChapters)
+		    nextOptionId = null;
+        else
+		    nextOptionId = getNextOptionId(outlinesKeyedByBCVRange, bcRange, outlineContainerId);
+		if (nextOptionId == null || fResetChapters)
 		{
-			// don't show any (clear/reset)
-			$(jq(outlineContainerId)).data("outline-selected", null);
-			DisplayBooksAndChapters();
-			adjustHeightOfRunnerContainers();
-			return false;
+		    indexHeadEnd = chapters.length - 1;
+		    // don't show any (clear/reset)
+		    $(jq(outlineContainerId)).data("outline-selected", null);
+            // ** DO OPTIMIZE. This takes noticeable time. **
+			//DisplayBooksAndChapters();
+			//adjustHeightOfRunnerContainers();
+			//return false;
 		}
 		
-		var chapters = results[bookCode].chapters;
-		for (var i=0; i < indexCh; i++) {
+		for (var i = 0; i < indexHeadEnd; i++) {
 		  $(jq(results[bookCode].bookHeadDivId)).append(chapters[i]);
 		};
 		
-		if (indexCh < chapters.length){
+		if (indexHeadEnd < chapters.length) {
 			if($(jq(results[bookCode].bookTailDivId)).length == 0)
 				$(jq(results[bookCode].bookHeadDivId)).after(results[bookCode].bookTailDiv);
-			for (var i=indexCh; i < chapters.length; i++) {
+			for (var i = indexHeadEnd; i < chapters.length; i++) {
 			  $(jq(results[bookCode].bookTailDivId)).append(chapters[i]);
 			};
 		} 
@@ -410,18 +441,19 @@
 		$(jq(results[bookCode].bookHeadDivId)).find("div.ch-options").click(doChapterOptions);
 		$(jq(results[bookCode].bookTailDivId)).find("div.ch-options").click(doChapterOptions);
 		
+        if (nextOptionId != null) {
+		    $(jq(results[bookCode].bookHeadDivId)).after("<div id='" + outlineContainerId + "'></div>");
+		    var outline = fetchOutline(nextOptionId);
+		    $(jq(outlineContainerId)).data("outline-selected", { "outlineId": nextOptionId, "bcRange": bcRange, "outline": outline });
+		    // highlight selected
+		    var selectedBcvRange = getSelectedBCVRange(outlinesKeyedByBCVRange, nextOptionId);
+		    var collectedChaptersInRangeHead = collectElementsInBCVRange($(jq(results[bookCode].bookHeadDivId)), outlinesKeyedByBCVRange, nextOptionId, bcRange);
+		    highlightElements(collectedChaptersInRangeHead);
+		    var collectedChaptersInRangeTail = collectElementsInBCVRange($(jq(results[bookCode].bookTailDivId)), outlinesKeyedByBCVRange, nextOptionId, bcRange);
+		    highlightElements(collectedChaptersInRangeTail);
 
-		$(jq(results[bookCode].bookHeadDivId)).after("<div id='" + outlineContainerId + "'></div>");
-		var outline = fetchOutline(nextOptionId);
-		$(jq(outlineContainerId)).data("outline-selected", {"outlineId" : nextOptionId, "bcRange": bcRange, "outline": outline });
-		// highlight selected
-		var selectedBcvRange = getSelectedBCVRange(outlinesKeyedByBCVRange, nextOptionId);
-		var collectedChaptersInRangeHead = collectElementsInBCVRange($(jq(results[bookCode].bookHeadDivId)), outlinesKeyedByBCVRange, nextOptionId, bcRange);
-		highlightElements(collectedChaptersInRangeHead);
-		var collectedChaptersInRangeTail = collectElementsInBCVRange($(jq(results[bookCode].bookTailDivId)), outlinesKeyedByBCVRange, nextOptionId, bcRange);
-		highlightElements(collectedChaptersInRangeTail);
-		
-		DisplayOutlineExpansion(outline, jq(outlineContainerId));
+		    DisplayOutlineExpansion(outline, jq(outlineContainerId));
+		}
 
 		adjustHeightOfRunnerContainers();
 		// find widest range of context
