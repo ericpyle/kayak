@@ -593,8 +593,11 @@
 		  		continue;
 		  	if (bcvRange.length == 6 && targetBCV[1] > bcvRange[4])
 		  		continue;
-		  	if (bcvRange.length == 6 && targetBCV[1] == bcvRange[4] && (targetBCV[2] < bcvRange[2] || targetBCV[2] > bcvRange[5]))
-		  		continue;
+		  	if (bcvRange.length == 6 && targetBCV[1] == bcvRange[1] && (targetBCV[2] < bcvRange[2]))
+		  	    continue;
+		  	if (bcvRange.length == 6 && targetBCV[1] == bcvRange[4] && (targetBCV[2] > bcvRange[5]))
+		  	    continue;
+
 		  	 matchingOutlines.push(outlineRow.id);
 		  }
 		};		
@@ -661,9 +664,10 @@
 			bcvRange.push(chapter1);
 			verse1 = getVerse(matches2[0], true /* expect colon to precede verse */);
 			if (verse1)
-				bcvRange.push(verse1); // first Verse
-			else
-				bcvRange.push(1); // no verses specified, just start at verse 1
+			    bcvRange.push(verse1); // first Verse
+			else {
+			    bcvRange.push(-1); // no verses specified, just start at verse 1
+			}
 		}
 		
 		if (matches2.length == 1)
@@ -725,6 +729,41 @@
 		}
 		return bcvRange;
 	}
+
+	function completeBCVRange(bcvRange) {
+	    var completedBcvRange = bcvRange.slice(0);
+	    if (bcvRange.length == 6) {
+	        // fill in chapter and verses
+	        if (bcvRange[2] == -1) {
+	            completedBcvRange[2] = 1;
+	        }
+	        if (bcvRange[5] == -1) {
+	            var bookChapterCode = formatBookAndChapterCode(bcvRange[0], bcvRange[1], BookStats[bcvRange[0]].chapters);
+	            completedBcvRange[5] = BookStats[bookChapterCode].verses;
+	        }            
+	    } else if (bcvRange.length == 3) {
+	        if (bcvRange[2] == -1) {
+	            completedBcvRange[2] = 1;
+	            completedBcvRange.push(bcvRange[0]);
+	            completedBcvRange.push(bcvRange[1]);
+	            var bookChapterCode = formatBookAndChapterCode(bcvRange[0], bcvRange[1], BookStats[bcvRange[0]].chapters);
+	            completedBcvRange.push(BookStats[bookChapterCode].verses);
+	        }	        
+	    }
+	    else if (bcvRange.length == 1){
+	        completedBcvRange = [];
+	        completedBcvRange.push(bcvRange[0]);
+	        completedBcvRange.push(1);
+	        completedBcvRange.push(1);
+	        completedBcvRange.push(bcvRange[0]);
+	        var lastChapter = BookStats[bcvRange[0]].chapters;
+	        completedBcvRange.push(lastChapter);
+	        var bookChapterCode = formatBookAndChapterCode(bcvRange[0], 1, BookStats[bcvRange[0]].chapters);
+	        completedBcvRange.push(BookStats[bookChapterCode].verses);
+	    }
+
+	    return completedBcvRange;
+	}
 	
 	function indexOutlinesByBCVRange(outlineRows)
 	{
@@ -739,8 +778,9 @@
 		  	// create new key
 		  	var bcvRange = parseBCVRange(outline.head.ScriptureRange);
 		  	if (bcvRange.length == 0)
-		  		continue; // skip outlines without BCVRange	  		  	
-		  	var newKey = [bcvRange, outline.head.contentType];		  	
+		  	    continue; // skip outlines without BCVRange
+		  	var completedBcvRange = completeBCVRange(bcvRange);
+		  	var newKey = [completedBcvRange, outline.head.contentType];
 		  	var newRow = { id : outline._id, key: newKey, value : outline };		  	
 		  	newRows.push(newRow);
 		};
