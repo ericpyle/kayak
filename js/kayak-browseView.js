@@ -483,7 +483,11 @@
 		var bcOrBcvRangeForDiv = bcOrBcvRange.slice(0);
 	    // $(jq(results[bookCode].bookHeadDivId)).append("<table class='bv-chvss'><tr><td style='vertical-align:top;'><div class='bv-ch'><b>" + (i + 1) + "</b></div></td><td>" + chaptersAndVerses[i] + "</td></tr></table>");
 		for (var i = 0; i < indexHeadEnd; i++) {
-		    var appendHtml = buildAppendHtml(i, bcOrBcvRangeForDiv, outlinesKeyedByBCVRange);
+		    var verseEnd = -1;
+		    if (nextOptionId != null && (bcOrBcvRange[1] == (i + 1)) && bcOrBcvRange[2]) {
+		        verseEnd = bcOrBcvRange[2];
+		    }
+		    var appendHtml = buildAppendHtml(i + 1, bcOrBcvRangeForDiv, outlinesKeyedByBCVRange, 1, verseEnd);
 		    $(jq(results[bookCode].bookHeadDivId)).append(appendHtml);
 		};
 		
@@ -493,7 +497,11 @@
 			if($(jq(results[bookCode].bookTailDivId)).length == 0)
 				$(jq(results[bookCode].bookHeadDivId)).after(results[bookCode].bookTailDiv);
 			for (var i = indexHeadEnd; i < bookStats.chapters; i++) {
-			    var appendHtml = buildAppendHtml(i, bcOrBcvRangeForDiv, outlinesKeyedByBCVRange);
+			    var appendHtml = "";
+			    if (nextOptionId != null && bcOrBcvRange[1] == i && bcOrBcvRange[2]) {
+			        appendHtml += buildAppendHtml(i, bcOrBcvRangeForDiv, outlinesKeyedByBCVRange, bcOrBcvRange[2] + 1, -1);
+			    }
+			    appendHtml += buildAppendHtml(i + 1, bcOrBcvRangeForDiv, outlinesKeyedByBCVRange, 1, -1);
 			    $(jq(results[bookCode].bookTailDivId)).append(appendHtml);
 			};
 		} 
@@ -533,19 +541,35 @@
 		return false;
 	}
 
-	function buildAppendHtml(i, bcOrBcvRangeForDiv, outlinesKeyedByBCVRange) {
-	    bcOrBcvRangeForDiv[1] = i + 1;
+	function createVerseTableRowFrag(ichapter) {
+	    return "<table class='bv-chvss'><tr><td style='vertical-align:top;'><div class='bv-ch'><b>" + (ichapter) + "</b></div></td><td>";
+	}
+
+	function closeVerseTableRowFrag()
+	{
+	    return "</td></tr></table>";
+	}
+
+	function buildAppendHtml(ch, bcOrBcvRangeForDiv, outlinesKeyedByBCVRange, verseBegin, verseEnd) {
+	    bcOrBcvRangeForDiv[1] = ch;
 	    var appendHtml = "";
 	    if (bcOrBcvRangeForDiv.length == 2) {
 	        appendHtml = createChapterOrVerseDiv(bcOrBcvRangeForDiv, outlinesKeyedByBCVRange);
-	    } else {
-	        appendHtml = "<table class='bv-chvss'><tr><td style='vertical-align:top;'><div class='bv-ch'><b>" + (i + 1) + "</b></div></td><td>";
-	        var bcstats = getBookStats([bcOrBcvRangeForDiv[0], bcOrBcvRangeForDiv[1]]);
-	        for (var ivs = 1; ivs <= bcstats.verses; ivs++) {
+	    } else {	        	        
+	        var bcstats = getBookStats([bcOrBcvRangeForDiv[0], bcOrBcvRangeForDiv[1]]);	        
+	        if (verseEnd == -1)
+	            verseEnd = bcstats.verses;
+	        if (verseBegin > verseEnd)
+	            return "";
+	        if (verseBegin != 1)
+	            appendHtml = createVerseTableRowFrag("<span style='display:none;'>" + ch + "</span>"); // continuing head div into tail div
+	        else
+	            appendHtml = createVerseTableRowFrag(ch);
+	        for (var ivs = verseBegin; ivs <= verseEnd; ivs++) {
 	            bcOrBcvRangeForDiv[2] = ivs;
 	            appendHtml += createChapterOrVerseDiv(bcOrBcvRangeForDiv, outlinesKeyedByBCVRange);
 	        }
-	        appendHtml += "</td></tr></table>";
+	        appendHtml += closeVerseTableRowFrag();
 	    }
 	    return appendHtml;
 	}
