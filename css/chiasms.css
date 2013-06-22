@@ -1,4 +1,7 @@
-﻿body { }
+﻿body 
+{
+    font-size: 13px;
+}
 
 button {border-style: solid; background:inherit;}
 button[href='#'], button[type='button'], button[type='submit']  { border-style: solid; background:#FFDD88; }
@@ -128,7 +131,7 @@ table.sourceSearchResults
 
 table.personSearchResults thead,
 table.sourceSearchResults thead {
-	font-size: 15px;
+	font-size: 13px;
 	font-weight: normal;
 	background: #B9C9FE;
 	border-top: 4px solid #AABCFE;
