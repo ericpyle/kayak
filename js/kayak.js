@@ -167,7 +167,7 @@
 	       }
 
 		   result["conceptStyle"] = "." + view + getBasicViewCssId(newIndex, conceptsCount) + " " + marginleft;
-	       result["conceptStyleDefinition"] = "<style type='text/css'> " + result.conceptStyle + " </style>";
+	       result["conceptStyleDefinition"] = "<style type='text/css'> " + result.conceptStyle + " {} </style>";
 		}
 		
 		var conceptClass = view + getBasicViewCssId(newIndex, conceptsCount);

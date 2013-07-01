@@ -1,6 +1,5 @@
 ﻿body 
 {
-    font-size: 13px;
 }
 
 button {border-style: solid; background:inherit;}
@@ -46,7 +45,7 @@ button[href='#']:hover, button[type='button']:hover, button[type='submit']:hover
     
 .examples { list-style: none; margin-left: 0px;}
  
-.itemMarker { font-weight: bold; margin-right: 10px;}
+.itemMarker { font-weight: bold; margin-right: 10px; }
 .conceptContent {  }
 .chiasmEditItem {  }    
 .markerEditLabel {
@@ -131,7 +130,6 @@ table.sourceSearchResults
 
 table.personSearchResults thead,
 table.sourceSearchResults thead {
-	font-size: 13px;
 	font-weight: normal;
 	background: #B9C9FE;
 	border-top: 4px solid #AABCFE;
