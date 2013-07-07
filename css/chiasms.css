@@ -222,7 +222,11 @@ form div label, form div textarea { vertical-align: middle; }
 
 .ch-options-multiple, .vs-options-multiple
 {
-	background-color: #E9C9FE;
+	background-color: #6789fa;
+}
+
+.ch-options-rangeStart, .vs-options-rangeStart {
+    background-color: #ffd15d;
 }
 
 .ch-selected

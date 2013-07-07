@@ -14,12 +14,37 @@
         if (slice.outlines.length > 0) {
             cssOptions += " "+ins+"-options";
             if (slice.outlines.length > 1)
-                cssOptions += " "+ins+"-options-multiple";
+                cssOptions += " " + ins + "-options-multiple";
+            // see if any of the outlines start here
+            for (var ioutline = 0; ioutline < slice.outlines.length; ioutline++) {
+                var outlineId = slice.outlines[ioutline];
+                var outline = fetchOutline(outlineId);
+                var bcvrange = completeBCVRange(parseBCVRange(outline.head.ScriptureRange));
+                if (!bcvrange || bcvrange.length == 0 || bcvrange.length == 1)
+                    continue;
+                if (bcOrbcvRange.length == 2)
+                {
+                    if (bcvrange[0] == bcOrbcvRange[0] &&
+                        bcvrange[1] == bcOrbcvRange[1]) {
+                        cssOptions += " ch-options-rangeStart";
+                        break;
+                    }
+                }
+                else
+                {
+                    if (bcvrange[0] == bcOrbcvRange[0] &&
+                        bcvrange[1] == bcOrbcvRange[1] &&
+                        bcvrange[2] == bcOrbcvRange[2]) {
+                        cssOptions += " vs-options-rangeStart";
+                        break;
+                    }
+                }
+            }
         }
         return "<div class='bv-" + ins + cssOptions + "'> " + i + " </div>";
     }
 
-	function GenerateBookAndChaptersHtml(outlinesKeyedByBCVRange, bookCode)
+	function GenerateBookAndChaptersHtml(outlinesKeyedByBCVRange, bookCode, chOrVsMode)
 	{
 		var results = {};
 		var bookNameLong = BookCodeToName[bookCode];
@@ -44,15 +69,17 @@
 		    var chDiv = createChapterOrVerseDiv(bcRange, outlinesKeyedByBCVRange);
 		    results[bookCode].chapters.push(chDiv);
 
-		    var bookStats = getBookStats(bcRange);
-			var verses = bookStats.verses;
-			var versesDivs = "";
-			for (var v = 1; v <= verses; v++) {
-			    var bcvRange = [bookCode, i, v];
-			    var vsDiv = createChapterOrVerseDiv(bcvRange, outlinesKeyedByBCVRange);
-			    versesDivs += vsDiv;
-			}
-			results[bookCode].chaptersAndVerses.push(versesDivs);
+		    if (chOrVsMode != "chapters") {
+		        var bookStats = getBookStats(bcRange);
+		        var verses = bookStats.verses;
+		        var versesDivs = "";
+		        for (var v = 1; v <= verses; v++) {
+		            var bcvRange = [bookCode, i, v];
+		            var vsDiv = createChapterOrVerseDiv(bcvRange, outlinesKeyedByBCVRange);
+		            versesDivs += vsDiv;
+		        }
+		        results[bookCode].chaptersAndVerses.push(versesDivs);
+		    }
 
 		}
 		return results;
@@ -161,7 +188,7 @@
 		for(var property in BookStats) {
 			if(typeof BookStats[property] == "string" || property.length == 3) {
 				var bookCode = property;
-				var results = GenerateBookAndChaptersHtml(outlinesKeyedByBCVRange, bookCode);
+				var results = GenerateBookAndChaptersHtml(outlinesKeyedByBCVRange, bookCode, "chapters");
 				var row = "<div class='row'><div class='cell'>" + results[bookCode].bookHeadDiv + "</div><div class='cell runner-container'></div></div>";
 				//var row = "<tr><td>"+ results[bookCode].bookHeadDiv +"</td><td></td></tr>";				
 				$("#BrowseByBook .table").append(row);				
@@ -225,7 +252,7 @@
 	    var bookHeadDivId = $(this).closest('.bv-book').attr('id');
 	    var bookCode = extractBookCode(bookHeadDivId);
 	    var outlinesKeyedByBCVRange = indexOutlinesByBCVRange(getDbRows());
-	    var results = GenerateBookAndChaptersHtml(outlinesKeyedByBCVRange, bookCode);
+	    var results = GenerateBookAndChaptersHtml(outlinesKeyedByBCVRange, bookCode, "verses");
 
 	    var chapters = results[bookCode].chapters;
 	    var chaptersAndVerses = results[bookCode].chaptersAndVerses;
@@ -248,7 +275,7 @@
 	    var bookHeadDivId = $(this).closest('.bv-book').attr('id');
 	    var bookCode = extractBookCode(bookHeadDivId);
 	    var outlinesKeyedByBCVRange = indexOutlinesByBCVRange(getDbRows());
-	    var results = GenerateBookAndChaptersHtml(outlinesKeyedByBCVRange, bookCode);
+	    var results = GenerateBookAndChaptersHtml(outlinesKeyedByBCVRange, bookCode, "chapters");
 
 	    var chapters = results[bookCode].chapters;
 	    $(jq("bv-outline-selected")).remove();
@@ -457,7 +484,7 @@
 		var bookCode = bcOrBcvRange[0];
 		var outlinesKeyedByBCVRange = indexOutlinesByBCVRange(getDbRows());
 		
-		var results = GenerateBookAndChaptersHtml(outlinesKeyedByBCVRange, bookCode);
+		var results = GenerateBookAndChaptersHtml(outlinesKeyedByBCVRange, bookCode, "verses");
 		removeChapters(results[bookCode]);
 		removeVerses(results[bookCode]);
 		clearRowWidths();
