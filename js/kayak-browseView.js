@@ -18,8 +18,7 @@
             // see if any of the outlines start here
             for (var ioutline = 0; ioutline < slice.outlines.length; ioutline++) {
                 var outlineId = slice.outlines[ioutline];
-                var outline = fetchOutline(outlineId);
-                var bcvrange = completeBCVRange(parseBCVRange(outline.head.ScriptureRange));
+                var bcvrange = fetchCompletedBcvRange(outlineId);
                 if (!bcvrange || bcvrange.length == 0 || bcvrange.length == 1)
                     continue;
                 if (bcOrbcvRange.length == 2)
@@ -42,6 +41,11 @@
             }
         }
         return "<div class='bv-" + ins + cssOptions + "'> " + i + " </div>";
+    }
+
+    function fetchCompletedBcvRange(outlineId) {
+        var outline = fetchOutline(outlineId);
+        return completeBCVRange(parseBCVRange(outline.head.ScriptureRange));
     }
 
 	function GenerateBookAndChaptersHtml(outlinesKeyedByBCVRange, bookCode, chOrVsMode)
@@ -682,8 +686,34 @@
 		  	 matchingOutlines.push(outlineRow.id);
 		  }
 		};		
-		results["outlines"] = matchingOutlines;		
+		results["outlines"] = orderByRangeStart(matchingOutlines, targetBC);
 		return results;
+	}
+
+	function orderByRangeStart(outlineIds, targetBCorBCV) {
+	    var sorted = [];
+	    var unsorted = [];
+	    // for now do two passes. 
+	    // Pass One: push any that match on start of range;
+	    // Pass Two: push remaining
+	    for (var i = 0; i < outlineIds.length; i++)
+	    {
+	        var outlineId = outlineIds[i];
+	        var bcvRange = fetchCompletedBcvRange(outlineId);
+	        if (targetBCorBCV.length == 2) {
+	            if (bcvRange[0] == targetBCorBCV[0] && bcvRange[1] == targetBCorBCV[1])
+	                sorted.push(outlineId);
+	            else
+	                unsorted.push(outlineId);
+	        }
+	        else {
+	            if (bcvRange[0] == targetBCorBCV[0] && bcvRange[1] == targetBCorBCV[1] && bcvRange[2] == targetBCorBCV[2])
+	                sorted.push(outlineId);
+	            else
+	                unsorted.push(outlineId);
+	        }
+	    }
+	    return sorted.concat(unsorted);
 	}
 	
 	function outlineInSet(outlineSet, idTarget)
@@ -735,7 +765,7 @@
 		  	 matchingOutlines.push(outlineRow.id);
 		  }
 		};		
-		results["outlines"] = matchingOutlines;
+		results["outlines"] = orderByRangeStart(matchingOutlines, targetBCV);
 		return results;	
 	}
 	
