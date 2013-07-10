@@ -2,7 +2,8 @@
                     "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-  <script src="../js/jquery.js"></script>
+  <title></title>
+  <script type="text/javascript" src="../js/jquery.js"></script>
   <link rel="stylesheet" href="css/qunit-git.css" type="text/css" media="screen" />
 <script type="text/javascript" src="js/qunit-git.js"></script>
 <script type="text/javascript" src="../js/jquery-extensions-utils.js"></script>
@@ -10,7 +11,7 @@
 <script type="text/javascript" src="../js/BibleBookInfo.js"></script>
 <script type="text/javascript" src="../js/kayak-browseView.js"></script>
 
-  <script>
+  <script type="text/javascript">
   $(document).ready(function(){
 
 module("kayak browse view - book slices");
@@ -179,6 +180,12 @@ test("book longname + chapters and verses", function() {
   deepEqual(result, expected, "We expect result to be " + expected);
 });
 
+test("book longname + chapters ccc and verses vv", function () {
+    var result = parseBCVRange("Psalm 140:1-141:10");
+    var expected = ["PSA", 140, 1, "PSA", 141, 10];
+    deepEqual(result, expected, "We expect result to be " + expected);
+});
+
 test("book longname + chapters", function() {
   var result = parseBCVRange("Genesis 2-4");
   var expected = ["GEN",2,-1,"GEN",4,-1];
@@ -207,6 +214,12 @@ test("book shortname + chapter verse", function() {
 test("book and chapter scripture", function () {
     var result = parseBCVRange("Genesis 1");
     var expected = ["GEN", 1, -1];
+    deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("book and chapter scripture: Psalm 117", function () {
+    var result = parseBCVRange("Psalm 117");
+    var expected = ["PSA", 117, -1];
     deepEqual(result, expected, "We expect result to be " + expected);
 });
 
@@ -243,7 +256,7 @@ test("do nothing for specified book chapter verse range", function () {
 
 test("fill chapter and verse range for book", function () {
     var result = completeBCVRange(["GEN"]);
-    var expected = ["GEN", 1, 1, "GEN", 50, 31];
+    var expected = ["GEN", 1, 1, "GEN", 50, 26];
     deepEqual(result, expected, "We expect result to be " + expected);
 });
 

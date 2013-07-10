@@ -18,7 +18,7 @@
             // see if any of the outlines start here
             for (var ioutline = 0; ioutline < slice.outlines.length; ioutline++) {
                 var outlineId = slice.outlines[ioutline];
-                var bcvrange = fetchCompletedBcvRange(outlineId);
+                var bcvrange = getSelectedBCVRange(outlinesKeyedByBCVRange, outlineId);
                 if (!bcvrange || bcvrange.length == 0 || bcvrange.length == 1)
                     continue;
                 if (bcOrbcvRange.length == 2)
@@ -41,11 +41,6 @@
             }
         }
         return "<div class='bv-" + ins + cssOptions + "'> " + i + " </div>";
-    }
-
-    function fetchCompletedBcvRange(outlineId) {
-        var outline = fetchOutline(outlineId);
-        return completeBCVRange(parseBCVRange(outline.head.ScriptureRange));
     }
 
 	function GenerateBookAndChaptersHtml(outlinesKeyedByBCVRange, bookCode, chOrVsMode)
@@ -548,7 +543,7 @@
 		
         if (nextOptionId != null) {
 		    $(jq(results[bookCode].bookHeadDivId)).after("<div id='" + outlineContainerId + "'></div>");
-		    var outline = fetchOutline(nextOptionId);
+		    var outline = findOutline(nextOptionId, outlinesKeyedByBCVRange);
 		    $(jq(outlineContainerId)).data("outline-selected", { "outlineId": nextOptionId, "bcRange": bcOrBcvRange, "outline": outline });
 		    // highlight selected
 		    var selectedBcvRange = getSelectedBCVRange(outlinesKeyedByBCVRange, nextOptionId);
@@ -570,6 +565,14 @@
 		// TODO: pick outline by fewest number of verses in range
 		// TODO:		
 		return false;
+	}
+
+	function findOutline(idTarget, outlinesKeyedByBCVRange) {
+	    for (var i = 0; i < outlinesKeyedByBCVRange.length; i++) {
+	        var outlineRow = outlinesKeyedByBCVRange[i];
+	        if (outlineRow.id == idTarget)
+	            return outlineRow.value;
+	    }
 	}
 
 	function createVerseTableRowFrag(ichapter) {
@@ -686,11 +689,11 @@
 		  	 matchingOutlines.push(outlineRow.id);
 		  }
 		};		
-		results["outlines"] = orderByRangeStart(matchingOutlines, targetBC);
+		results["outlines"] = orderByRangeStart(matchingOutlines, targetBC, outlinesKeyedByBCVRange);
 		return results;
 	}
 
-	function orderByRangeStart(outlineIds, targetBCorBCV) {
+	function orderByRangeStart(outlineIds, targetBCorBCV, outlinesKeyedByBCVRange) {
 	    var sorted = [];
 	    var unsorted = [];
 	    // for now do two passes. 
@@ -699,7 +702,7 @@
 	    for (var i = 0; i < outlineIds.length; i++)
 	    {
 	        var outlineId = outlineIds[i];
-	        var bcvRange = fetchCompletedBcvRange(outlineId);
+	        var bcvRange = getSelectedBCVRange(outlinesKeyedByBCVRange, outlineId);
 	        if (targetBCorBCV.length == 2) {
 	            if (bcvRange[0] == targetBCorBCV[0] && bcvRange[1] == targetBCorBCV[1])
 	                sorted.push(outlineId);
@@ -765,7 +768,7 @@
 		  	 matchingOutlines.push(outlineRow.id);
 		  }
 		};		
-		results["outlines"] = orderByRangeStart(matchingOutlines, targetBCV);
+		results["outlines"] = orderByRangeStart(matchingOutlines, targetBCV, outlinesKeyedByBCVRange);
 		return results;	
 	}
 	
@@ -816,7 +819,7 @@
 		
 		bcvRange.push(bookCode);
 		var cvRef = scriptureRange.substr(bookName.length, scriptureRange.length - bookName.length);
-		var pattCVerseRef=/(?:(?:[1-9][0-9]?[0-9]?[.:])?[1-9][0-9]?[-–—]?)/g;		
+		var pattCVerseRef = /(?:[1-9][0-9]?[0-9]?){1}(?:[.:][1-9][0-9]?[-–—]?)?/g;
 		var matches2 = cvRef.match(pattCVerseRef);
 		if (!matches2 || matches2.length == 0)
 			return bcvRange;
@@ -929,7 +932,7 @@
 	        completedBcvRange.push(bcvRange[0]);
 	        var lastChapter = BookStats[bcvRange[0]].chapters;
 	        completedBcvRange.push(lastChapter);
-	        var bookStats = getBookStats(bcvRange);
+	        var bookStats = getBookStats([bcvRange[0], lastChapter]);
 	        completedBcvRange.push(bookStats.verses);
 	    }
 
