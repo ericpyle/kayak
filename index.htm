@@ -388,7 +388,7 @@
 	<script type="text/javascript" src="js/kayak-importView.js"></script>
 	<script type="text/javascript" src="js/kayak-main.js"></script>
 	<script type="text/javascript" src="js/kayak-outlines-db.js"></script>
-	<script type="text/javascript" src="http://kayak.iriscouch.com/couchdb-xd/_design/couchdb-xd/couchdb.js"></script>
+	<script type="text/javascript" src="https://cloudbow.cloudant.com/couchdb-xd/_design/couchdb-xd/couchdb.js"></script>
 	<script type="text/javascript">
 
 	$(document).ready(function(){
@@ -426,8 +426,8 @@
 			Couch.init(function() {
 				try
 				{
-					var server = new Couch.Server('http://kayak.iriscouch.com', '', '');
-					dbMain = new Couch.Database(server, 'outlineslive');
+					var server = new Couch.Server('https://cloudbow.cloudant.com', 'waysturioultingavnselool', 'O3DPmE4E7XsNCT6Ue8Ks3nuI');
+					dbMain = new Couch.Database(server, 'kayak');
 					//dbMain = null; // DEBUG: just run from local db.
 					InitializeDbStuff();
 				}
