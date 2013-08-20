@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+                    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <script type="text/javascript" src="../../js/jquery.js"></script>
+  <link rel="stylesheet" href="../css/qunit-git.css" type="text/css" media="screen" />
+<script type="text/javascript" src="../js/qunit-git.js"></script>
+<script type="text/javascript" src="../../js/jquery-extensions-utils.js"></script>
+<script type="text/javascript" src="../../js/outline-item-labeler.js"></script>
+
+  <script type="text/javascript">
+  $(document).ready(function(){
+
+		module("outline-item-labeler.js - chiasm w/ embedded panels");
+
+		test("getLabels() simple - A, B, A'", function () {
+			var dto = {
+				type: "chiasm",
+				concepts: [
+						{ content: "a" },
+						{ content: "b" },
+						{ content: "a'"}
+				]
+			};
+			var result1 = getLabels(dto);
+			var expected1 = ["A.","B.", "A'"];
+			deepEqual(result1, expected1, "We expect result to be " + expected1);
+		});
+
+
+		test("getLabels() simple - A1, A2", function () {
+			var dto = {
+				type: "chiasm",
+				concepts: [
+						{ content: "a1" },
+						{ content: "a2", embeddedType: "panel" }
+				]
+			};
+			var result1 = getLabels(dto);
+			var expected1 = ["A1.", "A2."];
+			deepEqual(result1, expected1, "We expect result to be " + expected1);
+		});
+
+		test("getLabel() simple - A1, A2", function() {
+			var dto = {
+				type: "chiasm",
+				concepts: [
+						{ content: "a1" },
+						{ content: "a2", embeddedType: "panel" }
+					]
+			};
+			{
+				var result1 = getLabel(dto, 0);
+				var expected1 = "A1.";
+				deepEqual(result1, expected1, "We expect result to be " + expected1);
+			}
+			{
+				var result2 = getLabel(dto, 1);
+				var expected2 = "A2.";
+				deepEqual(result2, expected2, "We expect result to be " + expected2);
+			}
+		});
+
+		test("getLabels() - complete", function () {
+			var dto = {
+				type: "chiasm",
+				concepts: [
+						{ content: "a1" },
+						{ content: "a2", embeddedType: "panel" },
+						{ content: "b" },
+						{ content: "a1'" },
+						{ content: "a2'", embeddedType: "panel" }
+				]
+			};
+
+			var result1 = getLabels(dto);
+			var expected1 = ["A1.", "A2.", "B.", "A1'", "A2'"];
+			deepEqual(result1, expected1, "We expect result to be " + expected1);
+		});
+
+
+		test("getLabels() - limit complete", function () {
+			var dto = {
+				type: "chiasm",
+				concepts: [
+						{ content: "a1" },
+						{ content: "a2", embeddedType: "panel" },
+						{ content: "b" },
+						{ content: "a1'" },
+						{ content: "a2'", embeddedType: "panel" }
+				]
+			};
+
+			var result1 = getLabels(dto, 2);
+			var expected1 = ["A1.", "A2.", "B."];
+			deepEqual(result1, expected1, "We expect result to be " + expected1);
+		});
+
+		test("getLabel() - complete", function () {
+			var dto = {
+				type: "chiasm",
+				concepts: [
+						{ content: "a1" },
+						{ content: "a2", embeddedType: "panel" },
+						{ content: "b" },
+						{ content: "a1'"},
+						{ content: "a2'", embeddedType: "panel" }
+				]
+			};
+
+			{
+				var result1 = getLabel(dto, 2);
+				var expected1 = "B.";
+				deepEqual(result1, expected1, "We expect result to be " + expected1);
+			}
+			{
+				var result2 = getLabel(dto, 3);
+				var expected2 = "A1'";
+				deepEqual(result2, expected2, "We expect result to be " + expected2);
+			}
+			{
+				var result2 = getLabel(dto, 4);
+				var expected2 = "A2'";
+				deepEqual(result2, expected2, "We expect result to be " + expected2);
+			}
+		});
+
+
+  });
+
+  </script>
+  
+</head>
+<body>
+  <h1 id="qunit-header">QUnit example</h1>
+ <h2 id="qunit-banner"></h2>
+ <div id="qunit-testrunner-toolbar"></div>
+ <h2 id="qunit-userAgent"></h2>
+ <ol id="qunit-tests"></ol>
+ <div id="qunit-fixture">test markup, will be hidden</div>
+</body>
+</html>

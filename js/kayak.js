@@ -10,65 +10,14 @@
 	    return idA > idB ? 1 : -1;  
 	};
 
-
-	function IndexToAsciiMarkerABA(index, numChiasmItems)
-	{
-	    return String.fromCharCode(AsciiA + offsetFromClosestEnd(index, numChiasmItems));		
-	}
-	
-	function offsetFromClosestEnd(index, numChiasmItems)
-	{
-		var halfway = numChiasmItems/2;
-	    var asciiMarker;
-		if (index < halfway)
-	    {
-	       return index;	     
-	    }
-	    else
-	    {
-	    	//0 1 2           3            4
-	       // 0 1 2 1(5 - 3 - 1) 0(5 - 4 - 1)
-	       return numChiasmItems - index - 1;
-	    }
-	}
-	
 	function indexAABEditBoxesToIndexConcept(indexEditBox, conceptsCount)
 	{
 		var isEven = (indexEditBox%2 == 0);
 		return isEven ? Math.round(indexEditBox/2) : conceptsCount - Math.round(indexEditBox/2);
 	}
 	
-	function IndexToAsciiMarkerAAB(index)
-	{
-		var alphabetIndex = Math.floor(index/2);
-	    asciiMarker = String.fromCharCode(AsciiA + alphabetIndex);
-		return asciiMarker;		
-	}
-
-	function GetEndMarkerAAB(index)
-	{
-		var endchar;
-		if (index % 2 == 0)
-			endchar = ". ";
-		else
-			endchar = "' ";
-		return endchar;
-	}
-	
-	function GetEndMarkerABA(index, count)
-	{
-		var halfway = Math.round(count/2);
-		var endchar;
-		if (index < halfway)
-			endchar = ". ";
-		else
-			endchar = "' ";
-		return endchar;
-	}
-	
 	var CompatibilityMode = true;
 	var Spacing = 20; // px
-	var AsciiA = 65;
 
 	function ConceptToChiasmViewItem(concepts, iconcept, fIndent) {
 	    var item = CreateChiasmViewItem(concepts, iconcept, fIndent ? "indent" : "flat");
