@@ -15,7 +15,7 @@ NumLabel.prototype.toString = function () {
 
 /* cons - Custom Outline Numbering Services
  */
-var cons = (function () {
+var cons = (function (NumLabel) {
 
 	var api = {};
 	api.getLabel = getLabel;
@@ -53,7 +53,7 @@ var cons = (function () {
 			var mainlineIndex = -1;
 			for (var i = 0; i <= indexToStop; i++) {
 				var concept = dto.concepts[i];
-				var label = new NumLabel("", "", "");
+				var label = new NumLabel();
 				if (!concept.embeddedType || concept.embeddedType == "panel" && concept.isHead) {
 					mainlineIndex++;
 					var chr = IndexToAsciiMarkerABA(mainlineIndex, dto.concepts.length - embedded.total);
@@ -128,4 +128,4 @@ function GetEndMarkerAAB(index) {
 		endchar = "'";
 	return endchar;
 }
-})();
+})(NumLabel);
