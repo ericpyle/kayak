@@ -11,7 +11,23 @@
   <script type="text/javascript">
   $(document).ready(function(){
 
-		module("outline-item-labeler.js - chiasm w/ embedded panels");
+
+  	function getLabels(dto, istop) {
+  		var labels = cons.getLabels(dto, istop);
+  		var labelsToString = [];
+  		for (var i = 0; i < labels.length; i++) {
+  			labelsToString.push(labels[i].toString());
+  		}
+  		return labelsToString;
+  	}
+
+  	function getLabel(dto, i) {
+  		var labels = getLabels(dto, i);
+  		return labels[i];
+  	}
+
+
+  		module("KayakNumberingLib - chiasm w/ embedded panels");
 
 		test("getLabels() simple - A, B, A'", function () {
 			var dto = {
@@ -32,7 +48,7 @@
 			var dto = {
 				type: "chiasm",
 				concepts: [
-						{ content: "a1" },
+						{ content: "a1", embeddedType: "panel", isHead: true },
 						{ content: "a2", embeddedType: "panel" }
 				]
 			};
@@ -45,7 +61,7 @@
 			var dto = {
 				type: "chiasm",
 				concepts: [
-						{ content: "a1" },
+						{ content: "a1", embeddedType: "panel", isHead: true },
 						{ content: "a2", embeddedType: "panel" }
 					]
 			};
@@ -65,10 +81,10 @@
 			var dto = {
 				type: "chiasm",
 				concepts: [
-						{ content: "a1" },
+						{ content: "a1", embeddedType: "panel", isHead: true },
 						{ content: "a2", embeddedType: "panel" },
 						{ content: "b" },
-						{ content: "a1'" },
+						{ content: "a1'", embeddedType: "panel", isHead: true },
 						{ content: "a2'", embeddedType: "panel" }
 				]
 			};
@@ -83,10 +99,10 @@
 			var dto = {
 				type: "chiasm",
 				concepts: [
-						{ content: "a1" },
+						{ content: "a1", embeddedType: "panel", isHead: true },
 						{ content: "a2", embeddedType: "panel" },
 						{ content: "b" },
-						{ content: "a1'" },
+						{ content: "a1'", embeddedType: "panel", isHead: true },
 						{ content: "a2'", embeddedType: "panel" }
 				]
 			};
@@ -100,10 +116,10 @@
 			var dto = {
 				type: "chiasm",
 				concepts: [
-						{ content: "a1" },
+						{ content: "a1", embeddedType: "panel", isHead: true },
 						{ content: "a2", embeddedType: "panel" },
 						{ content: "b" },
-						{ content: "a1'"},
+						{ content: "a1'", embeddedType: "panel", isHead: true },
 						{ content: "a2'", embeddedType: "panel" }
 				]
 			};
