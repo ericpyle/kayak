@@ -79,7 +79,7 @@ var c = cons; /* global import */
 	function convertLabelToSpaces(label) {
 		var level = cons.convertLabelToLevel(label);
 		var spaces = "";
-		for (var i = 1; i < level; i++) {
+		for (var i = 0; i < level; i++) {
 			spaces += "&nbsp;&nbsp;&nbsp;&nbsp;"
 		};
 		return spaces;

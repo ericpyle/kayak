@@ -182,7 +182,7 @@
 		var index = positionObj.position[0] - 1;
 		if (positionObj.position.length > 1)
 			alert("what's up?" + positionObj.concept.content + positionObj.position.length);
-		var dto = cons.createDtoFromConcepts(positionObj.concepts);
+		var dto = cons.createDtoFromConcepts("chiasm", positionObj.concepts);
 		/* var count = positionObj.concepts != null ? positionObj.concepts.length + (ghostExists ? 1 : 0) : 2; */
 		if (positionObj.concepts != null) {
 			if (ghostExists)
@@ -616,13 +616,13 @@
 		    	.attr("id", "tail-editBoxControls");
 		    var btnOptionalHtml = "";
 		    if (outlineMode == "123")
-		    	btnOptionalHtml = '<button id="btnSubpoint"> &gt; subpoint </button> | ';
+		    	btnOptionalHtml = '<button id="btnSubpoint"> &gt; subpoint </button> ';
 		    
 			$("#tail-editBoxControls")
 				.append('<button id="btnAddPointBelow"> + point </button>')
 				.append('<button id="btnUpdateContent" type="button" value="'+ txtContentId +'">Enter</button>') 
 				.append(btnOptionalHtml)
-				.append('<button id="btnDelete"> x delete </button> | ');
+				.append('<button id="btnDelete"> x delete </button> ');
 			$("#btnUpdateContent").click(updateContent);
 		}
 		else
