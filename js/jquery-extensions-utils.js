@@ -30,6 +30,18 @@
 	{
 		return s ? s : "";
 	}
+
+	function offsetFromClosestEnd(index, listcount) {
+		var halfway = listcount / 2;
+		if (index < halfway) {
+			return index;
+		}
+		else {
+			//0 1 2           3            4
+			// 0 1 2 1(5 - 3 - 1) 0(5 - 4 - 1)
+			return listcount - index - 1;
+		}
+	}
 	
 	function doTestAndDoSomething(sequence, doTest, doSomething)
 	{

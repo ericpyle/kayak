@@ -1,6 +1,7 @@
 /**
  * @author Pyle
  */
+var c = cons; /* global import */
 
 //var currentChiasmEdit = jQuery.parseJSON( clearedStateJSONText );
     
@@ -22,14 +23,6 @@
 	function ConceptToChiasmViewItem(concepts, iconcept, fIndent) {
 	    var item = CreateChiasmViewItem(concepts, iconcept, fIndent ? "indent" : "flat");
 	    return item;
-	}
-	
-	function getBasicViewCssId(indexABA, count)
-	{
-		var conceptMarker = IndexToAsciiMarkerABA(indexABA, count);
-		//var isHalfway = Math.round(indexABA/2);
-		var basicViewConceptId = "-level-" + conceptMarker;
-		return basicViewConceptId;
 	}
 	
 	function RemoveAllHighlighting()
@@ -78,7 +71,16 @@
 	{
 		var spaces = "";
 		for (var i=20; i <= marginValue; i += 20) {
-		  spaces += "&nbsp;&nbsp;&nbsp;&nbsp;"
+			spaces += "&nbsp;&nbsp;&nbsp;&nbsp;"
+		};
+		return spaces;
+	}
+
+	function convertLabelToSpaces(label) {
+		var level = cons.convertLabelToLevel(label);
+		var spaces = "";
+		for (var i = 1; i < level; i++) {
+			spaces += "&nbsp;&nbsp;&nbsp;&nbsp;"
 		};
 		return spaces;
 	}
@@ -102,8 +104,8 @@
 	    //alert(newIndex + "/" + concepts.length);
 		var newConcept = concepts[newIndex];						
 
-		var chr = IndexToAsciiMarkerABA(newIndex, conceptsCount);
-		var endchar = GetEndMarkerABA(newIndex, conceptsCount);
+		var dto = cons.createDtoFromConcepts("chiasm", concepts);
+		var label = cons.getLabel(dto, newIndex);
 		var marginLeft = CalculateMarginInPx(newIndex, conceptsCount);
 		var halfway = Math.round(conceptsCount/2)
 		var fIndentMode = view.substr(0, "indent".length) == "indent";		
@@ -115,17 +117,17 @@
 	       		marginleft = "{ margin-left:" + marginLeft + "px;}";
 	       }
 
-		   result["conceptStyle"] = "." + view + getBasicViewCssId(newIndex, conceptsCount) + " " + marginleft;
+		   result["conceptStyle"] = "." + view + getChiasmLevelFrag(newIndex, concepts) + " " + marginleft;
 	       result["conceptStyleDefinition"] = "<style type='text/css'> " + result.conceptStyle + " {} </style>";
 		}
 		
-		var conceptClass = view + getBasicViewCssId(newIndex, conceptsCount);
-		var conceptId = getViewConceptId(view, newIndex, conceptsCount);
-		var conceptMarker = "<span class='itemMarker'>"+ chr + endchar +"</span>";
+		var conceptClass = view + getChiasmLevelFrag(newIndex, concepts);
+		var conceptId = getChiasmViewLevelId(view, newIndex, concepts);
+		var conceptMarker = "<span class='itemMarker'>" + label + "</span>";
 		
 		var spaces = "";
 	    if (CompatibilityMode && fIndentMode)
-	    	spaces = convertIndentToSpaces(marginLeft); 	
+	    	spaces = convertLabelToSpaces(label);
 	    var conceptHtml = "<div class='"+ conceptClass + "' id='"+ conceptId +"'>" + spaces + conceptMarker + "<span class='conceptContent'>" + newConcept.content + "</span></div>";
 		result["conceptHtml"] = conceptHtml;
 		result["conceptIndex"] = newIndex;
@@ -163,9 +165,9 @@
 		 * 
 		 */
  		var newConcept = concepts[newIndex];
- 		//alert(newIndex + "->" + indexAAB + " " + newConcept.content);
-		var asciiMarker = IndexToAsciiMarkerABA(newIndex, count);
-		var endMarker = GetEndMarkerABA(newIndex, count);
+		//alert(newIndex + "->" + indexAAB + " " + newConcept.content);
+ 		var dto = cons.createDtoFromConcepts("chiasm", concepts);
+ 		var label = cons.getLabel(dto, newIndex);
 		var halfway = Math.round(count/2);
 		var fFirstConceptInPair = (newIndex < halfway);
 		var rowIndex = offsetFromClosestEnd(newIndex, count);
@@ -179,9 +181,9 @@
 		    */
 		var view = "tableAAB";
 		var wrappedContent = "<span class='conceptContent'>" + newConcept.content + "</span>";
-		var wrappedMarker = "<span class='itemMarker'>" + asciiMarker + endMarker + "</span>";
-		var css = view + getBasicViewCssId(newIndex, count);
-		var id = getViewConceptId(view, newIndex, count);
+		var wrappedMarker = "<span class='itemMarker'>" + label + "</span>";
+		var css = view + getChiasmLevelFrag(newIndex, concepts);
+		var id = getChiasmViewLevelId(view, newIndex, concepts);
 		var newTableData = "<td>" + wrappedMarker + "</td>" + 
 			"<td id='" + id + "' class='" + css + "'>" + wrappedContent + "</td>";
 		if (fFirstConceptInPair)
@@ -238,7 +240,7 @@
 		{
 			//alert(textarea.id + ":" + newValue + ": " + indexEditItem + "->" + iconcept + ": " + mainOutline.body.concepts[iconcept].content)
 			mainOutline.body.concepts[iconcept].content = newValue;
-			var chiasmElementId = getBasicViewConceptId(iconcept, count);
+			var chiasmElementId = getChiasmIdLevelFrag(iconcept, mainOutline.body.concepts);
 			updateViewsChiasmContent(chiasmElementId + " .conceptContent", newValue);
 		}
 		FitToContent(textarea.id,'','100');
@@ -267,7 +269,7 @@
 			var content = concept.content;
 			var asciiMarker = IndexToAsciiMarkerAAB(iLastEditBox);
 			var endmarker = GetEndMarkerAAB(iLastEditBox);
-			var editItemId = getViewConceptId("edit", index, conceptsCount);
+			var editItemId = getChiasmViewLevelId("edit", index, concepts);
 			$("<div></div>")
 				.addClass("chiasmEditItem")
 				.prepend('<label class="markerEditLabel" for="' + editItemId + '">'+ asciiMarker + endmarker + '</label>')
@@ -390,7 +392,7 @@
 		  			//apply highlight style
 		  			return false;
 				});
-	    var tbId = getViewConceptId("edit", index, conceptsCount);
+	    var tbId = getChiasmViewLevelId("edit", index, concepts);
 		FitToContent(tbId,'','100');
 		//$("#editChiasmBody .chiasmEditItem").sort(sortByTextAreaIds).appendTo('#editChiasmBody');
 		return newInputBox;
@@ -406,12 +408,13 @@
 		/*
 		 * Note: efficient to use abaList, but simple algorithm.
 		 */
+		var dto = cons.createDtoFromConcepts("chiasm", mainOutline.body.concepts);
+		var labels = cons.getLabels(dto);
 		for (iconcept = 0; iconcept < count; iconcept++)
 		{
-		    var marker = IndexToAsciiMarkerABA(iconcept, count);		    
-		    var endmarker = GetEndMarkerABA(iconcept, count);
+			var label = labels[iconcept];
 		    //alert(newListIndex + halfway + endmarker);
-		    abaList.splice(iconcept, 0, marker + endmarker + mainOutline.body.concepts[iconcept].content);
+		    abaList.splice(iconcept, 0, label + mainOutline.body.concepts[iconcept].content);
 		}
 		//alert(abaList.length+abaList);
 		return abaList;
@@ -468,7 +471,7 @@
 		
 	function publishContentToChiasmView(concepts, iconcept, newContent)
 	{
-		var basicViewElementId = getBasicViewConceptId(iconcept, concepts.length);
+		var basicViewElementId = getChiasmIdLevelFrag(iconcept, concepts);
 		updateViewsChiasmContent(basicViewElementId + " .conceptContent", newContent);
 	}
 
@@ -504,7 +507,7 @@
 							if (currentIndex == (rowCountHead - 1))
 							{
 								//$(this).selectRange(0, 0);
-								var nextTextArea = $("#" + getViewConceptId("edit", 0, 1));
+								var nextTextArea = $("#" + getChiasmViewLevelId("edit", 0, [""]));
 								if ($(nextTextArea).length > 0)
 								{
 								  $(nextTextArea).first().putCursorAtEnd();	

@@ -141,28 +141,6 @@
 		return label;
 	}
 	
-	var AsciiA = 65;
-	/*
-	 * Move to common library (from kayak.js)
-	 */
-	function IndexToAsciiMarkerABA(index, numChiasmItems)
-	{
-		var isEven = numChiasmItems%2 == 0;
-	    var halfway = numChiasmItems/2;
-	    var asciiMarker;
-		if (index < halfway)
-	    {
-	       asciiMarker = String.fromCharCode(AsciiA + index);	     
-	    }
-	    else
-	    {
-	    	//0 1 2           3            4
-	       // 0 1 2 1(5 - 3 - 1) 0(5 - 4 - 1)
-	       asciiMarker = String.fromCharCode(AsciiA + (numChiasmItems - index - 1));
-	    }
-		return asciiMarker;		
-	}
-			
 	function switchOutlineMode(mode)
 	{
 		outlineMode = mode;
@@ -194,20 +172,6 @@
 		return getLabelForPanelIndex(mainOutline, positionObj.position[0] - 1) + ".";
 	}
 	
-	/*
-	 * Move to common library (from kayak.js)
-	 */
-	function GetEndMarkerABA(index, count)
-	{
-		var halfway = Math.round(count/2);
-		var endchar;
-		if (index < halfway)
-			endchar = ". ";
-		else
-			endchar = "' ";
-		return endchar;
-	}
-	
 	function formatPositionIntoLabel_ABA(positionObj, ghostExists)
 	{
 		if (!positionObj)
@@ -218,12 +182,19 @@
 		var index = positionObj.position[0] - 1;
 		if (positionObj.position.length > 1)
 			alert("what's up?" + positionObj.concept.content + positionObj.position.length);
-		var label = IndexToAsciiMarkerABA(index, 
-			positionObj.concepts != null ? positionObj.concepts.length + (ghostExists ? 1 : 0) : 2);
-		var count = $(".concept").length;
+		var dto = cons.createDtoFromConcepts(positionObj.concepts);
+		/* var count = positionObj.concepts != null ? positionObj.concepts.length + (ghostExists ? 1 : 0) : 2; */
+		if (positionObj.concepts != null) {
+			if (ghostExists)
+				dto.concepts.push("");
+		}
+		else {
+			dto.concepts.push("");
+			dto.concepts.push("");
+		}
+		var label = cons.getLabel(dto, index);
 		//alert(index + "/" + count);
-		var endMarker = GetEndMarkerABA(index, count);
-		return label + endMarker;
+		return label;
 	}
 	
 	function createEditBoxesForOutline(concepts)

@@ -27,7 +27,65 @@
   	}
 
 
-  		module("KayakNumberingLib - chiasm w/ embedded panels");
+  		module("cons.js - chiasm w/ embedded panels");
+  		test("convertLabelToLevel() simple - A", function () {
+  			var label = new NumLabel();
+  			label.num = "A";
+  			var level = cons.convertLabelToLevel(label);
+  			deepEqual(level, 0);
+  		});
+
+  		test("convertLabelToLevel() simple - B", function () {
+  			var label = new NumLabel();
+  			label.num = "B";
+  			var level = cons.convertLabelToLevel(label);
+  			deepEqual(level, 1);
+  		});
+
+  		test("convertLabelToLevel() embedded - A1", function () {
+  			var label = new NumLabel();
+  			label.num = "A1";
+  			var level = cons.convertLabelToLevel(label);
+  			deepEqual(level, 0);
+  		});
+
+  		test("convertLabelToLevel() embedded - B1", function () {
+  			var label = new NumLabel();
+  			label.num = "B1";
+  			var level = cons.convertLabelToLevel(label);
+  			deepEqual(level, 1);
+  		});
+
+  		test("createDtoFromOutline() simple - A, B, A'", function () {
+  			var outline = {
+  				"_id": "774c87bd5ec2e4afb24a0ce0d1000c9f", "_rev": "2-f594aedb0ddbc74513c80e90516f2244",
+  				"head": { "submissionTimestamp": [2011, 12, 28, "10:30:00.000Z"], "bcvRange": [], "title": "testing", "ScriptureRange": "", "contentType": "chiasm" },
+  				"body": { "concepts": [{ "content": "a" }, { "content": "b" }, { "content": "a'" }] }
+  			};
+  			var result1 = cons.createDtoFromOutline(outline);
+  			var dtoExpected = {
+  				type: "chiasm",
+  				concepts: [
+						{ content: "a" },
+						{ content: "b" },
+						{ content: "a'" }
+  				]
+  			};
+  			deepEqual(result1, dtoExpected, "We expect result to be " + dtoExpected);
+  		});
+
+  		test("createDtoFromConcepts() simple - A, B, A'", function () {
+  			var result1 = cons.createDtoFromConcepts("chiasm", [{ "content": "a" }, { "content": "b" }, { "content": "a'" }]);
+  			var dtoExpected = {
+  				type: "chiasm",
+  				concepts: [
+						{ content: "a" },
+						{ content: "b" },
+						{ content: "a'" }
+  				]
+  			};
+  			deepEqual(result1, dtoExpected, "We expect result to be " + dtoExpected);
+  		});
 
 		test("getLabels() simple - A, B, A'", function () {
 			var dto = {

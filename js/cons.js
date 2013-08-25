@@ -1,4 +1,9 @@
 ﻿/*
+ * Imports
+ *	offsetFromClosestEnd
+ */
+
+/*
  * dto = { before: "", num: "", after: "" }
  */
 function NumLabel(dto) {
@@ -20,6 +25,9 @@ var cons = (function (NumLabel) {
 	var api = {};
 	api.getLabel = getLabel;
 	api.getLabels = getLabels;
+	api.createDtoFromOutline = createDtoFromOutline;
+	api.createDtoFromConcepts = createDtoFromConcepts;
+	api.convertLabelToLevel = convertLabelToLevel;
 	return api;
 
 	/*
@@ -32,6 +40,21 @@ var cons = (function (NumLabel) {
 	 *				]
 	 *			};
 	 */
+	function createDtoFromOutline(outline) {
+		var dto = { type: "", concepts: [] };
+		if (outline)
+			dto = createDtoFromConcepts(outline.head.contentType, outline.body.concepts);
+		return dto;
+	}
+
+	function createDtoFromConcepts(type, concepts) {
+		var dto = { type: "", concepts: [] };
+		dto.type = type;
+		if (concepts)
+			dto.concepts = clone(concepts);
+		return dto;
+	}
+
 	function getLabel(dto, index) {
 		if (dto.type == "chiasm") {
 			var labels = getLabels(dto, index);
@@ -56,8 +79,9 @@ var cons = (function (NumLabel) {
 				var label = new NumLabel();
 				if (!concept.embeddedType || concept.embeddedType == "panel" && concept.isHead) {
 					mainlineIndex++;
-					var chr = IndexToAsciiMarkerABA(mainlineIndex, dto.concepts.length - embedded.total);
-					var endchar = GetEndMarkerABA(mainlineIndex, dto.concepts.length - embedded.total);
+					label = getChiasmLabel(mainlineIndex, dto.concepts.length - embedded.total);
+					var chr = label.num;
+					var endchar = label.after;
 					embedded.parentEndMarker = endchar;
 					embedded.parentEnum = chr;
 					embedded.currentCount = 0;
@@ -81,6 +105,15 @@ var cons = (function (NumLabel) {
 		return labels;
 	}
 
+	function getChiasmLabel(index, count) {
+		var chr = IndexToAsciiMarkerABA(index, count);
+		var endchar = GetEndMarkerABA(index, count);
+		var label = new NumLabel();
+		label.num = chr;
+		label.after = endchar;
+		return label;
+	}
+
 function GetEndMarkerABA(index, count) {
 	var halfway = Math.round(count / 2);
 	var endchar;
@@ -91,32 +124,37 @@ function GetEndMarkerABA(index, count) {
 	return endchar;
 }
 
-function OutlineItemLabelerConfig() {
-	return { AsciiA: 65 };
+function convertLabelToLevel(label) {
+	var baseChar = label.num.charAt(0); // review: this assumes first character is sufficient
+	if (baseChar >= "A" && baseChar <= "Z") 
+		return baseChar.charCodeAt(0) - "A".charCodeAt(0);
+	return 0;
 }
 
 function IndexToAsciiMarkerABA(index, numChiasmItems) {
-	var c = OutlineItemLabelerConfig();
-	return String.fromCharCode(c.AsciiA + offsetFromClosestEnd(index, numChiasmItems));
+	return String.fromCharCode("A".charCodeAt(0) + offsetFromClosestEnd(index, numChiasmItems));
 }
 
-function offsetFromClosestEnd(index, numChiasmItems) {
+/* Obsolete?
+function IndexToAsciiMarkerABA(index, numChiasmItems) {
+	var isEven = numChiasmItems % 2 == 0;
 	var halfway = numChiasmItems / 2;
 	var asciiMarker;
 	if (index < halfway) {
-		return index;
+		asciiMarker = String.fromCharCode(AsciiA + index);
 	}
 	else {
 		//0 1 2           3            4
 		// 0 1 2 1(5 - 3 - 1) 0(5 - 4 - 1)
-		return numChiasmItems - index - 1;
+		asciiMarker = String.fromCharCode(AsciiA + (numChiasmItems - index - 1));
 	}
-}
+	return asciiMarker;
+} 
+*/
 
 function IndexToAsciiMarkerAAB(index) {
-	var c = OutlineItemLabelerConfig();
 	var alphabetIndex = Math.floor(index / 2);
-	asciiMarker = String.fromCharCode(c.AsciiA + alphabetIndex);
+	asciiMarker = String.fromCharCode("A".charCodeAt(0) + alphabetIndex);
 	return asciiMarker;
 }
 

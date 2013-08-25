@@ -2,6 +2,8 @@
  * @author Pyle
  */
 
+var c = cons; /* global import */
+
 function CombineTitleAuthorAndSource(outline)
 {
 	var combinedSource = fetchSourceProfile(outline._id + "_source");
@@ -55,27 +57,33 @@ function publishContentToPanelTablePreviewTab(conceptsNotUsed, iconcept, newCont
 
 function publishContentToChiasmTablePreviewTab(concepts, iconcept, newContent)
 {
-	publishContentToId(newContent, getViewConceptId("tableAAB", iconcept, concepts.length));
+	publishContentToId(newContent, getChiasmViewLevelId("tableAAB", iconcept, concepts));
 }
 
-/*
- * NOTE: For Chiasm only. TODO: Rename.
- * preceded with "-level-A-[1/2]"
- */
-function getBasicViewConceptId(indexABA, count)
-{
-	var conceptMarker = IndexToAsciiMarkerABA(indexABA, count);
-	var halfway = Math.round(count/2);
-	var basicViewConceptId = "-level-" + conceptMarker + "-" + (indexABA < halfway ? 1 : 2);
+
+function getChiasmLevelFrag(indexABA, concepts) {
+	var dto = cons.createDtoFromConcepts("chiasm", concepts);
+	var conceptMarker = cons.getLabel(dto, indexABA).num;
+	//var isHalfway = Math.round(indexABA/2);
+	var basicViewConceptId = "-level-" + conceptMarker;
 	return basicViewConceptId;
 }
 
 /*
- * NOTE: For Chiasm only. TODO: Rename.
+ * preceded with "-level-A-[1/2]"
  */
-function getViewConceptId(view, indexABA, count)
+function getChiasmIdLevelFrag(indexABA, concepts)
 {
-	return view + getBasicViewConceptId(indexABA, count);
+	var halfway = Math.round(concepts.count/2);
+	var basicViewConceptId = getChiasmLevelFrag(indexABA, concepts) + "-" + (indexABA < halfway ? 1 : 2);
+	return basicViewConceptId;
+}
+
+/*
+ */
+function getChiasmViewLevelId(view, indexABA, concepts)
+{
+	return view + getChiasmIdLevelFrag(indexABA, concepts);
 }
 
 function publishContentToId(newContent, id)
