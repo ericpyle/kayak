@@ -374,7 +374,7 @@
 		if (mainOutline.body.concepts.length == 0)
 		{
 			$("#btnDelete").removeAttr("href");
--			$("#btnDelete").unbind("click");
+			$("#btnDelete").unbind("click");
 			return false;
 		}
 		$("#btnDelete").attr("href","#");
@@ -617,6 +617,8 @@
 		    var btnOptionalHtml = "";
 		    if (outlineMode == "123")
 		    	btnOptionalHtml = '<button id="btnSubpoint"> &gt; subpoint </button> ';
+		    else if (outlineMode == "Chiasm")
+		    	btnOptionalHtml = '<button id="btnEmbedMode">  </button> ';
 		    
 			$("#tail-editBoxControls")
 				.append('<button id="btnAddPointBelow"> + point </button>')
@@ -631,11 +633,56 @@
 		}
 		initializeCbIsPanelHead();
 		initializeBtnDelete();
+		initializeBtnEmbedMode();
 		initializeBtnSubpoint();
 		initializeBtnAddPoint(0);
 		initializeBtnAddPoint(1);
 		var idTextarea = $(".edit-state").find("textarea").attr("id");
 		$("#btnUpdateContent").attr("value", idTextarea);
+	}
+
+	function changeEmbedMode() {
+		var embedMode = getNextEmbedMode();
+		var mel = $('.edit-state').find('.markerEditLabel');
+		mel.text(embedMode.label.toString());
+	}
+
+	function getNextEmbedMode() {
+		var fGhost = $('.edit-state').hasClass("ghost");
+		if (!fGhost) {
+			var index = $('.edit-state').index();
+			var positionList = new Array();
+			getConceptPositions(positionList, -1);
+			var positionObj = positionList[index];
+			var dto = cons.createDtoFromConcepts("chiasm", positionObj.concepts);
+			var concept = positionObj.concepts[index];
+			var mel = $('.edit-state').find('.markerEditLabel');
+			var label = mel.text();
+			var embeddedMode = $('.edit-state').data("embeddedMode");
+			if (embeddedMode == null) {
+				// look at current state and display the next logical option
+				if (!concept.embeddedType) {
+					dto.concepts[index].embeddedType = "panel";
+					// if this is not a continuation, make it a head
+					if (index == 0 || !(dto.concepts[index - 1].embeddedType))
+						dto.concepts[index].isHead = true;
+					label = cons.getLabel(dto, index);
+				}
+			}
+			return { concept: dto.concepts[index], label: label };
+		}
+		return { concept: {}, label: new NumLabel() };
+	}
+
+	function initializeBtnEmbedMode() {
+		var embedMode = getNextEmbedMode();
+		$("#btnEmbedMode").text(embedMode.label.toString());
+		$("#btnEmbedMode").attr("href", "#");
+		$("#btnEmbedMode").off("click"); // make sure we don't install multiple times
+		$("#btnEmbedMode").on("click", function (event) {
+				changeEmbedMode();
+				return false;
+		});
 	}
 	
 	function createConcept(content)
