@@ -7,6 +7,7 @@
 <script type="text/javascript" src="../js/qunit-git.js"></script>
 <script type="text/javascript" src="../../js/jquery-extensions-utils.js"></script>
 <script type="text/javascript" src="../../js/cons.js"></script>
+<script type="text/javascript" src="../../js/kayak-outliner.js"></script>
 
   <script type="text/javascript">
   $(document).ready(function(){
@@ -199,6 +200,63 @@
 			}
 		});
 
+		module("kayak-outliner.js - make head");
+		test("getOtherEmbedModes() simple - A. > A1.", function () {
+			var concepts = [
+						{ content: "a" },
+						{ content: "b" },
+						{ content: "a'" }
+			];
+			var embedModes = getOtherEmbedModes(concepts, 0, false);
+			var expectedLabel = new NumLabel();
+			expectedLabel.num = "A1";
+			expectedLabel.after = ".";
+			var modesExpected = [{ concept: { content: "a", embeddedType: "panel", isHead: true }, label: expectedLabel }];
+			deepEqual(embedModes, modesExpected, "We expect result to be " + modesExpected);
+		});
+
+		test("getOtherEmbedModes() simple - (A.) > (A1.)", function () {
+			var concepts = [
+						{ content: "a" },
+						{ content: "b" },
+						{ content: "a'" }
+			];
+			var embedModes = getOtherEmbedModes(concepts, 0, true);
+			var expectedLabel = new NumLabel();
+			expectedLabel.before = "(";
+			expectedLabel.num = "A1";
+			expectedLabel.after = ".)";
+			var modesExpected = [{ concept: { content: "a", embeddedType: "panel", isHead: true }, label: expectedLabel }];
+			deepEqual(embedModes, modesExpected, "We expect result to be " + modesExpected);
+		});
+
+		test("getOtherEmbedModes() simple - B > B1", function () {
+			var concepts = [
+						{ content: "a" },
+						{ content: "b" },
+						{ content: "a'" }
+			];
+			var embedModes = getOtherEmbedModes(concepts, 1, false);
+			var expectedLabel = new NumLabel();
+			expectedLabel.num = "B1";
+			expectedLabel.after = ".";
+			var modesExpected = [{ concept: { content: "b", embeddedType: "panel", isHead: true }, label: expectedLabel }];
+			deepEqual(embedModes, modesExpected, "We expect result to be " + modesExpected);
+		});
+
+		test("getOtherEmbedModes() A1. > A.", function () {
+			var concepts = [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "b" },
+						{ content: "a'" }
+			];
+			var embedModes = getOtherEmbedModes(concepts, 0, false);
+			var expectedLabel = new NumLabel();
+			expectedLabel.num = "A";
+			expectedLabel.after = ".";
+			var modesExpected = [{ concept: { content: "a1" }, label: expectedLabel }];
+			deepEqual(embedModes, modesExpected, "We expect result to be " + modesExpected);
+		});
 
   });
 

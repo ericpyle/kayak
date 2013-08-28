@@ -25,8 +25,8 @@ var cons = (function (NumLabel) {
 	var api = {};
 	api.getLabel = getLabel;
 	api.getLabels = getLabels;
-	api.createDtoFromOutline = createDtoFromOutline;
-	api.createDtoFromConcepts = createDtoFromConcepts;
+	api.createDtoFromOutline = createDtoFromOutline; /* refactor to remove */
+	api.createDtoFromConcepts = createDtoFromConcepts; /* refactor to remove */
 	api.convertLabelToLevel = convertLabelToLevel;
 	return api;
 

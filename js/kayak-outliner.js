@@ -642,41 +642,56 @@
 	}
 
 	function changeEmbedMode() {
-		var embedMode = getNextEmbedMode();
+		var index = $('.edit-state').index();
+		var fGhost = $('.edit-state').hasClass("ghost");
+		var embedModes = getOtherEmbedModes(mainOutline.body.concepts, index, fGhost);
+		mainOutline.body.concepts[index] = embedModes[0].concept;
 		var mel = $('.edit-state').find('.markerEditLabel');
-		mel.text(embedMode.label.toString());
+		mel.text(embedModes[0].label.toString());
+		var newModes = getOtherEmbedModes(mainOutline.body.concepts, index, fGhost);
+		$("#btnEmbedMode").text(newModes[0].label.toString());
 	}
 
-	function getNextEmbedMode() {
-		var fGhost = $('.edit-state').hasClass("ghost");
-		if (!fGhost) {
-			var index = $('.edit-state').index();
-			var positionList = new Array();
-			getConceptPositions(positionList, -1);
-			var positionObj = positionList[index];
-			var dto = cons.createDtoFromConcepts("chiasm", positionObj.concepts);
-			var concept = positionObj.concepts[index];
-			var mel = $('.edit-state').find('.markerEditLabel');
-			var label = mel.text();
-			var embeddedMode = $('.edit-state').data("embeddedMode");
-			if (embeddedMode == null) {
-				// look at current state and display the next logical option
-				if (!concept.embeddedType) {
-					dto.concepts[index].embeddedType = "panel";
-					// if this is not a continuation, make it a head
-					if (index == 0 || !(dto.concepts[index - 1].embeddedType))
-						dto.concepts[index].isHead = true;
-					label = cons.getLabel(dto, index);
-				}
-			}
-			return { concept: dto.concepts[index], label: label };
+	/* given the current embedMode (if any), return the most relavent other embedModes which the user could choose.
+	*/
+	function getOtherEmbedModes(concepts, index, fGhost) {
+		var otherEmbedModes = [];
+		
+		var positionList = new Array();
+		getConceptPositions(positionList, -1, { concepts: concepts });
+		var positionObj = positionList[index];
+		var concept = positionObj.concepts[index];
+		var clonedConcepts = clone(positionObj.concepts);
+		// look at current state and display the next logical option
+		if (!concept.embeddedType) {
+			clonedConcepts[index].embeddedType = "panel";
+			// if this is not a continuation, make it a head
+			if (index == 0 || !(clonedConcepts[index - 1].embeddedType))
+				clonedConcepts[index].isHead = true;
+			var dto = cons.createDtoFromConcepts("chiasm", clonedConcepts);
+			label = cons.getLabel(dto, index);
 		}
-		return { concept: {}, label: new NumLabel() };
+		else if (concept.embeddedType == "panel") {
+			delete clonedConcepts[index].embeddedType;
+			delete clonedConcepts[index].isHead;
+			var dto = cons.createDtoFromConcepts("chiasm", clonedConcepts);
+			label = cons.getLabel(dto, index);
+		}
+		if (fGhost) {
+			label.before = "(" + label.before;
+			label.after += ")";
+		}
+		otherEmbedModes.push({ concept: clonedConcepts[index], label: label })
+		return otherEmbedModes;
 	}
 
 	function initializeBtnEmbedMode() {
-		var embedMode = getNextEmbedMode();
-		$("#btnEmbedMode").text(embedMode.label.toString());
+		//var mel = $('.edit-state').find('.markerEditLabel');
+		//var label = mel.text();
+		var index = $('.edit-state').index();
+		var fGhost = $('.edit-state').hasClass("ghost");
+		var embedModes = getOtherEmbedModes(mainOutline.body.concepts, index, fGhost);
+		$("#btnEmbedMode").text(embedModes[0].label.toString());
 		$("#btnEmbedMode").attr("href", "#");
 		$("#btnEmbedMode").off("click"); // make sure we don't install multiple times
 		$("#btnEmbedMode").on("click", function (event) {
