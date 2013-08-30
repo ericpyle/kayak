@@ -641,15 +641,18 @@
 		$("#btnUpdateContent").attr("value", idTextarea);
 	}
 
-	function changeEmbedMode() {
-		var index = $('.edit-state').index();
-		var fGhost = $('.edit-state').hasClass("ghost");
-		var embedModes = getOtherEmbedModes(mainOutline.body.concepts, index, fGhost);
-		mainOutline.body.concepts[index] = embedModes[0].concept;
-		var mel = $('.edit-state').find('.markerEditLabel');
-		mel.text(embedModes[0].label.toString());
-		var newModes = getOtherEmbedModes(mainOutline.body.concepts, index, fGhost);
-		$("#btnEmbedMode").text(newModes[0].label.toString());
+	function changeEmbedMode(concepts, index, fGhost) {
+		var embedModes = getOtherEmbedModes(concepts, index, fGhost);
+		var embeddedTypeOrig = concepts[index].embeddedType;
+		var fCleanup = embeddedTypeOrig != null;
+		concepts[index] = embedModes[0].concept;
+		for (var i = index + 1; i < concepts.length; ++i) {
+			var nextConcept = concepts[i];
+			if (nextConcept.isHead)
+				break;
+			if (nextConcept.embeddedType == embeddedTypeOrig)
+				delete nextConcept.embeddedType;				
+		}
 	}
 
 	/* given the current embedMode (if any), return the most relavent other embedModes which the user could choose.
@@ -695,7 +698,13 @@
 		$("#btnEmbedMode").attr("href", "#");
 		$("#btnEmbedMode").off("click"); // make sure we don't install multiple times
 		$("#btnEmbedMode").on("click", function (event) {
-				changeEmbedMode();
+			var index = $('.edit-state').index();
+			var fGhost = $('.edit-state').hasClass("ghost");
+			changeEmbedMode(mainOutline.body.concepts, index, fGhost);
+			var mel = $('.edit-state').find('.markerEditLabel');
+			var newModes = getOtherEmbedModes(mainOutline.body.concepts, index, fGhost);
+			$("#btnEmbedMode").text(newModes[0].label.toString());
+			refreshAllLabels();
 				return false;
 		});
 	}

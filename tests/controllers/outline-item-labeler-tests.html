@@ -153,24 +153,6 @@
 			deepEqual(result1, expected1, "We expect result to be " + expected1);
 		});
 
-
-		test("getLabels() - limit complete", function () {
-			var dto = {
-				type: "chiasm",
-				concepts: [
-						{ content: "a1", embeddedType: "panel", isHead: true },
-						{ content: "a2", embeddedType: "panel" },
-						{ content: "b" },
-						{ content: "a1'", embeddedType: "panel", isHead: true },
-						{ content: "a2'", embeddedType: "panel" }
-				]
-			};
-
-			var result1 = getLabels(dto, 2);
-			var expected1 = ["A1.", "A2.", "B."];
-			deepEqual(result1, expected1, "We expect result to be " + expected1);
-		});
-
 		test("getLabel() - complete", function () {
 			var dto = {
 				type: "chiasm",
@@ -194,13 +176,47 @@
 				deepEqual(result2, expected2, "We expect result to be " + expected2);
 			}
 			{
-				var result2 = getLabel(dto, 4);
-				var expected2 = "A2'";
-				deepEqual(result2, expected2, "We expect result to be " + expected2);
+				var result3 = getLabel(dto, 4);
+				var expected3 = "A2'";
+				deepEqual(result3, expected3, "We expect result to be " + expected3);
 			}
 		});
 
-		module("kayak-outliner.js - make head");
+
+		test("getLabels() - limit complete", function () {
+			var dto = {
+				type: "chiasm",
+				concepts: [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "a2", embeddedType: "panel" },
+						{ content: "b" },
+						{ content: "a1'", embeddedType: "panel", isHead: true },
+						{ content: "a2'", embeddedType: "panel" }
+				]
+			};
+
+			var result1 = getLabels(dto, 2);
+			var expected1 = ["A1.", "A2.", "B."];
+			deepEqual(result1, expected1, "We expect result to be " + expected1);
+		});
+
+		test("getLabels() - transition ", function () {
+			var dto = {
+				type: "chiasm",
+				concepts: [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "b" },
+						{ content: "b'"},
+						{ content: "a'"}
+				]
+			};
+
+			var result1 = getLabels(dto);
+			var expected1 = ["A1.", "B.", "B'", "A'"];
+			deepEqual(result1, expected1, "We expect result to be " + expected1);
+		});
+
+		module("kayak-outliner.js - embedModes");
 		test("getOtherEmbedModes() simple - A. > A1.", function () {
 			var concepts = [
 						{ content: "a" },
@@ -256,6 +272,52 @@
 			expectedLabel.after = ".";
 			var modesExpected = [{ concept: { content: "a1" }, label: expectedLabel }];
 			deepEqual(embedModes, modesExpected, "We expect result to be " + modesExpected);
+		});
+
+
+		test("changeEmbedMode() A. > A1.", function () {
+			var concepts = [
+						{ content: "a" },
+						{ content: "b" },
+						{ content: "a'" }
+			];
+			changeEmbedMode(concepts, 0, false);
+			var expectedConcepts = [
+						{ content: "a", embeddedType: "panel", isHead:true },
+						{ content: "b" },
+						{ content: "a'" }
+			];
+			deepEqual(concepts, expectedConcepts, "We expect result to be " + expectedConcepts);
+		});
+
+		test("changeEmbedMode() cleanup after removing head", function () {
+			var concepts = [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "a2", embeddedType: "panel" },
+						{ content: "a'" }
+			];
+			changeEmbedMode(concepts, 0, false);
+			var expectedConcepts = [
+						{ content: "a1" },
+						{ content: "a2" },
+						{ content: "a'" }
+			];
+			deepEqual(concepts, expectedConcepts, "We expect result to be " + expectedConcepts);
+		});
+
+		test("changeEmbedMode() cleanup after embeddedType", function () {
+			var concepts = [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "a2", embeddedType: "panel" },
+						{ content: "a3", embeddedType: "panel" }
+			];
+			changeEmbedMode(concepts, 1, false);
+			var expectedConcepts = [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "a2" },
+						{ content: "a3" }
+			];
+			deepEqual(concepts, expectedConcepts, "We expect result to be " + expectedConcepts);
 		});
 
   });

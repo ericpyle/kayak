@@ -74,6 +74,13 @@ var cons = (function (NumLabel) {
 		if (dto.type == "chiasm") {
 			var embedded = { parentEnum: "", parentEndMarker: "", total: 0, currentCount: 0 };
 			var mainlineIndex = -1;
+			// first pass, just compute the mainline chiasm length
+			for (var i = 0; i < dto.concepts.length; i++) {
+				var concept = dto.concepts[i];
+				if (concept.embeddedType == "panel" && !concept.isHead) {
+					embedded.total++;
+				}
+			}
 			for (var i = 0; i <= indexToStop; i++) {
 				var concept = dto.concepts[i];
 				var label = new NumLabel();
@@ -87,7 +94,6 @@ var cons = (function (NumLabel) {
 					embedded.currentCount = 0;
 					if (concept.embeddedType == "panel" && concept.isHead) {
 						embedded.currentCount++;
-						embedded.total++;
 						chr = chr + "1";
 					}				
 					label.num = chr;
@@ -97,7 +103,6 @@ var cons = (function (NumLabel) {
 					embedded.currentCount++;
 					label.num = embedded.parentEnum + embedded.currentCount;
 					label.after = embedded.parentEndMarker;
-					embedded.total++;
 				}
 				labels.push(label);
 			}
