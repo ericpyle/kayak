@@ -100,6 +100,8 @@
 				  	positionObj = createPositionObj(null, 0);
 				else
 					positionObj = createGhostPositionAfter(positionList[irealConcept]);
+				positionObj.concept = createConcept("");
+				transferEmbedModeProperties(element, positionObj.concept);
 			}
 			else
 			{
@@ -184,14 +186,14 @@
 			alert("what's up?" + positionObj.concept.content + positionObj.position.length);
 		var dto = cons.createDtoFromConcepts("chiasm", positionObj.concepts);
 		/* var count = positionObj.concepts != null ? positionObj.concepts.length + (ghostExists ? 1 : 0) : 2; */
-		if (positionObj.concepts != null) {
-			if (ghostExists)
-				dto.concepts.push("");
+		if (ghostExists) {
+			if (positionObj.concepts == null)
+				positionObj.concepts = [];
+			var newConcept = positionObj.concept ? positionObj.concept : createConcept("");
+			if (index >= dto.concepts.length || dto.concepts[index] != newConcept)
+				dto.concepts.splice(index, 0, newConcept);
 		}
-		else {
-			dto.concepts.push("");
-			dto.concepts.push("");
-		}
+		
 		var label = cons.getLabel(dto, index);
 		//alert(index + "/" + count);
 		return label;
@@ -641,30 +643,34 @@
 		$("#btnUpdateContent").attr("value", idTextarea);
 	}
 
-	function changeEmbedMode(concepts, index, fGhost) {
-		var embedModes = getOtherEmbedModes(concepts, index, fGhost);
+	function changeEmbedMode(concepts, index) {
+		var embedModes = getOtherEmbedModes(concepts, index);
+		cleanupEmbeddedDependents(concepts, index);
+		concepts[index] = embedModes[0].concept;	
+	}
+
+	function cleanupEmbeddedDependents(concepts, index) {
 		var embeddedTypeOrig = concepts[index].embeddedType;
 		var fCleanup = embeddedTypeOrig != null;
-		concepts[index] = embedModes[0].concept;
+		if (!fCleanup)
+			return;
 		for (var i = index + 1; i < concepts.length; ++i) {
 			var nextConcept = concepts[i];
 			if (nextConcept.isHead)
 				break;
 			if (nextConcept.embeddedType == embeddedTypeOrig)
-				delete nextConcept.embeddedType;				
+				delete nextConcept.embeddedType;
 		}
 	}
 
 	/* given the current embedMode (if any), return the most relavent other embedModes which the user could choose.
 	*/
-	function getOtherEmbedModes(concepts, index, fGhost) {
+	function getOtherEmbedModes(concepts, index) {
 		var otherEmbedModes = [];
-		
-		var positionList = new Array();
-		getConceptPositions(positionList, -1, { concepts: concepts });
-		var positionObj = positionList[index];
-		var concept = positionObj.concepts[index];
-		var clonedConcepts = clone(positionObj.concepts);
+		var clonedConcepts = clone(concepts);
+		var concept = clonedConcepts[index];
+//		var positionList = new Array();
+//		getConceptPositions(positionList, -1, { concepts: clonedConcepts });
 		// look at current state and display the next logical option
 		if (!concept.embeddedType) {
 			clonedConcepts[index].embeddedType = "panel";
@@ -675,15 +681,16 @@
 			label = cons.getLabel(dto, index);
 		}
 		else if (concept.embeddedType == "panel") {
+			cleanupEmbeddedDependents(clonedConcepts, index);
 			delete clonedConcepts[index].embeddedType;
 			delete clonedConcepts[index].isHead;
 			var dto = cons.createDtoFromConcepts("chiasm", clonedConcepts);
 			label = cons.getLabel(dto, index);
 		}
-		if (fGhost) {
-			label.before = "(" + label.before;
-			label.after += ")";
-		}
+		//if (fGhost) {
+		//	label.before = "(" + label.before;
+		//	label.after += ")";
+		//}
 		otherEmbedModes.push({ concept: clonedConcepts[index], label: label })
 		return otherEmbedModes;
 	}
@@ -693,20 +700,49 @@
 		//var label = mel.text();
 		var index = $('.edit-state').index();
 		var fGhost = $('.edit-state').hasClass("ghost");
-		var embedModes = getOtherEmbedModes(mainOutline.body.concepts, index, fGhost);
+		var existing = $('.edit-state').data("embedMode");
+		var clonedConcepts = cloneAndInsertGhostConcept(mainOutline.body.concepts, fGhost, index, existing);
+		var embedModes = getOtherEmbedModes(clonedConcepts, index);
 		$("#btnEmbedMode").text(embedModes[0].label.toString());
 		$("#btnEmbedMode").attr("href", "#");
 		$("#btnEmbedMode").off("click"); // make sure we don't install multiple times
 		$("#btnEmbedMode").on("click", function (event) {
 			var index = $('.edit-state').index();
 			var fGhost = $('.edit-state').hasClass("ghost");
-			changeEmbedMode(mainOutline.body.concepts, index, fGhost);
+			var existing = $('.edit-state').data("embedMode");
+			var clonedConcepts = cloneAndInsertGhostConcept(mainOutline.body.concepts, fGhost, index, existing);
+			changeEmbedMode(clonedConcepts, index);
+			var realConcepts;
+			if (fGhost) {
+				$('.edit-state').data("embedMode", clonedConcepts[index]);
+				realConcepts = cloneAndRemoveGhostConcept(clonedConcepts, index);
+			}
+			else {
+				realConcepts = clonedConcepts;
+			}
+			mainOutline.body.concepts = realConcepts;
 			var mel = $('.edit-state').find('.markerEditLabel');
-			var newModes = getOtherEmbedModes(mainOutline.body.concepts, index, fGhost);
+			var newModes = getOtherEmbedModes(clonedConcepts, index);
 			$("#btnEmbedMode").text(newModes[0].label.toString());
 			refreshAllLabels();
-				return false;
+			
+			return false;
 		});
+	}
+
+	function cloneAndInsertGhostConcept(concepts, fGhost, indexToIns, existing) {
+		var clonedConcepts = clone(concepts);
+		if (fGhost) {
+			var newConcept = existing ? existing : { content: "" };
+			clonedConcepts.splice(indexToIns, 0, newConcept);
+		}
+		return clonedConcepts;
+	}
+
+	function cloneAndRemoveGhostConcept(concepts, indexToDel) {
+		var clonedConcepts = clone(concepts);
+		clonedConcepts.splice(indexToDel, 1);
+		return clonedConcepts;
 	}
 	
 	function createConcept(content)
@@ -715,6 +751,15 @@
 		var newConcept = jQuery.parseJSON( emptyConceptText );
 		newConcept.content = content;
 		return newConcept;
+	}
+
+	function transferEmbedModeProperties(ghostNode, concept) {
+		var ghostConcept = $(ghostNode).data("embedMode");
+		if (ghostConcept) {
+			concept.embeddedType = ghostConcept.embeddedType;
+			if (ghostConcept.isHead)
+				concept.isHead = true;
+		}
 	}
 	
 	function convertGhostToReal(ghostNode)
@@ -739,6 +784,7 @@
 		}
 		conceptPosition.concepts.splice(indexRowEdit, 0, concept);
 		conceptPosition.concept = concept;
+		transferEmbedModeProperties(ghostNode, concept);		
 		//mainOutline.body.concepts[indexRowEdit].content = newContent;
 		$(ghostNode).removeClass('ghost');
 		var label = formatPositionIntoLabel(conceptPosition, ghostExists(positionList));

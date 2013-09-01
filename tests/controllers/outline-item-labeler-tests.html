@@ -223,28 +223,13 @@
 						{ content: "b" },
 						{ content: "a'" }
 			];
-			var embedModes = getOtherEmbedModes(concepts, 0, false);
+			var embedModes = getOtherEmbedModes(concepts, 0);
 			var expectedLabel = new NumLabel();
 			expectedLabel.num = "A1";
 			expectedLabel.after = ".";
 			var modesExpected = [{ concept: { content: "a", embeddedType: "panel", isHead: true }, label: expectedLabel }];
 			deepEqual(embedModes, modesExpected, "We expect result to be " + modesExpected);
-		});
-
-		test("getOtherEmbedModes() simple - (A.) > (A1.)", function () {
-			var concepts = [
-						{ content: "a" },
-						{ content: "b" },
-						{ content: "a'" }
-			];
-			var embedModes = getOtherEmbedModes(concepts, 0, true);
-			var expectedLabel = new NumLabel();
-			expectedLabel.before = "(";
-			expectedLabel.num = "A1";
-			expectedLabel.after = ".)";
-			var modesExpected = [{ concept: { content: "a", embeddedType: "panel", isHead: true }, label: expectedLabel }];
-			deepEqual(embedModes, modesExpected, "We expect result to be " + modesExpected);
-		});
+		});		
 
 		test("getOtherEmbedModes() simple - B > B1", function () {
 			var concepts = [
@@ -252,7 +237,7 @@
 						{ content: "b" },
 						{ content: "a'" }
 			];
-			var embedModes = getOtherEmbedModes(concepts, 1, false);
+			var embedModes = getOtherEmbedModes(concepts, 1);
 			var expectedLabel = new NumLabel();
 			expectedLabel.num = "B1";
 			expectedLabel.after = ".";
@@ -266,7 +251,7 @@
 						{ content: "b" },
 						{ content: "a'" }
 			];
-			var embedModes = getOtherEmbedModes(concepts, 0, false);
+			var embedModes = getOtherEmbedModes(concepts, 0);
 			var expectedLabel = new NumLabel();
 			expectedLabel.num = "A";
 			expectedLabel.after = ".";
@@ -281,7 +266,7 @@
 						{ content: "b" },
 						{ content: "a'" }
 			];
-			changeEmbedMode(concepts, 0, false);
+			changeEmbedMode(concepts, 0);
 			var expectedConcepts = [
 						{ content: "a", embeddedType: "panel", isHead:true },
 						{ content: "b" },
@@ -296,7 +281,7 @@
 						{ content: "a2", embeddedType: "panel" },
 						{ content: "a'" }
 			];
-			changeEmbedMode(concepts, 0, false);
+			changeEmbedMode(concepts, 0);
 			var expectedConcepts = [
 						{ content: "a1" },
 						{ content: "a2" },
@@ -311,11 +296,52 @@
 						{ content: "a2", embeddedType: "panel" },
 						{ content: "a3", embeddedType: "panel" }
 			];
-			changeEmbedMode(concepts, 1, false);
+			changeEmbedMode(concepts, 1);
 			var expectedConcepts = [
 						{ content: "a1", embeddedType: "panel", isHead: true },
 						{ content: "a2" },
 						{ content: "a3" }
+			];
+			deepEqual(concepts, expectedConcepts, "We expect result to be " + expectedConcepts);
+		});
+
+		test("changeEmbedMode() label a2 > b after embeddedType", function () {
+			var concepts = [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "a2", embeddedType: "panel" },
+						{ content: "a3", embeddedType: "panel" }
+			];
+			var modes = getOtherEmbedModes(concepts, 1);
+			var expectedLabel = new NumLabel();
+			expectedLabel.num = "B";
+			expectedLabel.after = ".";
+			var modesExpected = [{ concept: { content: "a2" }, label: expectedLabel }];
+			deepEqual(modes, modesExpected, "We expect result to be " + modesExpected);
+			/*
+			changeEmbedMode(concepts, 1);
+			var dto = cons.createDtoFromConcepts("chiasm", concepts);
+			var labelResult = getLabel(dto, 1);
+			var expected = "B.";
+			deepEqual(concepts, expectedConcepts, "We expect result to be " + expectedConcepts);
+			*/
+		});
+
+		test("changeEmbedMode() cleanup after removing head (second half)", function () {
+			var concepts = [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "a2", embeddedType: "panel" },
+						{ content: "b" },
+						{ content: "a1'", embeddedType: "panel", isHead: true },
+						{ content: "a2'", embeddedType: "panel" }
+
+			];
+			changeEmbedMode(concepts, 0);
+			var expectedConcepts = [
+						{ content: "a1"},
+						{ content: "a2"},
+						{ content: "b" },
+						{ content: "a1'", embeddedType: "panel", isHead: true },
+						{ content: "a2'", embeddedType: "panel" }
 			];
 			deepEqual(concepts, expectedConcepts, "We expect result to be " + expectedConcepts);
 		});
