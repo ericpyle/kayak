@@ -39,6 +39,9 @@
 	    	
 	    	if (mainOutline.head.contentType == "chiasm")
 	    	{
+	    		publishOutlineToReadOnlyViews();
+				// todo: reestablish the highlights.
+				/*
 		    	var positionList = new Array();
 				getConceptPositions(positionList, -1);
 				positionObj = positionList[iconceptChangedContent];
@@ -48,7 +51,7 @@
 		    	if (!fUpdated)
 		    	{
 		    		publishContentToChiasmView(positionObj.concepts, positionObj.index, positionObj.concept.content);
-		    	}
+		    	}*/
 	    	}
 	    	else if (mainOutline.head.contentType == "outline")
 	    	{
@@ -461,6 +464,6 @@
 		var abaArray = trimChiasm(textBoxId, fStripCounting);
 		loadABAListToCurrentChiasm(abaArray);
 		//alert("import" + mainOutline.body.concepts.length);
-		LoadAllViewsFromCurrentObj(createdEditBoxesForConcepts);
+		LoadAllViewsFromCurrentObj(createEditBoxesForOutline);
 	}
 	

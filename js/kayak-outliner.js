@@ -40,13 +40,13 @@
 	  			getConceptPositions(positionList, indexOldEditBox);
 	  			var positionObj = positionList[indexOldEditBox];
 	  			var oldContent = positionObj.concept.content;
-	  			if (oldContent != textareaContent)
-	  			{
+	  			//if (oldContent != textareaContent) // embedMode labels may need to change as well.
+	  			//{
 	  				// update mainOutline
 	  				positionObj.concept.content = textareaContent;
 	  				publishContentChangesElsewhere(positionObj.concepts, indexOldEditBox, mainOutline.head)
 	  				//alert(textareaContent)
-	  			}			 
+	  			//}			 
 	  		}
 			convertTextarea();
 		}
