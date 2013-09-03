@@ -119,7 +119,7 @@
 					};
 				}
 			}
-			var label = formatPositionIntoLabel(positionObj, ghostExists(positionList));
+			var label = formatPositionIntoLabel(positionObj, ghostExists());
 			applyLabelToConceptNode(element, label);
 		});
 	}
@@ -184,15 +184,23 @@
 		var index = positionObj.position[0] - 1;
 		if (positionObj.position.length > 1)
 			alert("what's up?" + positionObj.concept.content + positionObj.position.length);
-		var dto = cons.createDtoFromConcepts("chiasm", positionObj.concepts);
 		/* var count = positionObj.concepts != null ? positionObj.concepts.length + (ghostExists ? 1 : 0) : 2; */
+		var adjustedConcepts = positionObj.concepts ? clone(positionObj.concepts) : [];
+		if (ghostExists) {
+			if (index == adjustedConcepts.length)
+				adjustedConcepts.push(positionObj.concept); // this is the ghost item. preserve the concept as it was passed in.
+			else
+				adjustedConcepts.push(createConcept("ghost"));
+		}
+		var dto = cons.createDtoFromConcepts("chiasm", adjustedConcepts);
+		/*
 		if (ghostExists) {
 			if (positionObj.concepts == null)
 				positionObj.concepts = [];
 			var newConcept = positionObj.concept ? positionObj.concept : createConcept("");
-			if (index >= dto.concepts.length || dto.concepts[index] != newConcept)
+			if (index >= positionObj.concepts.length || positionObj.concepts[index] != newConcept)
 				dto.concepts.splice(index, 0, newConcept);
-		}
+		}*/
 		
 		var label = cons.getLabel(dto, index);
 		//alert(index + "/" + count);
@@ -231,7 +239,7 @@
 		};
 	}
 	
-	function ghostExists(positionList)
+	function ghostExists()
 	{
 		return $('.concept').hasClass("ghost");
 	}
@@ -244,7 +252,7 @@
 		if (positionObj == undefined || positionObj.position == undefined)
 			return "(?.)";
 		//format position backwards
-		var label = formatPositionIntoLabel(positionObj, ghostExists(positionList));
+		var label = formatPositionIntoLabel(positionObj, ghostExists());
 		return label;
 	}
 	
@@ -787,7 +795,7 @@
 		transferEmbedModeProperties(ghostNode, concept);		
 		//mainOutline.body.concepts[indexRowEdit].content = newContent;
 		$(ghostNode).removeClass('ghost');
-		var label = formatPositionIntoLabel(conceptPosition, ghostExists(positionList));
+		var label = formatPositionIntoLabel(conceptPosition, ghostExists());
 		applyLabelToConceptNode($(ghostNode), label);
 		publishConceptInsertionElsewhere(conceptPosition.concepts, indexRowEdit, mainOutline.head);
 	}
