@@ -192,7 +192,9 @@ var c = cons; /* global import */
 		}
 		else
 		{
-			$(tableBodyId).children().eq(rowIndex).append(newTableData);
+			// search for the row of the matching class, and insert there.
+			var secondRowIndex = $(tableBodyId).find("td." + css).parent("tr").index();
+			$(tableBodyId).children().eq(secondRowIndex).append(newTableData);
 		}
 		
 		//$("#" + id).hover(highlightItem, removeHighlight);

@@ -74,7 +74,7 @@ function getChiasmLevelFrag(indexABA, concepts) {
  */
 function getChiasmIdLevelFrag(indexABA, concepts)
 {
-	var halfway = Math.round(concepts.count/2);
+	var halfway = Math.round(concepts.length/2);
 	var basicViewConceptId = getChiasmLevelFrag(indexABA, concepts) + "-" + (indexABA < halfway ? 1 : 2);
 	return basicViewConceptId;
 }
