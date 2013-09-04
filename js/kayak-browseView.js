@@ -959,5 +959,31 @@
 		  	newRows.push(newRow);
 		};
 		
-		return newRows;
+		return newRows.sort(sortByBCVRange);
+	}
+
+	function sortByBCVRange(oa, ob) {
+		var a = oa.key[0];
+		var b = ob.key[0];
+		if (a[0] < b[0])
+			return -1;
+		if (a[0] > b[0])
+			return 1;
+		if (a[1] < b[1])
+			return -1;
+		if (a[1] > b[1])
+			return 1;
+		if (a[2] < b[2])
+			return -1;
+		if (a[2] > b[2])
+			return 1;
+		if (a[4] < b[4])
+			return -1;
+		if (a[4] > b[4])
+			return 1;
+		if (a[5] < b[5])
+			return -1;
+		if (a[5] > b[5])
+			return 1;
+		return 0;
 	}

@@ -272,6 +272,38 @@ test("fill verse for book chapter range (both verses unspecified)", function () 
     deepEqual(result, expected, "We expect result to be " + expected);
 });
 
+module("kayak browse view - sortByBCVRange");
+test("sort - same chapter", function () {
+
+	var allOutlinesKeyedByBCVRange = [
+{ "id": "A74c87bd5ec2e4afb24a0ce0d1000c9f", "key": [["GEN", 1, 3], "chiasm"], "value": { "_id": "A74c87bd5ec2e4afb24a0ce0d1000c9f", "head": { "ScriptureRange": "Genesis 1:3", "contentType": "chiasm" } } },
+{ "id": "974c87bd5ec2e4afb24a0ce0d1000c9f", "key": [["GEN", 1, 1], "chiasm"], "value": { "_id": "974c87bd5ec2e4afb24a0ce0d1000c9f", "head": { "ScriptureRange": "Genesis 1:1", "contentType": "chiasm" } } },
+	];
+
+	var result = allOutlinesKeyedByBCVRange.sort(sortByBCVRange);
+	var expected = [
+  { "id": "974c87bd5ec2e4afb24a0ce0d1000c9f", "key": [["GEN", 1, 1], "chiasm"], "value": { "_id": "974c87bd5ec2e4afb24a0ce0d1000c9f", "head": { "ScriptureRange": "Genesis 1:1", "contentType": "chiasm" } } },
+  { "id": "A74c87bd5ec2e4afb24a0ce0d1000c9f", "key": [["GEN", 1, 3], "chiasm"], "value": { "_id": "A74c87bd5ec2e4afb24a0ce0d1000c9f", "head": { "ScriptureRange": "Genesis 1:3", "contentType": "chiasm" } } },
+	];
+	deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("sort - same chapter", function () {
+
+	var allOutlinesKeyedByBCVRange = [
+{ "id": "A74c87bd5ec2e4afb24a0ce0d1000c9f", "key": [["MRK", 5, 21, "MRK", 5, 43], "chiasm"] },
+{ "id": "974c87bd5ec2e4afb24a0ce0d1000c9f", "key": [["MRK", 5, 3, "MRK", 5, 4], "chiasm"]},
+	];
+
+	var result = allOutlinesKeyedByBCVRange.sort(sortByBCVRange);
+	var expected = [
+  { "id": "974c87bd5ec2e4afb24a0ce0d1000c9f", "key": [["MRK", 5, 3, "MRK", 5, 4], "chiasm"] },
+  { "id": "A74c87bd5ec2e4afb24a0ce0d1000c9f", "key": [["MRK", 5, 21, "MRK", 5, 43], "chiasm"]},
+	];
+	deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+
 module("kayak browse view - nearsighted sort");
 
 test("sort - no outlines", function() {
@@ -281,7 +313,6 @@ test("sort - no outlines", function() {
   var expected = [];
   deepEqual(result, expected, "We expect result to be " + expected);
 });
-
 
 test("sort - same chapter", function() {
     
