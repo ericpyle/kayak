@@ -671,35 +671,115 @@
 		}
 	}
 
+	function collectGroupings(concepts, imax) {
+		var groupings = [];
+		for (var i = 0; i < imax; i++) {
+			var nextConcept = concepts[i];
+			if (!nextConcept.embeddedType || !nextConcept.isHead || nextConcept.embeddedType != "panel")
+				continue;
+			// look ahead to see if we have a group.
+			var grouping = { indexHead : null, groupCount: 0};
+			var j = (i + 1);
+			for (; j < imax; j++) {
+				var groupConcept = concepts[j];
+				if (!groupConcept.embeddedType || groupConcept.isHead || groupConcept.embeddedType != "panel") {
+					break;
+				}
+			}
+			if (j > (i + 1)) {
+				var groupCount = j - i;
+				grouping.indexHead = i;
+				grouping.groupCount = groupCount;
+				groupings.push(grouping);
+			}
+		}
+		return groupings;
+	}
+
+	function addEmbedModesForMatchingPairs(conceptsPure, indexTarget, otherEmbedModes) {
+		var halfway = Math.round(conceptsPure.length / 2);
+		var fFirstConceptInPair = (indexTarget < halfway);
+		if (!fFirstConceptInPair) {
+			// look back at first half, and
+			// find the groupings that we might be able to create our own grouping to match with.
+			var groupings = collectGroupings(conceptsPure, halfway);
+			// for each grouping, see if we can create a matching grouping on the other half of the chiasm
+			for (var i = 0; i < groupings.length; i++) {
+				var grouping = groupings[i];
+				var matchingIndex = conceptsPure.length - grouping.indexHead - 1; // same distance from each end.
+				var indexHeadMatch = matchingIndex + 1 - grouping.groupCount;
+				if (indexHeadMatch < halfway)
+					continue;
+				if (indexHeadMatch != indexTarget)
+					continue;
+				/* a1, a2, b | b', a  => a1, a2, b | a1', a2' */
+				// now scan through the matching range and see if we can form a matching group
+				var fReadyForMatch = true;
+				for (var j = 0; j < grouping.groupCount ; j++) {
+					var indexMatching = indexHeadMatch + j;
+					var conceptMatching = conceptsPure[indexMatching];
+					if (conceptMatching.isHead || conceptMatching.embeddedType != null) {
+						fReadyForMatch = false;
+						break;
+					}
+				}
+				if (fReadyForMatch) {
+					var tryConcepts = clone(conceptsPure);
+					tryConcepts[indexTarget].isHead = true;
+					tryConcepts[indexTarget].embeddedType = "panel";
+					for (var j = 1; j < grouping.groupCount ; j++) {
+						var indexMatching = indexHeadMatch + j;
+						var conceptMatching = tryConcepts[indexMatching];
+						conceptMatching.embeddedType = "panel";
+					}
+					var dto = cons.createDtoFromConcepts("chiasm", tryConcepts);
+					label = cons.getLabel(dto, indexTarget);
+					otherEmbedModes.push({ concept: tryConcepts[indexTarget], label: label })
+				}
+			}
+		}
+	}
+
+	function pushToEmbedModes(tryConcepts, index, embedModes) {
+		var dto = cons.createDtoFromConcepts("chiasm", tryConcepts);
+		label = cons.getLabel(dto, index);
+		embedModes.push({ concept: tryConcepts[index], label: label });
+	}
+
 	/* given the current embedMode (if any), return the most relavent other embedModes which the user could choose.
 	*/
 	function getOtherEmbedModes(concepts, index) {
 		var otherEmbedModes = [];
-		var clonedConcepts = clone(concepts);
-		var concept = clonedConcepts[index];
+		var concept = concepts[index];
 //		var positionList = new Array();
 //		getConceptPositions(positionList, -1, { concepts: clonedConcepts });
 		// look at current state and display the next logical option
 		if (!concept.embeddedType) {
-			clonedConcepts[index].embeddedType = "panel";
-			// if this is not a continuation, make it a head
-			if (index == 0 || !(clonedConcepts[index - 1].embeddedType))
-				clonedConcepts[index].isHead = true;
-			var dto = cons.createDtoFromConcepts("chiasm", clonedConcepts);
-			label = cons.getLabel(dto, index);
+			addEmbedModesForMatchingPairs(concepts, index, otherEmbedModes);
+			
+			if (index != 0 && concepts[index - 1].embeddedType) {
+				// this is continuation, not a head
+				var tryConcepts = clone(concepts);
+				tryConcepts[index].embeddedType = "panel";
+				pushToEmbedModes(tryConcepts, index, otherEmbedModes);
+			}
+			// in any case, add head as an option (A1, B1, C1, etc...)
+			var tryConcepts2 = clone(concepts);
+			tryConcepts2[index].isHead = true;
+			tryConcepts2[index].embeddedType = "panel";
+			pushToEmbedModes(tryConcepts2, index, otherEmbedModes);			
 		}
 		else if (concept.embeddedType == "panel") {
-			cleanupEmbeddedDependents(clonedConcepts, index);
-			delete clonedConcepts[index].embeddedType;
-			delete clonedConcepts[index].isHead;
-			var dto = cons.createDtoFromConcepts("chiasm", clonedConcepts);
-			label = cons.getLabel(dto, index);
+			var tryConcepts = clone(concepts);
+			cleanupEmbeddedDependents(tryConcepts, index);
+			delete tryConcepts[index].embeddedType;
+			delete tryConcepts[index].isHead;
+			pushToEmbedModes(tryConcepts, index, otherEmbedModes);
 		}
 		//if (fGhost) {
 		//	label.before = "(" + label.before;
 		//	label.after += ")";
-		//}
-		otherEmbedModes.push({ concept: clonedConcepts[index], label: label })
+		//}		
 		return otherEmbedModes;
 	}
 
