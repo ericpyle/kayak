@@ -627,9 +627,9 @@
 		    var btnOptionalHtml = "";
 		    if (outlineMode == "123")
 		    	btnOptionalHtml = '<button id="btnSubpoint"> &gt; subpoint </button> ';
-		    else if (outlineMode == "Chiasm")
-		    	btnOptionalHtml = '<button id="btnEmbedMode">  </button> ';
-		    
+		    else if (outlineMode == "Chiasm") {
+		    	btnOptionalHtml = '<button id="btnEmbedMode"></button><button id="btnEmbedModeOptions"></button> ';
+		    }
 			$("#tail-editBoxControls")
 				.append('<button id="btnAddPointBelow"> + point </button>')
 				.append('<button id="btnUpdateContent" type="button" value="'+ txtContentId +'">Enter</button>') 
@@ -653,8 +653,12 @@
 
 	function changeEmbedMode(concepts, index) {
 		var embedModes = getOtherEmbedModes(concepts, index);
-		cleanupEmbeddedDependents(concepts, index);
-		concepts[index] = embedModes[0].concept;	
+		if (embedModes[0].concepts) {
+			concepts = embedModes[0].concepts;
+		}
+		else
+			concepts[index] = embedModes[0].concept;
+		return concepts;
 	}
 
 	function cleanupEmbeddedDependents(concepts, index) {
@@ -732,9 +736,9 @@
 						var conceptMatching = tryConcepts[indexMatching];
 						conceptMatching.embeddedType = "panel";
 					}
-					var dto = cons.createDtoFromConcepts("chiasm", tryConcepts);
-					label = cons.getLabel(dto, indexTarget);
-					otherEmbedModes.push({ concept: tryConcepts[indexTarget], label: label })
+					pushToEmbedModes(tryConcepts, indexTarget, otherEmbedModes);
+					// add concepts, since this mode affects other concepts
+					otherEmbedModes[otherEmbedModes.length - 1].concepts = tryConcepts;
 				}
 			}
 		}
@@ -775,6 +779,7 @@
 			delete tryConcepts[index].embeddedType;
 			delete tryConcepts[index].isHead;
 			pushToEmbedModes(tryConcepts, index, otherEmbedModes);
+			otherEmbedModes[otherEmbedModes.length - 1].concepts = tryConcepts; // other concepts affected
 		}
 		//if (fGhost) {
 		//	label.before = "(" + label.before;
@@ -791,6 +796,7 @@
 		var existing = $('.edit-state').data("embedMode");
 		var clonedConcepts = cloneAndInsertGhostConcept(mainOutline.body.concepts, fGhost, index, existing);
 		var embedModes = getOtherEmbedModes(clonedConcepts, index);
+		$("#btnEmbedModeOptions").text("1/" + embedModes.length + ">");
 		$("#btnEmbedMode").text(embedModes[0].label.toString());
 		$("#btnEmbedMode").attr("href", "#");
 		$("#btnEmbedMode").off("click"); // make sure we don't install multiple times
@@ -799,19 +805,20 @@
 			var fGhost = $('.edit-state').hasClass("ghost");
 			var existing = $('.edit-state').data("embedMode");
 			var clonedConcepts = cloneAndInsertGhostConcept(mainOutline.body.concepts, fGhost, index, existing);
-			changeEmbedMode(clonedConcepts, index);
+			var newConcepts = changeEmbedMode(clonedConcepts, index);
 			var realConcepts;
 			if (fGhost) {
-				$('.edit-state').data("embedMode", clonedConcepts[index]);
-				realConcepts = cloneAndRemoveGhostConcept(clonedConcepts, index);
+				$('.edit-state').data("embedMode", newConcepts[index]);
+				realConcepts = cloneAndRemoveGhostConcept(newConcepts, index);
 			}
 			else {
-				realConcepts = clonedConcepts;
+				realConcepts = newConcepts;
 			}
 			mainOutline.body.concepts = realConcepts;
 			var mel = $('.edit-state').find('.markerEditLabel');
-			var newModes = getOtherEmbedModes(clonedConcepts, index);
+			var newModes = getOtherEmbedModes(newConcepts, index);
 			$("#btnEmbedMode").text(newModes[0].label.toString());
+			$("#btnEmbedModeOptions").text("1/" + newModes.length + ">");
 			refreshAllLabels();
 			
 			return false;
