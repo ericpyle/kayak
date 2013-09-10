@@ -628,7 +628,7 @@
 		    if (outlineMode == "123")
 		    	btnOptionalHtml = '<button id="btnSubpoint"> &gt; subpoint </button> ';
 		    else if (outlineMode == "Chiasm") {
-		    	btnOptionalHtml = '<button id="btnEmbedMode"></button><button id="btnEmbedModeOptions"></button> ';
+		    	btnOptionalHtml = '<button id="btnEmbedMode" style="margin-right:0px;padding-right:0px;"></button><button id="btnEmbedModeOptions" style="margin-left: 0px;padding-left:0px"></button> ';
 		    }
 			$("#tail-editBoxControls")
 				.append('<button id="btnAddPointBelow"> + point </button>')
@@ -788,47 +788,84 @@
 		return otherEmbedModes;
 	}
 
+	function initializeBtnEmbedModeOptions(embedModes) {
+		if (embedModes.length > 1) {
+			$("#btnEmbedModeOptions").text("(1/" + embedModes.length + ")");
+			$("#btnEmbedModeOptions").data("modes", embedModes);
+			$("#btnEmbedModeOptions").data("nextModeIndex", 0);
+			$("#btnEmbedModeOptions").attr("href", "#");
+			$("#btnEmbedModeOptions").off("click"); // make sure we don't install multiple times
+			$("#btnEmbedModeOptions").on("click", function (event) {
+				advanceEmbedModeOption();
+				false;
+			});
+			$("#btnEmbedModeOptions").show();
+		} else {
+			$("#btnEmbedModeOptions").hide();
+		}
+	}
+
+	function advanceEmbedModeOption() {
+		var modes = $("#btnEmbedModeOptions").data("modes");
+		if (modes == null)
+			return;
+		var indexMode = $("#btnEmbedModeOptions").data("nextModeIndex");
+		var indexNextMode = (indexMode + 1) < modes.length ? (indexMode + 1) : 0;
+		$("#btnEmbedModeOptions").text("(" + (indexNextMode + 1) + "/" + modes.length + ")");
+		$("#btnEmbedModeOptions").data("nextModeIndex", indexNextMode);
+		var nextMode = modes[indexNextMode];
+		$("#btnEmbedMode").text(nextMode.label.toString());
+		$("#btnEmbedMode").data("mode", nextMode);
+
+	}
+
+	function initializeBtnEmbedModeBasic() {
+		var index = $('.edit-state').index();
+		var fGhost = $('.edit-state').hasClass("ghost");
+		var existingGhost = $('.edit-state').data("ghostConcept");
+		var clonedConcepts = cloneAndInsertGhostConcept(mainOutline.body.concepts, fGhost, index, existingGhost);
+		var embedModes = getOtherEmbedModes(clonedConcepts, index);
+		initializeBtnEmbedModeOptions(embedModes);
+		$("#btnEmbedMode").text(embedModes[0].label.toString());
+		$("#btnEmbedMode").data("mode", embedModes[0]);
+	}
+
 	function initializeBtnEmbedMode() {
 		//var mel = $('.edit-state').find('.markerEditLabel');
 		//var label = mel.text();
-		var index = $('.edit-state').index();
-		var fGhost = $('.edit-state').hasClass("ghost");
-		var existing = $('.edit-state').data("embedMode");
-		var clonedConcepts = cloneAndInsertGhostConcept(mainOutline.body.concepts, fGhost, index, existing);
-		var embedModes = getOtherEmbedModes(clonedConcepts, index);
-		$("#btnEmbedModeOptions").text("1/" + embedModes.length + ">");
-		$("#btnEmbedMode").text(embedModes[0].label.toString());
+		initializeBtnEmbedModeBasic();
 		$("#btnEmbedMode").attr("href", "#");
 		$("#btnEmbedMode").off("click"); // make sure we don't install multiple times
 		$("#btnEmbedMode").on("click", function (event) {
 			var index = $('.edit-state').index();
+			var selectedMode = $("#btnEmbedMode").data("mode"); // todo
+			var newConcepts = null;
 			var fGhost = $('.edit-state').hasClass("ghost");
-			var existing = $('.edit-state').data("embedMode");
-			var clonedConcepts = cloneAndInsertGhostConcept(mainOutline.body.concepts, fGhost, index, existing);
-			var newConcepts = changeEmbedMode(clonedConcepts, index);
-			var realConcepts;
-			if (fGhost) {
-				$('.edit-state').data("embedMode", newConcepts[index]);
-				realConcepts = cloneAndRemoveGhostConcept(newConcepts, index);
-			}
+			if (!fGhost && selectedMode.concepts)
+				newConcepts = selectedMode.concepts;
 			else {
-				realConcepts = newConcepts;
+				var existingGhost = $('.edit-state').data("ghostConcept");
+				var clonedConcepts = cloneAndInsertGhostConcept(mainOutline.body.concepts, fGhost, index, existingGhost);
+				clonedConcepts[index] = selectedMode.concept;
+				if (fGhost) {
+					$('.edit-state').data("ghostConcept", clonedConcepts[index]);
+					newConcepts = cloneAndRemoveGhostConcept(clonedConcepts, index);
+				}
+				else {
+					newConcepts = clonedConcepts;
+				}
 			}
-			mainOutline.body.concepts = realConcepts;
-			var mel = $('.edit-state').find('.markerEditLabel');
-			var newModes = getOtherEmbedModes(newConcepts, index);
-			$("#btnEmbedMode").text(newModes[0].label.toString());
-			$("#btnEmbedModeOptions").text("1/" + newModes.length + ">");
+			mainOutline.body.concepts = newConcepts;
 			refreshAllLabels();
-			
+			initializeBtnEmbedModeBasic();
 			return false;
 		});
 	}
 
-	function cloneAndInsertGhostConcept(concepts, fGhost, indexToIns, existing) {
+	function cloneAndInsertGhostConcept(concepts, fGhost, indexToIns, existingGhost) {
 		var clonedConcepts = clone(concepts);
 		if (fGhost) {
-			var newConcept = existing ? existing : { content: "" };
+			var newConcept = existingGhost ? existingGhost : { content: "" };
 			clonedConcepts.splice(indexToIns, 0, newConcept);
 		}
 		return clonedConcepts;
@@ -849,7 +886,7 @@
 	}
 
 	function transferEmbedModeProperties(ghostNode, concept) {
-		var ghostConcept = $(ghostNode).data("embedMode");
+		var ghostConcept = $(ghostNode).data("ghostConcept");
 		if (ghostConcept) {
 			concept.embeddedType = ghostConcept.embeddedType;
 			if (ghostConcept.isHead)
