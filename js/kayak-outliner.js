@@ -831,8 +831,6 @@
 	}
 
 	function initializeBtnEmbedMode() {
-		//var mel = $('.edit-state').find('.markerEditLabel');
-		//var label = mel.text();
 		initializeBtnEmbedModeBasic();
 		$("#btnEmbedMode").attr("href", "#");
 		$("#btnEmbedMode").off("click"); // make sure we don't install multiple times
