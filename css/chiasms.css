@@ -214,6 +214,9 @@ form div { padding-left: 10px; padding-right: 10px; padding-top: 10px; }
 form div p { padding: 10px; }
 form div label, form div textarea { vertical-align: middle; }
 
+.concept label[for=lnkEmbedded], #lnkEmbedded { vertical-align: middle; }
+
+
 .ch-options, .vs-options
 {
 	background-color: #B9C9FE; 

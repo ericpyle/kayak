@@ -62,6 +62,17 @@
 		return false;
 	}
 
+/*
+ * requires jquery.url.js ($.url())
+ */
+function getDbIdFromUrl(url) {
+	var dbId = url.fsegment(1);
+	if (dbId == "!")
+		dbId = url.fsegment(2);
+	return dbId;
+}
+
+
 	/*
 	 * http://sirdarckcat.blogspot.com/2007/07/passing-reference-to-javascript.html
 	 */

@@ -274,7 +274,7 @@
 				removeAnyRowSelectionAndOptions("#exampleTable", "outlineRowSelected", "outlineSelectedOptions");
 				var	docToLoad = createBlankOutline("chiasm");
 				loadJSONToOutline(docToLoad);
-				$("#tabsMain").tabs('select',"#EditView");
+				$("#tabsMain").tabs("option", "active", getTabIndex("#EditView"));
 				
 				return false;
 			});

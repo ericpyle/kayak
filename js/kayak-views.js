@@ -25,18 +25,22 @@ function wrapInHyperlink(stuff, combinedSource) {
         return stuff;
     }
     var href = EmptyIfNull(combinedSource.outline.source.website).length > 0 ? combinedSource.outline.source.website : combinedSource.source.website;
-    href = encodeURI(href);
-    try
-    {
-        var url = $.url(href);
-        var protocol = EmptyIfNull(url.attr('protocol'));
-        if (protocol.length == 0)
-            protocol = "http://";
-        href = protocol + url.attr('host') + url.attr('path');
-    }
-    catch (err) {
-    }
+    href = buildFullHref(href);
     return "<a href='"+ href + "'>" + stuff + "</a>";
+}
+
+function buildFullHref(href) {
+	href = encodeURI(href);
+	try {
+		var url = $.url(href);
+		var protocol = EmptyIfNull(url.attr('protocol'));
+		if (protocol.length == 0)
+			protocol = "http://";
+		href = protocol + url.attr('host') + url.attr('path');
+	}
+	catch (err) {
+	}
+	return href;
 }
 
 function publishContentToSequentialPreviewTabs(conceptsNotUsed, iconcept, newContent, view, containerSelector)

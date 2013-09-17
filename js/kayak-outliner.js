@@ -378,6 +378,83 @@
 		refreshAllLabels();
 		//alert(mainOutline.body.concepts.length)		
 	}
+
+	function initializeBtnEmbeddedLink() {
+		$("#btnEmbeddedLink").attr("href", "#");
+		$("#btnEmbeddedLink").off("click"); // make sure we don't install multiple times
+		$("#btnEmbeddedLink").on("click", function (event) {
+			var index = $('.edit-state').index();
+			// ** TODO ** Handle GhostConcept
+			if (index >= mainOutline.body.concepts.length)
+				return false;
+			var existingEmbeddedOutlineId = "";
+			var concept = mainOutline.body.concepts[index];
+			if (concept.embeddedOutlineId) {
+				existingEmbeddedOutlineId = concept.embeddedOutlineId;
+			}
+
+			// insert text box...replace buttons...?
+			var content = $('.edit-state textarea').val();
+			if (content == null)
+				content = "";
+			$(".edit-state").append('<div id="dialog" title="Embed an outline..."></div>');
+			$("#dialog").append('<div>Link to an existing outline with the same range.</div>');
+			$("#dialog").append('<div style="background-color:#E2E4FF;">' + content + '</div>');
+			
+			$("#dialog").append('<label for="lnkEmbedded">http://</label>');
+			$("#dialog").append('<textarea id="lnkEmbedded" cols="40" rows="1"></textarea>');
+			$("#dialog").append('<div>Later, click on the [<a href="#" onclick="return false;">+</a>] link to see that outline.</div>');
+			
+			$("#dialog").dialog({
+				autoOpen: false,
+				modal: true,
+				position: { my: "center", at: "center", of: "#btnEmbeddedLink" },
+				width: 500,
+				buttons: {
+					"OK": function () {
+						$(this).dialog("close");
+						var urlLnkEmbedded = $(jq("lnkEmbedded")).val();
+						var dbId = "";
+						if (isDbId(urlLnkEmbedded))
+							dbId = urlLnkEmbedded;
+						else {
+							var url = $.url(urlLnkEmbedded);
+							var dbId = getDbIdFromUrl(url);
+						}
+						if (EmptyIfNull(dbId).length == 0)
+							return false;
+						var index = $(".edit-state").index();
+						/*TODO: handle ghost */
+						if (index >= mainOutline.body.concepts.length)
+							return false;
+						var concept = mainOutline.body.concepts[index];
+						concept.embeddedOutlineId = dbId;
+						$("<label>[<a href='#/"+ dbId + "'>+</a>]</label> ").insertAfter(".edit-state .markerEditLabel");
+					},
+					Cancel: function () {
+						$(this).dialog("close");
+					}
+				}
+			});
+			$("#dialog").dialog("open");
+			$(jq("lnkEmbedded")).val(existingEmbeddedOutlineId);
+			/*
+			// validate?
+			// copy url to concept.
+			if ($('.edit-state').hasClass("ghost")) {
+				// convert to real
+				convertGhostToReal($('.edit-state'));
+				//getConceptPositions(positionList, index);
+			}
+			convertTextarea();
+			$("#lnkEmbedded").first().putCursorAtEnd();
+			$("#head-editBoxControls").remove();
+			$("#tail-editBoxControls").remove();
+			$('.edit-state').removeClass('edit-state');
+			*/
+			false;
+		});
+	}
 	
 	function initializeBtnDelete()
 	{
@@ -634,6 +711,7 @@
 				.append('<button id="btnAddPointBelow"> + point </button>')
 				.append('<button id="btnUpdateContent" type="button" value="'+ txtContentId +'">Enter</button>') 
 				.append(btnOptionalHtml)
+				.append('<button id="btnEmbeddedLink"> embed... </button> ')
 				.append('<button id="btnDelete"> x delete </button> ');
 			$("#btnUpdateContent").click(updateContent);
 		}
@@ -643,6 +721,7 @@
 		}
 		initializeCbIsPanelHead();
 		initializeBtnDelete();
+		initializeBtnEmbeddedLink();
 		initializeBtnEmbedMode();
 		initializeBtnSubpoint();
 		initializeBtnAddPoint(0);
@@ -961,9 +1040,9 @@
 	
 	function convertTextarea()
 	{
-		var idTextareaOld = $('.edit-state textarea').attr("id");
+		var idTextareaOld = $('.edit-state textarea').first().attr("id");
 		var content = $('#' + idTextareaOld).val();
-		$('.edit-state textarea').replaceWith('<span id="' + idTextareaOld + '">' + content + '</span>');
+		$('.edit-state textarea').first().replaceWith('<span id="' + idTextareaOld + '">' + content + '</span>');
 	}
 	
 	function convertIntoTextarea()

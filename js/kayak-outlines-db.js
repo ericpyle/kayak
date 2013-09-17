@@ -223,15 +223,15 @@
 			// add some extra options
 			$(outlineRow).after(rowHtml);
 			$("#btnJumpToViewTab").click(function(event){
-				$("#tabsMain").tabs('select',"#View");
+				$("#tabsMain").tabs("option", "active", getTabIndex("#View"));
 				return false;
 			});
 			$("#btnJumpToEditTab").click(function(event){
-				$("#tabsMain").tabs('select',"#EditView");
+				$("#tabsMain").tabs("option", "active", getTabIndex("#EditView"));
 				return false;
 			});
 			$("#btnJumpToCiteTab").click(function(event){
-				$("#tabsMain").tabs('select',"#Cite");
+				$("#tabsMain").tabs("option", "active", getTabIndex("#Cite"));
 				return false;
 			});
 		}
@@ -1289,13 +1289,15 @@
 		$(jq(idTable)).data("dataTable", dataTable1);
 	}
 	
+	function isDbId(testId) {
+		return testId && testId.substr(testId.length - 2, testId.length) == "ol" &&
+			testId.substr(0, 3) == "kyk";
+	}
+
 	function SelectUrlSpecifiedDb()
 	{
-		var dbId = $.url().fsegment(1);
-		if (dbId == "!")
-			dbId = $.url().fsegment(2);
-		if (dbId && dbId.substr(dbId.length - 2, dbId.length) == "ol" && 
-			dbId.substr(0, 3) == "kyk")
+		var dbId = getDbIdFromUrl($.url());
+		if (isDbId(dbId))
 		{
 			// TODO: verify db id format?
 			pageToAndSelectOutline(dbId);
@@ -1308,7 +1310,11 @@
 		selectOutlineRow(newRow);
 		if (!goToTabSelector)
 			goToTabSelector = "#View";
-		$("#tabsMain").tabs('select', goToTabSelector);
+		$("#tabsMain").tabs("option", "active", getTabIndex(goToTabSelector));
+	}
+
+	function getTabIndex(selector) {
+		return $(selector).index() - 1;
 	}
 	
 	function changeUrlToSelectedId(rowId)
