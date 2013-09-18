@@ -124,11 +124,20 @@ var c = cons; /* global import */
 		var conceptClass = view + getChiasmLevelFrag(newIndex, concepts);
 		var conceptId = getChiasmViewLevelId(view, newIndex, concepts);
 		var conceptMarker = "<span class='itemMarker'>" + label + "</span>";
+		var embeddedOutlineLink = "";
+		if (newConcept.embeddedOutlineId) {
+			var dbId = newConcept.embeddedOutlineId;
+			embeddedOutlineLink = "<span class='lnkToEmbeddedOutline'>[<a href='#/" + dbId + "' target='_blank'>+</a>]</span>";
+		}
+		else {
+			embeddedOutlineLink = "";
+		}
 		
 		var spaces = "";
 	    if (CompatibilityMode && fIndentMode)
 	    	spaces = convertLabelToSpaces(label);
-	    var conceptHtml = "<div class='"+ conceptClass + "' id='"+ conceptId +"'>" + spaces + conceptMarker + "<span class='conceptContent'>" + newConcept.content + "</span></div>";
+	    var conceptHtml = "<div class='" + conceptClass + "' id='" + conceptId + "'>" +
+			spaces + conceptMarker + "<span class='conceptContent'>" + newConcept.content + "</span>" + " <label>" + embeddedOutlineLink + "</label>" + "</div>";
 		result["conceptHtml"] = conceptHtml;
 		result["conceptIndex"] = newIndex;
 		return result;
@@ -272,9 +281,11 @@ var c = cons; /* global import */
 			var asciiMarker = IndexToAsciiMarkerAAB(iLastEditBox);
 			var endmarker = GetEndMarkerAAB(iLastEditBox);
 			var editItemId = getChiasmViewLevelId("edit", index, concepts);
+			var lnk = concept.embeddedOutlineLink ? "[" + wrapInHref(concept.embeddedOutlineLink) + "]" : "";
 			$("<div></div>")
 				.addClass("chiasmEditItem")
-				.prepend('<label class="markerEditLabel" for="' + editItemId + '">'+ asciiMarker + endmarker + '</label>')
+				.prepend('<label class="markerEditLabel" for="' + editItemId + '">' + asciiMarker + endmarker + '</label>')
+				.prepend('<label><span class="lnkToEmbeddedOutline">' + lnk + '</span></label>')
 				.appendTo("#editChiasmBody");
 			var newInputBox = $("<textarea></textarea>")												
 				.attr("id", editItemId)

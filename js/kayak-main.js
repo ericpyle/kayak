@@ -260,6 +260,7 @@
 		
 		function InitializeEditForm()
 		{
+			/*
 			$("#itemHighlighting").click(function() {
 	  			var fEnableHighlighting = $("#itemHighlighting").attr("checked");
 	  			if (!fEnableHighlighting)
@@ -267,6 +268,18 @@
 					RemoveAllHighlighting();
 	  			}
 	  			return true;
+			});*/
+
+			$("#showLinksToEmbeddedOutlines").click(function () {
+				var fIsChecked = $("#showLinksToEmbeddedOutlines").is(':checked');
+				var selector = "#bv-outline-selected,#chiasm-indent,#chiasm-flat,.tableViewAAB";
+				if (fIsChecked) {
+					$(selector).find(".lnkToEmbeddedOutline").show();
+				}
+				else {
+					$(selector).find(".lnkToEmbeddedOutline").hide();
+				}
+				return true;
 			});
 			
 			$("#btnCreateNewOutline, #btnNewOutline_Edit").click(function(event) {

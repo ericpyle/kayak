@@ -83,7 +83,7 @@
 			label = "("+ label +") ";
 		else
 			label = label + " ";
-		$(element).find("label").text(label);
+		$(element).find("label").first().text(label);
 		adjustAutoLabeling();
 	}
 	
@@ -219,7 +219,7 @@
 		var concept = concepts[iconcept];
 		//var newConcept = createConcept(concept.content)
 		//mainOutline.body.concepts.splice(iconcept, 0, concept);
-		insertConceptInView($('#outline div').length, "", true, concept.content);
+		insertConceptInView($('#outline div').length, "", true, concept);
 		if (outlineMode == "123")		
 			if (concept.concepts)
 			{
@@ -429,7 +429,8 @@
 							return false;
 						var concept = mainOutline.body.concepts[index];
 						concept.embeddedOutlineId = dbId;
-						$("<label>[<a href='#/"+ dbId + "'>+</a>]</label> ").insertAfter(".edit-state .markerEditLabel");
+						$(".edit-state .lnkToEmbeddedOutline").text("[" + wrapInHref(dbId) + "]");
+						//$("<label class='lnkToEmbeddedOutline'>[<a href='#/"+ dbId + "'>+</a>] </label>").insertAfter(".edit-state textarea");
 					},
 					Cancel: function () {
 						$(this).dialog("close");
@@ -438,6 +439,14 @@
 			});
 			$("#dialog").dialog("open");
 			$(jq("lnkEmbedded")).val(existingEmbeddedOutlineId);
+			FitToContent("lnkEmbedded", '', '100');
+			$(jq("lnkEmbedded"))
+				.keyup(function (event) {
+					// update content of chiasm
+					var textAreaId = event.target.id;
+					FitToContent(this, '', '100');
+					return false;
+				});
 			/*
 			// validate?
 			// copy url to concept.
@@ -1012,12 +1021,21 @@
 		++numConceptCreated;
 		$(nextRow).append('<label class="markerEditLabel" for="txtContent-' + numConceptCreated + '"></label>');
 		$(nextRow).append('<textarea id="txtContent-' + numConceptCreated + '" cols="40" rows="1"></textarea>');
+		$(nextRow).append(' <label><span class="lnkToEmbeddedOutline"></span></label>');
 		refreshAllLabels();
 		return nextRow;
 	}
 	
-	function insertConceptInView(indexInView, classesToAdd, fAsReadOnlyContent, content)
+	function insertConceptInView(indexInView, classesToAdd, fAsReadOnlyContent, concept)
 	{
+		var content = null;
+		var lnk = "";
+		if (concept) {
+			content = concept.content;
+			if (concept.embeddedOutlineId) {
+				lnk = "[" + wrapInHref(concept.embeddedOutlineId) + "]";
+			}
+		}
 		//alert("insertConceptInView" + indexInView + content);
 		$('#outline').insertAt(indexInView, "<div></div>");
 		var nextRow = $('#outline').children("div:eq(" + indexInView + ")");
@@ -1034,6 +1052,7 @@
 		}
 		else
 			$(nextRow).append('<textarea id="txtContent-' + numConceptCreated + '" cols="40" rows="1"></textarea>');
+		$(nextRow).append(' <label><span class="lnkToEmbeddedOutline">' + lnk + '</span></label>');
 		refreshAllLabels();
 		return nextRow;
 	}
