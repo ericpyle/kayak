@@ -285,8 +285,8 @@ var c = cons; /* global import */
 			$("<div></div>")
 				.addClass("chiasmEditItem")
 				.prepend('<label class="markerEditLabel" for="' + editItemId + '">' + asciiMarker + endmarker + '</label>')
-				.prepend('<label><span class="lnkToEmbeddedOutline">' + lnk + '</span></label>')
 				.appendTo("#editChiasmBody");
+				// .append('<label><span class="lnkToEmbeddedOutline">' + lnk + '</span></label>')
 			var newInputBox = $("<textarea></textarea>")												
 				.attr("id", editItemId)
 				.attr("cols", "40")

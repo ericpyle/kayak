@@ -415,21 +415,30 @@
 						$(this).dialog("close");
 						var urlLnkEmbedded = $(jq("lnkEmbedded")).val();
 						var dbId = "";
-						if (isDbId(urlLnkEmbedded))
+						if (EmptyIfNull(urlLnkEmbedded).length == 0) {
+							// remove the property below.
+						}
+						else if (isDbId(urlLnkEmbedded)) {
 							dbId = urlLnkEmbedded;
-						else {
+						} else {
 							var url = $.url(urlLnkEmbedded);
 							var dbId = getDbIdFromUrl(url);
 						}
-						if (EmptyIfNull(dbId).length == 0)
-							return false;
 						var index = $(".edit-state").index();
 						/*TODO: handle ghost */
 						if (index >= mainOutline.body.concepts.length)
 							return false;
 						var concept = mainOutline.body.concepts[index];
+						if (EmptyIfNull(dbId).length == 0) {
+							// remove the property if it exists.
+							if (concept.embeddedOutlineId) {
+								delete concept.embeddedOutlineId;
+							}
+							$(".edit-state .lnkToEmbeddedOutline").html("");
+							return false;
+						}
 						concept.embeddedOutlineId = dbId;
-						$(".edit-state .lnkToEmbeddedOutline").text("[" + wrapInHref(dbId) + "]");
+						$(".edit-state .lnkToEmbeddedOutline").html("[" + wrapInHref(dbId) + "]");
 						//$("<label class='lnkToEmbeddedOutline'>[<a href='#/"+ dbId + "'>+</a>] </label>").insertAfter(".edit-state textarea");
 					},
 					Cancel: function () {
@@ -657,7 +666,10 @@
 			var concept = concepts[i];
 			if (concept)
 			{
-				$(newOrderedList).append("<li><span class='conceptContent'>" + concept.content + "</span></li>");
+				var lnk = "";
+				if (concept.embeddedOutlineId)
+					lnk = "[" + wrapInHref(concept.embeddedOutlineId) + "]";
+				$(newOrderedList).append("<li><span class='conceptContent'>" + concept.content + "</span> <label><span class='lnkToEmbeddedOutline'>"+lnk+"</span></label></li>");
 				var newListItem = $(newOrderedList).children(":last");
 				if (concept.concepts)
 				{

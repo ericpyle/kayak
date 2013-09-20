@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="css/qunit-git.css" type="text/css" media="screen" />
 <script type="text/javascript" src="js/qunit-git.js"></script>
 <script type="text/javascript" src="../js/jquery-extensions-utils.js"></script>
+<script type="text/javascript" src="../js/cons.js"></script>
 <script type="text/javascript" src="../js/kayak-common.js"></script>
 <script type="text/javascript" src="../js/kayak-outliner.js"></script>
 <script type="text/javascript" src="../js/kayak-views.js"></script>
@@ -29,10 +30,21 @@ test("one line", function() {
   outline.body.concepts.push({"content": "one line"});
   var result = generateHierarchicalFlat(outline);
   var expected = {
-  	"html" :   "<div><span class='itemMarker'>1. </span><span class='conceptContent'>one line</span></div>"
+  	"html" :   "<div><span class='itemMarker'>1. </span><span class='conceptContent'>one line</span> <label><span class='lnkToEmbeddedOutline'></span></label></div>"
   };
   
   deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("one line with embedded link", function () {
+	var outline = createBlankOutline("outline");
+	outline.body.concepts.push({ "content": "one line", embeddedOutlineId: "link" });
+	var result = generateHierarchicalFlat(outline);
+	var expected = {
+		"html": "<div><span class='itemMarker'>1. </span><span class='conceptContent'>one line</span> <label><span class='lnkToEmbeddedOutline'>[<a href='#/link'>+</a>]</span></label></div>"
+	};
+
+	deepEqual(result, expected, "We expect result to be " + expected);
 });
 
 test("two lines", function() {
@@ -41,8 +53,8 @@ test("two lines", function() {
   outline.body.concepts.push({"content": "second line"});
   var result = generateHierarchicalFlat(outline);
   var expected = {
-  	"html" :   "<div><span class='itemMarker'>1. </span><span class='conceptContent'>one line</span></div>" + 
-  			   "<div><span class='itemMarker'>2. </span><span class='conceptContent'>second line</span></div>"
+  	"html" :   "<div><span class='itemMarker'>1. </span><span class='conceptContent'>one line</span> <label><span class='lnkToEmbeddedOutline'></span></label></div>" + 
+  			   "<div><span class='itemMarker'>2. </span><span class='conceptContent'>second line</span> <label><span class='lnkToEmbeddedOutline'></span></label></div>"
   }
   
   deepEqual(result, expected, "We expect result to be " + expected);
@@ -55,8 +67,8 @@ test("one sub concept", function() {
   insertChildConcept(outline.body.concepts[0], "child concept");
   var result = generateHierarchicalFlat(outline);
   var expected = {
-  	"html" :   "<div><span class='itemMarker'>1. </span><span class='conceptContent'>parent concept</span></div>" + 
-  			   "<div><span class='itemMarker'>1.1. </span><span class='conceptContent'>child concept</span></div>"
+  	"html" :   "<div><span class='itemMarker'>1. </span><span class='conceptContent'>parent concept</span> <label><span class='lnkToEmbeddedOutline'></span></label></div>" + 
+  			   "<div><span class='itemMarker'>1.1. </span><span class='conceptContent'>child concept</span> <label><span class='lnkToEmbeddedOutline'></span></label></div>"
   }
     
   deepEqual(result, expected, "We expect result to be " + expected);

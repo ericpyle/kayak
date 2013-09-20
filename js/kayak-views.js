@@ -164,7 +164,8 @@ function generatePanelVertical(outline, spacing, view)
 	var indentStyles = [];
 	var html = "";
 	var indentSpacing = "";
-	for (var i=0; i < concepts.length; i++) {
+	for (var i = 0; i < concepts.length; i++) {
+		var concept = concepts[i];
 		var indentStyleNum = getIndentStyleNum(outline, i);
 		if (indentStyleNum > 1)
 			indentSpacing += spacing;
@@ -177,10 +178,13 @@ function generatePanelVertical(outline, spacing, view)
 		if(!doTestAndDoSomething(indentStyles, function (item) { return item == ("." + classIndent); }))
 		{
 			indentStyles.push("." + classIndent);
-		}		
+		}
+		var lnk = "";
+		if (concept.embeddedOutlineId)
+			lnk = "[" + wrapInHref(concept.embeddedOutlineId) + "]";
 		var id = view + "-panel-concept-" + i;
 		html += "<div id='"+ id +"' class='"+ classIndent + (contentParams.header && indentStyleNum == 1 ? " panel-header" : "") + "'>" + 
-			indentSpacing + "<span class='itemMarker'>"+ indexForLabel +". </span><span class='conceptContent'>"+ concepts[i].content +"</span></div>";
+			indentSpacing + "<span class='itemMarker'>" + indexForLabel + ". </span><span class='conceptContent'>" + concepts[i].content + "</span> <label><span class='lnkToEmbeddedOutline'>"+ lnk +"</span></label></div>";
 	};
 	panelOutput["indentStyles"] = indentStyles;
 	panelOutput["html"] = html;
@@ -188,7 +192,7 @@ function generatePanelVertical(outline, spacing, view)
 	 *   
 	 var expected = {
 		  	"indentStyles": [".panel-indent-level-1"],
-		  	"html" :   "<div class='panel-indent-level-1'><span class='itemMarker'>1</span><span class='conceptContent'>one line</span></div>"
+		  	"html" :   "<div class='panel-indent-level-1'><span class='itemMarker'>1</span><span class='conceptContent'>one line</span> <label><span class='lnkToEmbeddedOutline'></span></label></div>"
 		  };
 	 */
 	return panelOutput;
@@ -294,7 +298,11 @@ function generateHierarchicalFlat(outline)
 		var positionObj = positionList[i];
 		var label = formatPositionIntoLabel_123(positionObj); //, ghostExists(positionList));
 		
-		html += "<div><span class='itemMarker'>"+ label +" </span><span class='conceptContent'>"+ positionObj.concept.content +"</span></div>";
+		var lnk = "";
+		if (positionObj.concept.embeddedOutlineId) {
+			lnk = "[" + wrapInHref(positionObj.concept.embeddedOutlineId) + "]";
+		}
+		html += "<div><span class='itemMarker'>"+ label +" </span><span class='conceptContent'>"+ positionObj.concept.content +"</span> <label><span class='lnkToEmbeddedOutline'>"+lnk+"</span></label></div>";
 	}
 	response["html"] = html;
 	return response;
