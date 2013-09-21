@@ -384,9 +384,10 @@
 		$("#btnEmbeddedLink").off("click"); // make sure we don't install multiple times
 		$("#btnEmbeddedLink").on("click", function (event) {
 			var index = $('.edit-state').index();
-			// ** TODO ** Handle GhostConcept
-			if (index >= mainOutline.body.concepts.length)
-				return false;
+			var fIsGhost = $('.edit-state').hasClass('ghost');
+			if (fIsGhost) {
+				convertGhostToReal($('.edit-state'));
+			}
 			var existingEmbeddedOutlineId = "";
 			var concept = mainOutline.body.concepts[index];
 			if (concept.embeddedOutlineId) {
@@ -425,9 +426,6 @@
 							var dbId = getDbIdFromUrl(url);
 						}
 						var index = $(".edit-state").index();
-						/*TODO: handle ghost */
-						if (index >= mainOutline.body.concepts.length)
-							return false;
 						var concept = mainOutline.body.concepts[index];
 						if (EmptyIfNull(dbId).length == 0) {
 							// remove the property if it exists.
