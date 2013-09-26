@@ -281,7 +281,7 @@ var c = cons; /* global import */
 			var asciiMarker = IndexToAsciiMarkerAAB(iLastEditBox);
 			var endmarker = GetEndMarkerAAB(iLastEditBox);
 			var editItemId = getChiasmViewLevelId("edit", index, concepts);
-			var lnk = concept.embeddedOutlineLink ? "[" + wrapInHref(concept.embeddedOutlineLink) + "]" : "";
+			var lnk = concept.embeddedOutlineLink ? "[" + createEmbedLink(concept.embeddedOutlineLink) + "]" : "";
 			$("<div></div>")
 				.addClass("chiasmEditItem")
 				.prepend('<label class="markerEditLabel" for="' + editItemId + '">' + asciiMarker + endmarker + '</label>')

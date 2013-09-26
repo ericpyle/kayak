@@ -72,7 +72,7 @@ function getDbIdFromUrl(url) {
 	return dbId;
 }
 
-function wrapInHref(linkFrag) {
+function createEmbedLink(linkFrag) {
 	return "<a href='#/" + linkFrag + "'>+</a>";
 }
 	/*

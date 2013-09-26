@@ -181,7 +181,7 @@ function generatePanelVertical(outline, spacing, view)
 		}
 		var lnk = "";
 		if (concept.embeddedOutlineId)
-			lnk = "[" + wrapInHref(concept.embeddedOutlineId) + "]";
+			lnk = "[" + createEmbedLink(concept.embeddedOutlineId) + "]";
 		var id = view + "-panel-concept-" + i;
 		html += "<div id='"+ id +"' class='"+ classIndent + (contentParams.header && indentStyleNum == 1 ? " panel-header" : "") + "'>" + 
 			indentSpacing + "<span class='itemMarker'>" + indexForLabel + ". </span><span class='conceptContent'>" + concepts[i].content + "</span> <label><span class='lnkToEmbeddedOutline'>"+ lnk +"</span></label></div>";
@@ -300,7 +300,7 @@ function generateHierarchicalFlat(outline)
 		
 		var lnk = "";
 		if (positionObj.concept.embeddedOutlineId) {
-			lnk = "[" + wrapInHref(positionObj.concept.embeddedOutlineId) + "]";
+			lnk = "[" + createEmbedLink(positionObj.concept.embeddedOutlineId) + "]";
 		}
 		html += "<div><span class='itemMarker'>"+ label +" </span><span class='conceptContent'>"+ positionObj.concept.content +"</span> <label><span class='lnkToEmbeddedOutline'>"+lnk+"</span></label></div>";
 	}

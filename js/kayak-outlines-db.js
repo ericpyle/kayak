@@ -1334,7 +1334,7 @@
 		// /_design/outlines/_view
 		// /_design/personalProfiles/_view
 		$("#submitterIsAuthor").click(function(event) {
-			var fSubmitterIsAuthor = $("#submitterIsAuthor").attr("checked");
+			var fSubmitterIsAuthor = this.checked;
 			if (fSubmitterIsAuthor)
 			{
 				var submitterProfile = $("#save-outline-submitter").data('profile-submitter');
@@ -2084,7 +2084,7 @@
 		$("#save-outline-author")
 			.text(formatName(profile, defaultCitationLinkContent))
 			.data('profile-author', profile);
-		var fSubmitterIsAuthor = $("#submitterIsAuthor").attr("checked");
+		var fSubmitterIsAuthor = $("#submitterIsAuthor").is(":checked");
 		if (fSubmitterIsAuthor && !fIgnoreSubmitterIsAuthor)
 		{
 			$("#save-outline-submitter")
@@ -2099,7 +2099,7 @@
 		$("#save-outline-submitter")
 			.text(formatName(profile, defaultCitationLinkContent))
 			.data('profile-submitter', profile);
-		var fSubmitterIsAuthor = $("#submitterIsAuthor").attr("checked");
+		var fSubmitterIsAuthor = $("#submitterIsAuthor").is(":checked");
 		if (fSubmitterIsAuthor && !fIgnoreSubmitterIsAuthor)
 		{
 			$("#save-outline-author")

@@ -321,7 +321,7 @@
 			});
 			
 			$("#cbPanelHasHeaders").click(function() {
-	  			var fPanelHasHeaders = $("#cbPanelHasHeaders").attr("checked");
+				var fPanelHasHeaders = this.checked;
 	  			if (fPanelHasHeaders)
 	  				mainOutline.head.contentParams["header"] = true;
 				else
@@ -473,7 +473,7 @@
 	
 	function importFromTextBoxToCurrentChiasm(textBoxId)
 	{
-		var fStripCounting = $("#stripCounting").attr("checked");
+		var fStripCounting = $("#stripCounting").is(":checked");
 		var abaArray = trimChiasm(textBoxId, fStripCounting);
 		loadABAListToCurrentChiasm(abaArray);
 		//alert("import" + mainOutline.body.concepts.length);

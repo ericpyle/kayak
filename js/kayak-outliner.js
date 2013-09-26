@@ -436,7 +436,7 @@
 							return false;
 						}
 						concept.embeddedOutlineId = dbId;
-						$(".edit-state .lnkToEmbeddedOutline").html("[" + wrapInHref(dbId) + "]");
+						$(".edit-state .lnkToEmbeddedOutline").html("[" + createEmbedLink(dbId) + "]");
 						//$("<label class='lnkToEmbeddedOutline'>[<a href='#/"+ dbId + "'>+</a>] </label>").insertAfter(".edit-state textarea");
 					},
 					Cancel: function () {
@@ -503,7 +503,7 @@
 		$("#btnSetPanelCycle").removeAttr("checked");
 		$("#btnSetPanelCycle").click(function(event)
 		{
-			var fIsPanelHead = $("#btnSetPanelCycle").attr("checked");
+			var fIsPanelHead = $("#btnSetPanelCycle").is(":checked");
 			var index = $('.edit-state').index();
 			var positionList = new Array();
 			getConceptPositions(positionList, index);
@@ -666,8 +666,8 @@
 			{
 				var lnk = "";
 				if (concept.embeddedOutlineId)
-					lnk = "[" + wrapInHref(concept.embeddedOutlineId) + "]";
-				$(newOrderedList).append("<li><span class='conceptContent'>" + concept.content + "</span> <label><span class='lnkToEmbeddedOutline'>"+lnk+"</span></label></li>");
+					lnk = "[" + createEmbedLink(concept.embeddedOutlineId) + "]";
+				$(newOrderedList).append("<li><span class='conceptContent'>" + concept.content + "</span> <label><span class='lnkToEmbeddedOutline'>" + lnk + "</span></label></li>");
 				var newListItem = $(newOrderedList).children(":last");
 				if (concept.concepts)
 				{
@@ -1043,7 +1043,7 @@
 		if (concept) {
 			content = concept.content;
 			if (concept.embeddedOutlineId) {
-				lnk = "[" + wrapInHref(concept.embeddedOutlineId) + "]";
+				lnk = "[" + createEmbedLink(concept.embeddedOutlineId) + "]";
 			}
 		}
 		//alert("insertConceptInView" + indexInView + content);
