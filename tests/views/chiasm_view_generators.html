@@ -1,0 +1,274 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+                    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>Chiasm View Generators</title>
+	<script type="text/javascript" src="../../js/jquery.js"></script>
+	<link rel="stylesheet" href="../css/qunit-git.css" type="text/css" media="screen" />
+	<script type="text/javascript" src="../js/qunit-git.js"></script>
+	<script type="text/javascript" src="../../js/jquery-extensions-utils.js"></script>
+	<script type="text/javascript" src="../../js/cons.js"></script>
+	<script type="text/javascript" src="../../js/kayak-common.js"></script>
+	<script type="text/javascript" src="../../js/kayak-views.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function(){
+
+
+module("kayak-views.js - generateChiasmConceptHtml");
+test("empty", function () {
+	var concepts = [];
+	var result = generateChiasmConceptHtml(concepts, 0, "view");
+	var expected = {};
+	deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("one line", function () {
+	var concepts = [];
+	concepts.push({ "content": "one line" });
+	var result = generateChiasmConceptHtml(concepts, 0, "view");
+	var expected = {
+		"conceptStyle": ".view-level-A",
+		"conceptStyleDefinition": "<style type='text/css'> .view-level-A {} </style>",
+		"conceptHtml": "<div class='view-level-A' id='view-level-A-1'><span class='itemMarker'>A.</span><span class='conceptContent'>one line</span></div>"
+	};
+
+	deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("one line w/embeddedOutlineId", function () {
+	var concepts = [];
+	concepts.push({ "content": "one line", embeddedOutlineId: "link" });
+	var result = generateChiasmConceptHtml(concepts, 0, "view");
+	var expected = {
+		"conceptStyle": ".view-level-A",
+		"conceptStyleDefinition": "<style type='text/css'> .view-level-A {} </style>",
+		"conceptHtml": "<div class='view-level-A' id='view-level-A-1'><span class='itemMarker'>A.</span><span class='conceptContent'>one line</span><label><span class='lnkToEmbeddedOutline'> [<a href='#/link' target='_blank'>+</a>]</span></label></div>"
+	};
+
+	deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("last line", function () {
+	var concepts = [];
+	concepts.push({ "content": "one line" });
+	concepts.push({ "content": "last line" });
+	var result = generateChiasmConceptHtml(concepts, 1, "view");
+	var expected = {
+		"conceptStyle": ".view-level-A",
+		"conceptStyleDefinition": "<style type='text/css'> .view-level-A {} </style>",
+		"conceptHtml": "<div class='view-level-A' id='view-level-A-2'><span class='itemMarker'>A'</span><span class='conceptContent'>last line</span></div>"
+	};
+
+	deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("middle line", function () {
+	var concepts = [];
+	concepts.push({ "content": "one line" });
+	concepts.push({ "content": "middle line" });
+	concepts.push({ "content": "last line" });
+	var result = generateChiasmConceptHtml(concepts, 1, "view");
+	var expected = {
+		"conceptStyle": ".view-level-B",
+		"conceptStyleDefinition": "<style type='text/css'> .view-level-B {} </style>",
+		"conceptHtml": "<div class='view-level-B' id='view-level-B-1'><span class='itemMarker'>B.</span><span class='conceptContent'>middle line</span></div>"
+	};
+	deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+module("kayak-views.js - generateChiasmConceptHtml - options");
+test("one line - includeId: false", function () {
+	var concepts = [];
+	concepts.push({ "content": "one line" });
+	var options = {"includeId": false};
+	var result = generateChiasmConceptHtml(concepts, 0, "embedded", options);
+	var expected = {
+		"conceptStyle": ".embedded-level-A",
+		"conceptStyleDefinition": "<style type='text/css'> .embedded-level-A {} </style>",
+		"conceptHtml": "<div class='embedded-level-A'><span class='itemMarker'>A.</span><span class='conceptContent'>one line</span></div>"
+	};
+
+	deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("one line - leadSpaces", function () {
+	var concepts = [];
+	concepts.push({ "content": "one line" });
+	var options = { "leadSpaces": "&nbsp;&nbsp;" };
+	var result = generateChiasmConceptHtml(concepts, 0, "embedded", options);
+	var expected = {
+		"conceptStyle": ".embedded-level-A",
+		"conceptStyleDefinition": "<style type='text/css'> .embedded-level-A {} </style>",
+		"conceptHtml": "<div class='embedded-level-A'>&nbsp;&nbsp;<span class='itemMarker'>A.</span><span class='conceptContent'>one line</span></div>"
+	};
+
+	deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("middle line - indent", function () {
+	var concepts = [];
+	concepts.push({ "content": "one line" });
+	concepts.push({ "content": "middle line" });
+	concepts.push({ "content": "last line" });
+	var options = {"layoutMode": "indent"};
+	var result = generateChiasmConceptHtml(concepts, 1, "view", options);
+	var expected = {
+		"conceptStyle": ".view-level-B",
+		"conceptStyleDefinition": "<style type='text/css'> .view-level-B {} </style>",
+		"conceptHtml": "<div class='view-level-B'>&nbsp;&nbsp;&nbsp;&nbsp;<span class='itemMarker'>B.</span><span class='conceptContent'>middle line</span></div>"
+	};
+	deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+/*
+module("kayak-views.js - generateChiasmIndent");
+
+test("empty", function() {
+  var concepts = [];
+  var result = generateChiasmIndent(concepts);
+  var expected = {};
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("one line - simple", function () {
+	var concepts = [];
+	var result = generateChiasmIndent(concepts);
+	var expected = {
+		"html": "<div><span class='itemMarker'>A. </span><span class='conceptContent'>one line</span></div>"
+	};
+
+	deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("one line - simple - with embed label - empty", function () {
+	var concepts = [];
+	var result = generateChiasmIndent(concepts);
+	var expected = {
+		"html": "<div><span class='itemMarker'>A. </span><span class='conceptContent'>one line</span></div>"
+	};
+
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("one line - embedded link", function () {
+	var concepts = [];
+	concepts.push({ "content": "one line", embeddedOutlineId: "link" });
+	var result = generateChiasmIndent(concepts);
+	var expected = {
+		"indentStyles": [".indent-level-B"],
+		"html": "<div id='indent-level-A-1' class='indent-level-1'><span class='itemMarker'>A.</span><span class='conceptContent'>one line</span> <label><span class='lnkToEmbeddedOutline'>[<a href='#/link'>+</a>]</span></label></div>"
+	};
+
+	deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("two lines", function() {
+  var concepts = [];
+  concepts.push({"content": "one line"});
+  concepts.push({"content": "second line"});
+  var result = generateChiasmIndent(concepts);
+  var expected = {
+  	"indentStyles": [".indent-level-B", ".indent-level-C"],
+  	"html" :   "<div id='indent-level-A-1' class='indent-level-B'><span class='itemMarker'>A. </span><span class='conceptContent'>one line</span> </div>" + 
+  			   "<div id='indent-level-B-1' class='indent-level-C'>&nbsp;&nbsp;&nbsp;&nbsp;<span class='itemMarker'>B. </span><span class='conceptContent'>second line</span> </div>" 
+  }
+  
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+module("kayak-views.js - chiasm - flat");
+test("two lines", function() {
+  var concepts = [];
+  concepts.push({"content": "one line"});
+  concepts.push({"content": "second line"});
+  var result = generateChiasmFlat(concepts);
+  var expected = {
+  	"indentStyles": [".flat-level-B", ".flat-level-C"],
+  	"html" :   "<div id='flat-level-A-1' class='flat-level-B'><span class='itemMarker'>A. </span><span class='conceptContent'>one line</span> </div>" + 
+  			   "<div id='flat-level-B-1' class='flat-level-C'><span class='itemMarker'>B. </span><span class='conceptContent'>second line</span> </div>" 
+  }
+  
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+module("kayak-views.js - table");
+test("one line", function() {
+  var concepts = [];
+  outline.head["contentParams"] = {"repeat" : 0};
+  concepts.push({"content": "one line"});
+  var result = generateChiasmTable(concepts);
+  var expected = {
+  	"html" :   "<tbody><tr><td id='tableAAB-level-A'><span class='conceptContent'>one line</span></td></tr></tbody>"
+	};
+   deepEqual(result, expected, "We expect result to be " + expected);
+});
+  
+test("two lines", function() {
+  var concepts = [];
+  outline.head["contentParams"] = {"repeat" : 0};
+  concepts.push({"content": "one line"});
+  concepts.push({"content": "second line"});
+  var result = generateChiasmTable(concepts);
+  var expected = {
+  	"html" :   "<tbody><tr><td id='tableAAB-level-A-1'><span class='conceptContent'>one line</span></td></tr>" +
+  				"<tr><td id='tableAAB-level-B-1'><span class='conceptContent'>second line</span></td></tr></tbody>"
+  }
+  
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+
+module("kayak-views.js - panel - table - publish to id");
+test("one line", function() {
+  
+  $("body").append("<table><tbody><tr><td id='tableAAB-level-A'><span class='conceptContent'>empty</span></td></tr></tbody></table>");
+  
+  publishContentToId("one line", getChiasmTableConceptId(0));
+  var result = $("#tableAAB-level-A").html();   
+  var expected = "<span class=\"conceptContent\">one line</span>";
+  
+   deepEqual(result, expected, "We expect result to be " + expected);
+
+  // cleanup
+  $("body table").remove();
+  
+});
+
+module("kayak-views.js - browse view chiasm indent");
+test("one line", function() {
+  var concepts = [];
+  concepts.push({"content": "one line"});
+  var result = generateChiasmIndent(outline, "bv");
+  var expected = {
+  	"html" :   "<div><div id='indent-bv-level-A'><span class='conceptContent'>one line</span></div></div>"
+	};
+   deepEqual(result, expected, "We expect result to be " + expected);
+});
+  
+test("two lines", function() {
+  var concepts = [];
+  concepts.push({"content": "one line"});
+  concepts.push({"content": "second line"});
+  var result = generateChiasmTable(outline, "bv");
+  var expected = {
+  	"html" :   "<tbody><tr><td id='bv-tableAAB-level-A'><span class='conceptContent'>one line</span></td></tr>" +
+  				"<tr><td id='bv-tableAAB-level-B'><span class='conceptContent'>second line</span></td></tr></tbody>"
+  }
+  
+  deepEqual(result, expected, "We expect result to be " + expected);
+});
+*/
+  });
+
+  </script>
+  
+</head>
+<body>
+  <h1 id="qunit-header">QUnit example</h1>
+ <h2 id="qunit-banner"></h2>
+ <div id="qunit-testrunner-toolbar"></div>
+ <h2 id="qunit-userAgent"></h2>
+ <ol id="qunit-tests"></ol>
+ <div id="qunit-fixture">test markup, will be hidden</div>
+</body>
+</html>

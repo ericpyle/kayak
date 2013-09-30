@@ -114,7 +114,7 @@
 		{
 			$(outline.body.concepts).each(function(index)
 			{
-				CreateChiasmViewItem(outline.body.concepts, index, "indent-bv", bodySelector);
+				CreateChiasmViewItem(outline.body.concepts, index, "indent-bv", bodySelector, { "includeId": true, "layoutMode": "indent" });
 			});
 			applyCitationMarkup(outline, publishContentToSequentialPreviewTabs, "bv", container);
 		}

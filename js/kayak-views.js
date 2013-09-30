@@ -90,6 +90,68 @@ function getChiasmViewLevelId(view, indexABA, concepts)
 	return view + getChiasmIdLevelFrag(indexABA, concepts);
 }
 
+
+function generateChiasmlIndent(concepts) {
+
+}
+
+function generateChiasmConceptHtml(concepts, newIndex, view, options) {
+	var result = {};
+	if (concepts == null || concepts.length == 0)
+		return result;
+	// 0 -> 0
+	// 1 -> 1
+	// 2 -> 1
+	// 3 -> 2
+	// 4 -> 2
+	// 5 -> 3
+	// 6 -> 3
+	var conceptsCount = concepts.length;
+	var newConcept = concepts[newIndex];
+
+	var dto = cons.createDtoFromConcepts("chiasm", concepts);
+	var label = cons.getLabel(dto, newIndex);
+	var halfway = Math.round(conceptsCount / 2)
+	var fIndentMode = (options ? options.layoutMode == "indent": false);
+
+	result["conceptStyle"] = "." + view + getChiasmLevelFrag(newIndex, concepts);
+	result["conceptStyleDefinition"] = "<style type='text/css'> " + result.conceptStyle + " {} </style>";
+
+	var conceptClass = view + getChiasmLevelFrag(newIndex, concepts);
+	var conceptId = getChiasmViewLevelId(view, newIndex, concepts);
+	var conceptMarker = "<span class='itemMarker'>" + label + "</span>";
+	var embeddedOutlineLink = "";
+	if (newConcept.embeddedOutlineId) {
+		var dbId = newConcept.embeddedOutlineId;
+		embeddedOutlineLink = "<label><span class='lnkToEmbeddedOutline'> [<a href='#/" + dbId + "' target='_blank'>+</a>]</span></label>";
+	}
+	else {
+		embeddedOutlineLink = "";
+	}
+
+	var spaces = "";
+	if (options && options.leadSpaces && options.leadSpaces.length > 0)
+		spaces += options.leadSpaces;
+	if (/*CompatibilityMode && */ fIndentMode)
+		spaces += convertLabelToSpaces(label);
+	idAttribute = "";
+	if (!options || options.includeId)
+		idAttribute = " id='" + conceptId + "'";
+	var conceptHtml = "<div class='" + conceptClass + "'" + idAttribute + ">" +
+		spaces + conceptMarker + "<span class='conceptContent'>" + newConcept.content + "</span>" + embeddedOutlineLink + "</div>";
+	result["conceptHtml"] = conceptHtml;
+	return result;
+}
+
+function convertLabelToSpaces(label) {
+	var level = cons.convertLabelToLevel(label);
+	var spaces = "";
+	for (var i = 0; i < level; i++) {
+		spaces += "&nbsp;&nbsp;&nbsp;&nbsp;"
+	};
+	return spaces;
+}
+
 function publishContentToId(newContent, id)
 {
 	var viewConcept = $(jq(id)).find(".conceptContent").get(0);

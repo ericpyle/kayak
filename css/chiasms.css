@@ -42,6 +42,10 @@ button[href='#']:hover, button[type='button']:hover, button[type='submit']:hover
 .panel-header {
 	font-weight: 600;
 }
+
+.embeddedOutline {
+	color: SlateGray;
+}
     
 .examples { list-style: none; margin-left: 0px;}
  

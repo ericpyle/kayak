@@ -17,11 +17,13 @@ var c = cons; /* global import */
 		return isEven ? Math.round(indexEditBox/2) : conceptsCount - Math.round(indexEditBox/2);
 	}
 	
-	var CompatibilityMode = true;
-	var Spacing = 20; // px
+/*	var CompatibilityMode = true; */
+/*	var Spacing = 20; // px */
 
 	function ConceptToChiasmViewItem(concepts, iconcept, fIndent) {
-	    var item = CreateChiasmViewItem(concepts, iconcept, fIndent ? "indent" : "flat");
+		var layoutMode = fIndent ? "indent" : "flat";
+		var view = layoutMode;
+		var item = CreateChiasmViewItem(concepts, iconcept, view, jq("chiasm-" + view), { "includeId": true, "layoutMode": layoutMode });
 	    return item;
 	}
 	
@@ -61,93 +63,30 @@ var c = cons; /* global import */
 		RemoveAllHighlighting();
 	}
 	
-	function CalculateMarginInPx(index, count)
+/*	function CalculateMarginInPx(index, count) // TODO: Remove.
 	{
 		var offset = offsetFromClosestEnd(index, count);
 		return offset * Spacing;
 	}
-	
-	function convertIndentToSpaces(marginValue)
+*/
+/*	function convertIndentToSpaces(marginValue)
 	{
 		var spaces = "";
 		for (var i=20; i <= marginValue; i += 20) {
 			spaces += "&nbsp;&nbsp;&nbsp;&nbsp;"
 		};
 		return spaces;
-	}
-
-	function convertLabelToSpaces(label) {
-		var level = cons.convertLabelToLevel(label);
-		var spaces = "";
-		for (var i = 0; i < level; i++) {
-			spaces += "&nbsp;&nbsp;&nbsp;&nbsp;"
-		};
-		return spaces;
-	}
+	} 
+*/
 	
 	function FindInsertionIndexForNewChiasmConcept()
 	{
 		return Math.round(mainOutline.body.concepts.length/2);
 	}
 		
-	function generateChiasmConceptHtml(concepts, newIndex, view)
-	{
-		var result = {};		
-		// 0 -> 0
-		// 1 -> 1
-		// 2 -> 1
-		// 3 -> 2
-		// 4 -> 2
-		// 5 -> 3
-		// 6 -> 3
-		var conceptsCount = concepts.length;
-	    //alert(newIndex + "/" + concepts.length);
-		var newConcept = concepts[newIndex];						
-
-		var dto = cons.createDtoFromConcepts("chiasm", concepts);
-		var label = cons.getLabel(dto, newIndex);
-		var marginLeft = CalculateMarginInPx(newIndex, conceptsCount);
-		var halfway = Math.round(conceptsCount/2)
-		var fIndentMode = view.substr(0, "indent".length) == "indent";		
-	    if (newIndex < halfway)
-	    {
-	       var marginleft = "";
-	       if (!CompatibilityMode && fIndentMode)
-	       {
-	       		marginleft = "{ margin-left:" + marginLeft + "px;}";
-	       }
-
-		   result["conceptStyle"] = "." + view + getChiasmLevelFrag(newIndex, concepts) + " " + marginleft;
-	       result["conceptStyleDefinition"] = "<style type='text/css'> " + result.conceptStyle + " {} </style>";
-		}
-		
-		var conceptClass = view + getChiasmLevelFrag(newIndex, concepts);
-		var conceptId = getChiasmViewLevelId(view, newIndex, concepts);
-		var conceptMarker = "<span class='itemMarker'>" + label + "</span>";
-		var embeddedOutlineLink = "";
-		if (newConcept.embeddedOutlineId) {
-			var dbId = newConcept.embeddedOutlineId;
-			embeddedOutlineLink = "<span class='lnkToEmbeddedOutline'>[<a href='#/" + dbId + "' target='_blank'>+</a>]</span>";
-		}
-		else {
-			embeddedOutlineLink = "";
-		}
-		
-		var spaces = "";
-	    if (CompatibilityMode && fIndentMode)
-	    	spaces = convertLabelToSpaces(label);
-	    var conceptHtml = "<div class='" + conceptClass + "' id='" + conceptId + "'>" +
-			spaces + conceptMarker + "<span class='conceptContent'>" + newConcept.content + "</span>" + " <label>" + embeddedOutlineLink + "</label>" + "</div>";
-		result["conceptHtml"] = conceptHtml;
-		result["conceptIndex"] = newIndex;
-		return result;
-	}
-	
-	function CreateChiasmViewItem(concepts, newIndex, view, containerSelector)
+	function CreateChiasmViewItem(concepts, newIndex, view, containerSelector, options)
 	{	
-		if (!containerSelector)
-			containerSelector = "#chiasm-" + view;
-		var result = generateChiasmConceptHtml(concepts, newIndex, view);
+		var result = generateChiasmConceptHtml(concepts, newIndex, view, options);
 		var conceptsCount = concepts.length;
 	    //alert(newIndex + "/" + concepts.length);
 		var newConcept = concepts[newIndex];
@@ -159,8 +98,50 @@ var c = cons; /* global import */
 		}
 		var newItem = $(containerSelector).children("div:eq(" + newIndex + ")");
 	    //$(newItem).hover(highlightItem, removeHighlight);
-	    $(newItem).click(highlightItem);
+		$(newItem).click(highlightItem);
+		$(newItem).find(".lnkToEmbeddedOutline").click(embedOutlineHere);
 		return newItem;
+	}
+
+	function embedOutlineHere() {
+		// find the concept to get the outline
+		var label = $(this).closest("label");
+		var conceptDiv = $(label).closest("div");
+		var anchor = $(label).find("a[href]");
+		var existingEmbeddedOutline = $(conceptDiv).find('.embeddedOutline').get(0);
+		if (existingEmbeddedOutline) {
+			$(existingEmbeddedOutline).remove();
+			$(anchor).text('+');
+			return false;
+		}
+
+		var link = anchor.attr("href");
+		var dbId = getDbIdFromUrl($.url(link));
+		var embeddedOutline = fetchOutline(dbId);
+		var embeddedOutlineContainer = $("<div class='embeddedOutline'></div>").appendTo(conceptDiv);
+		var embeddedOutlineConcepts = embeddedOutline.body.concepts;
+		var leadingWhitespaceMatches = $(conceptDiv).text().match(/^\s+/);
+		var leadSpaceCount = leadingWhitespaceMatches ? leadingWhitespaceMatches[0].length: 0;
+		var leadSpaces = "";
+		for (var n = 0; n < leadSpaceCount; n++)
+			leadSpaces += "&nbsp;";
+		leadSpaces += "&nbsp;&nbsp;";
+		if (embeddedOutline.head.contentType == "chiasm") {
+			for (var i = 0; i < embeddedOutlineConcepts.length; i++) {				
+				CreateChiasmViewItem(embeddedOutlineConcepts, i, "embedded-chiasm", embeddedOutlineContainer, { "includeId": false, "layoutMode": "indent", "leadSpaces": leadSpaces });
+			}
+		}
+		else if (embeddedOutline.head.contentType == "panel") {
+			var panelHtml = generatePanelIndent(embeddedOutline);
+			$(panelHtml.html).appendTo(embeddedOutlineContainer);
+		}
+		else if (embeddedOutline.head.contentType == "outline") {
+			var hierarchicalHtml = generateHierarchicalFlat(embeddedOutline);
+			$(hierarchicalHtml.html).appendTo(embeddedOutlineContainer);
+		}
+		$(anchor).text('-');
+
+		return false;
 	}
 	
 	function UpdateTableFromConcept(concepts, newIndex, tableBodyId, count)
