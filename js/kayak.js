@@ -132,7 +132,7 @@ var c = cons; /* global import */
 			}
 		}
 		else if (embeddedOutline.head.contentType == "panel") {
-			var panelHtml = generatePanelIndent(embeddedOutline);
+			var panelHtml = generatePanelIndent(embeddedOutline, { leadSpaces: leadSpaces, includeId : false });
 			$(panelHtml.html).appendTo(embeddedOutlineContainer);
 		}
 		else if (embeddedOutline.head.contentType == "outline") {

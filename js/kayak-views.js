@@ -205,17 +205,17 @@ function getLabelForPanelIndex(outline, iconcept)
 	return indexForLabel;
 }
 
-function generatePanelIndent(outline)
+function generatePanelIndent(outline, options)
 {
-	return generatePanelVertical(outline, "&nbsp;&nbsp;&nbsp;&nbsp;", "indent");
+	return generatePanelVertical(outline, "&nbsp;&nbsp;&nbsp;&nbsp;", "indent", options);
 }
 
-function generatePanelFlat(outline)
+function generatePanelFlat(outline, options)
 {
-	return generatePanelVertical(outline, "", "flat");
+	return generatePanelVertical(outline, "", "flat", options);
 }
 
-function generatePanelVertical(outline, spacing, view)
+function generatePanelVertical(outline, spacing, view, options)
 {
 	var panelOutput = {};
 	if (outline.head.contentType != "panel" || outline.body.concepts.length == 0)
@@ -225,14 +225,17 @@ function generatePanelVertical(outline, spacing, view)
 	var repeated = 0;
 	var indentStyles = [];
 	var html = "";
-	var indentSpacing = "";
+	var leadSpaces = "";
+	if (options && options.leadSpaces && options.leadSpaces.length > 0)
+		leadSpaces += options.leadSpaces;
+	var indentSpacing = leadSpaces;
 	for (var i = 0; i < concepts.length; i++) {
 		var concept = concepts[i];
 		var indentStyleNum = getIndentStyleNum(outline, i);
 		if (indentStyleNum > 1)
 			indentSpacing += spacing;
 		else if (indentStyleNum == 1)
-			indentSpacing = "";
+			indentSpacing = leadSpaces;
 		var indexForLabel = getLabelForPanelIndex(outline, i);
 		var classIndent = view + "-panel-level-" + indentStyleNum;
 		// lookup to see if we've already added this
@@ -242,11 +245,17 @@ function generatePanelVertical(outline, spacing, view)
 			indentStyles.push("." + classIndent);
 		}
 		var lnk = "";
-		if (concept.embeddedOutlineId)
+		if (concept.embeddedOutlineId) {
 			lnk = "[" + createEmbedLink(concept.embeddedOutlineId) + "]";
-		var id = view + "-panel-concept-" + i;
-		html += "<div id='"+ id +"' class='"+ classIndent + (contentParams.header && indentStyleNum == 1 ? " panel-header" : "") + "'>" + 
-			indentSpacing + "<span class='itemMarker'>" + indexForLabel + ". </span><span class='conceptContent'>" + concepts[i].content + "</span> <label><span class='lnkToEmbeddedOutline'>"+ lnk +"</span></label></div>";
+			lnk = "<label><span class='lnkToEmbeddedOutline'> "+ lnk +"</span></label>"
+		}
+		idAttribute = "";
+		if (!options || options.includeId) {
+			var id = view + "-panel-concept-" + i;
+			idAttribute = " id='" + id + "'";
+		}
+		html += "<div" + idAttribute + " class='" + classIndent + (contentParams.header && indentStyleNum == 1 ? " panel-header" : "") + "'>" +
+			indentSpacing + "<span class='itemMarker'>" + indexForLabel + ". </span><span class='conceptContent'>" + concepts[i].content + "</span>"+ lnk +"</div>";
 	};
 	panelOutput["indentStyles"] = indentStyles;
 	panelOutput["html"] = html;
