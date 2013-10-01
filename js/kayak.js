@@ -33,7 +33,8 @@ var c = cons; /* global import */
       	$(".chiasmItemHighlightedSecondaryFocus").removeClass("chiasmItemHighlightedSecondaryFocus");
 	}
 	
-	function highlightItem() {
+	function highlightItem(e) {
+		e.stopPropagation();
 	    var fWasMainFocus = $(this).hasClass("chiasmItemHighlightedMainFocus");
 		RemoveAllHighlighting();
 		if ($("#itemHighlighting").attr("checked") == false)
@@ -43,10 +44,16 @@ var c = cons; /* global import */
         var viewMatchingClass = $(this).attr("class");
         var view = viewMatchingClass.split("-")[0];
         var matchingClass = viewMatchingClass.substr(view.length);
-        $(".indent" + matchingClass + "," + 
+        $("#chiasm-indent").children(".indent" + matchingClass).addClass("chiasmItemHighlightedSecondaryFocus");
+        $("#chiasm-flat").children(".flat" + matchingClass).addClass("chiasmItemHighlightedSecondaryFocus");
+        $("#tableViewAAB").find(".tableAAB" + matchingClass).addClass("chiasmItemHighlightedSecondaryFocus");
+		//outline-table...table...
+		// tableViewAAB
+		/* $(".indent" + matchingClass + "," + 
           ".flat" + matchingClass + "," + 
           ".tableAAB" + matchingClass)        
-        	.addClass("chiasmItemHighlightedSecondaryFocus");
+        	.addClass("chiasmItemHighlightedSecondaryFocus"); */
+        $(this).siblings("." + viewMatchingClass).addClass("chiasmItemHighlightedSecondaryFocus");
         $(this).removeClass("chiasmItemHighlightedSecondaryFocus");
         $(this).addClass("chiasmItemHighlightedMainFocus");
 
@@ -99,7 +106,6 @@ var c = cons; /* global import */
 		var newItem = $(containerSelector).children("div:eq(" + newIndex + ")");
 	    //$(newItem).hover(highlightItem, removeHighlight);
 		$(newItem).click(highlightItem);
-		$(newItem).find(".lnkToEmbeddedOutline").click(embedOutlineHere);
 		return newItem;
 	}
 
@@ -110,8 +116,10 @@ var c = cons; /* global import */
 		var anchor = $(label).find("a[href]");
 		var existingEmbeddedOutline = $(conceptDiv).find('.embeddedOutline').get(0);
 		if (existingEmbeddedOutline) {
-			$(existingEmbeddedOutline).remove();
 			$(anchor).text('+');
+			clearRowWidths();
+			$(existingEmbeddedOutline).remove();
+			adjustRunnerContainers.call(this);
 			return false;
 		}
 
@@ -128,20 +136,30 @@ var c = cons; /* global import */
 		leadSpaces += "&nbsp;&nbsp;";
 		if (embeddedOutline.head.contentType == "chiasm") {
 			for (var i = 0; i < embeddedOutlineConcepts.length; i++) {				
-				CreateChiasmViewItem(embeddedOutlineConcepts, i, "embedded-chiasm", embeddedOutlineContainer, { "includeId": false, "layoutMode": "indent", "leadSpaces": leadSpaces });
+				CreateChiasmViewItem(embeddedOutlineConcepts, i, "embedded-chiasm", embeddedOutlineContainer, { includeId: false, layoutMode: "indent", leadSpaces: leadSpaces });
 			}
 		}
 		else if (embeddedOutline.head.contentType == "panel") {
 			var panelHtml = generatePanelIndent(embeddedOutline, { leadSpaces: leadSpaces, includeId : false });
 			$(panelHtml.html).appendTo(embeddedOutlineContainer);
+			$(embeddedOutlineContainer).children('div').click(highlightItem);
 		}
 		else if (embeddedOutline.head.contentType == "outline") {
-			var hierarchicalHtml = generateHierarchicalFlat(embeddedOutline);
+			var hierarchicalHtml = generateHierarchicalFlat(embeddedOutline, { leadSpaces: leadSpaces });
 			$(hierarchicalHtml.html).appendTo(embeddedOutlineContainer);
 		}
+		$(embeddedOutlineContainer).find(".lnkToEmbeddedOutline").click(embedOutlineHere);
 		$(anchor).text('-');
-
+		clearRowWidths();
+		$(embeddedOutlineContainer).css({ overflow: "auto", width: "100%" });
+		adjustRunnerContainers.call(this);
 		return false;
+	}
+
+	function adjustRunnerContainers() {
+		// style="overflow:auto; width:100%;"
+		if ($(this).parents(jq("BrowseByBook")).get(0))
+			adjustHeightOfRunnerContainers();
 	}
 	
 	function UpdateTableFromConcept(concepts, newIndex, tableBodyId, count)

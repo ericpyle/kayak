@@ -435,11 +435,13 @@
 		{
 			var result = generatePanelIndent(mainOutline);
 			$("#chiasm-indent").append(result.html);
-			$("#chiasm-indent div").click(highlightItem);
+			$("#chiasm-indent div").click(highlightItem)
+				.find(".lnkToEmbeddedOutline").click(embedOutlineHere);
 			
 			var result = generatePanelFlat(mainOutline);
 			$("#chiasm-flat").append(result.html);
-			$("#chiasm-flat div").click(highlightItem);
+			$("#chiasm-flat div").click(highlightItem)
+				.find(".lnkToEmbeddedOutline").click(embedOutlineHere);
 			$("#chiasm-flat").addClass("chiasm");
 			
 			var result = generatePanelTable(mainOutline);

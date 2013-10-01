@@ -126,11 +126,14 @@
 		}
 		else if (outline.head.contentType == "panel")
 		{			
-			var result = generatePanelTable(outline, "bv");
-			$(bodySelector).append("<table class='outline-table'></table>");
-			$(bodySelector).find("table").append(result.html);
+			var result = generatePanelIndent(outline, { includeId:false });
+			$("<table class='outline-table'></table>").appendTo(bodySelector)
+				.append(result.html)
+				.children('div').click(highlightItem);
+
 			applyCitationMarkup(outline, publishContentToPanelTablePreviewTab, "bv", container);
 		}
+		$(bodySelector).find(".lnkToEmbeddedOutline").click(embedOutlineHere);
 		$(container).prepend("<div id='bv-outline-selected-head'> (" + outline.head.ScriptureRange + ") "+
 			" <a id='bv-head-goEdit' href='#' style='font-size:small;'>Go edit...</a> " +
 			" <a id='bv-head-details-toggle' href='#' style='font-size:small;'>Show details...</a> " +

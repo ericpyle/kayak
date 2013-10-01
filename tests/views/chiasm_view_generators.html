@@ -80,7 +80,7 @@ module("kayak-views.js - generateChiasmConceptHtml - options");
 test("one line - includeId: false", function () {
 	var concepts = [];
 	concepts.push({ "content": "one line" });
-	var options = {"includeId": false};
+	var options = { includeId: false};
 	var result = generateChiasmConceptHtml(concepts, 0, "embedded", options);
 	var expected = {
 		"conceptStyle": ".embedded-level-A",
@@ -94,7 +94,7 @@ test("one line - includeId: false", function () {
 test("one line - leadSpaces", function () {
 	var concepts = [];
 	concepts.push({ "content": "one line" });
-	var options = { "leadSpaces": "&nbsp;&nbsp;" };
+	var options = { leadSpaces : "&nbsp;&nbsp;" };
 	var result = generateChiasmConceptHtml(concepts, 0, "embedded", options);
 	var expected = {
 		"conceptStyle": ".embedded-level-A",
@@ -110,7 +110,7 @@ test("middle line - indent", function () {
 	concepts.push({ "content": "one line" });
 	concepts.push({ "content": "middle line" });
 	concepts.push({ "content": "last line" });
-	var options = {"layoutMode": "indent"};
+	var options = { layoutMode: "indent"};
 	var result = generateChiasmConceptHtml(concepts, 1, "view", options);
 	var expected = {
 		"conceptStyle": ".view-level-B",

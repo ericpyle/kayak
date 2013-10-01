@@ -356,7 +356,7 @@ function generatePanelTable(outline, view)
 }
 
 
-function generateHierarchicalFlat(outline)
+function generateHierarchicalFlat(outline, options)
 {
 	var response = {};
 	if (outline.head.contentType != "outline" || outline.body.concepts.length == 0)
@@ -372,8 +372,10 @@ function generateHierarchicalFlat(outline)
 		var lnk = "";
 		if (positionObj.concept.embeddedOutlineId) {
 			lnk = "[" + createEmbedLink(positionObj.concept.embeddedOutlineId) + "]";
+			lnk = "<label><span class='lnkToEmbeddedOutline'> "+lnk+"</span></label>"
 		}
-		html += "<div><span class='itemMarker'>"+ label +" </span><span class='conceptContent'>"+ positionObj.concept.content +"</span> <label><span class='lnkToEmbeddedOutline'>"+lnk+"</span></label></div>";
+		var leadSpaces = options ? EmptyIfNull(options.leadSpaces) : "";
+		html += "<div>"+ leadSpaces +"<span class='itemMarker'>"+ label +" </span><span class='conceptContent'>"+ positionObj.concept.content +"</span>"+ lnk +"</div>";
 	}
 	response["html"] = html;
 	return response;
