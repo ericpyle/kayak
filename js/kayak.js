@@ -81,7 +81,7 @@ var c = cons; /* global import */
 	function embedOutlineHere() {
 		// find the concept to get the outline
 		var label = $(this).closest("label");
-		var conceptDiv = $(label).closest("div");
+		var conceptDiv = $(label).parent();
 		var anchor = $(label).find("a[href]");
 		var existingEmbeddedOutline = $(conceptDiv).find('.embeddedOutline').get(0);
 		if (existingEmbeddedOutline) {

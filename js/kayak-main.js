@@ -427,6 +427,7 @@
 		else if (mainOutline.head.contentType == "outline")
 		{
 			PublishOutlineViewItems(mainOutline.body.concepts, "#chiasm-" + "indent");
+			$("#chiasm-indent").find(".lnkToEmbeddedOutline").click(embedOutlineHere);
 			var result = generateHierarchicalFlat(mainOutline);
 			$("#chiasm-flat").append(result.html);
 			$("#chiasm-flat").find(".lnkToEmbeddedOutline").click(embedOutlineHere);
