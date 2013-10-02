@@ -53,7 +53,7 @@ test("one line with embedded link", function () {
 	outline.body.concepts.push({ "content": "one line", embeddedOutlineId: "link" });
 	var result = generateHierarchicalFlat(outline);
 	var expected = {
-		"html": "<div><span class='itemMarker'>1. </span><span class='conceptContent'>one line</span><label><span class='lnkToEmbeddedOutline'> [<a href='#/link'>+</a>]</span></label></div>"
+		"html": "<div><span class='itemMarker'>1. </span><span class='conceptContent'>one line</span><label><span class='lnkToEmbeddedOutline'> [<a href='#/link' target='_blank'>+</a>]</span></label></div>"
 	};
 
 	deepEqual(result, expected, "We expect result to be " + expected);

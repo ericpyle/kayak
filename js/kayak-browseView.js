@@ -127,9 +127,8 @@
 		else if (outline.head.contentType == "panel")
 		{			
 			var result = generatePanelIndent(outline, { includeId:false });
-			$("<table class='outline-table'></table>").appendTo(bodySelector)
-				.append(result.html)
-				.children('div').click(highlightItem);
+			$(result.html).appendTo(bodySelector)
+				.siblings('div').click(highlightItem);
 
 			applyCitationMarkup(outline, publishContentToPanelTablePreviewTab, "bv", container);
 		}

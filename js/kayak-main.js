@@ -423,29 +423,32 @@
 		    	ConceptToChiasmViewItem(mainOutline.body.concepts, index, false);
 				UpdateTableFromConcept(mainOutline.body.concepts, index, "#tableViewAAB", count);
 			});
-			$("#chiasm-flat").addClass("chiasm");
 		}
 		else if (mainOutline.head.contentType == "outline")
 		{
 			PublishOutlineViewItems(mainOutline.body.concepts, "#chiasm-" + "indent");
 			var result = generateHierarchicalFlat(mainOutline);
-			$("#chiasm-flat").append(result.html);			
+			$("#chiasm-flat").append(result.html);
+			$("#chiasm-flat").find(".lnkToEmbeddedOutline").click(embedOutlineHere);
 		}
 		else if (mainOutline.head.contentType == "panel")
 		{
 			var result = generatePanelIndent(mainOutline);
 			$("#chiasm-indent").append(result.html);
-			$("#chiasm-indent div").click(highlightItem)
-				.find(".lnkToEmbeddedOutline").click(embedOutlineHere);
+			$("#chiasm-indent div").click(highlightItem);
 			
 			var result = generatePanelFlat(mainOutline);
 			$("#chiasm-flat").append(result.html);
-			$("#chiasm-flat div").click(highlightItem)
-				.find(".lnkToEmbeddedOutline").click(embedOutlineHere);
-			$("#chiasm-flat").addClass("chiasm");
+			$("#chiasm-flat div").click(highlightItem);
 			
 			var result = generatePanelTable(mainOutline);
 			$("#outline-table").append(result.html);
+		}
+		if (mainOutline.head.contentType == "chiasm" ||
+			mainOutline.head.contentType == "panel") {
+			$("#chiasm-flat").addClass("chiasm");
+			$("#chiasm-indent div").find(".lnkToEmbeddedOutline").click(embedOutlineHere);
+			$("#chiasm-flat div").find(".lnkToEmbeddedOutline").click(embedOutlineHere);
 		}
 	}
 	

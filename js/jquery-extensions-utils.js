@@ -73,7 +73,7 @@ function getDbIdFromUrl(url) {
 }
 
 function createEmbedLink(linkFrag) {
-	return "<a href='#/" + linkFrag + "'>+</a>";
+	return "<a href='#/" + linkFrag + "' target='_blank'>+</a>";
 }
 	/*
 	 * http://sirdarckcat.blogspot.com/2007/07/passing-reference-to-javascript.html

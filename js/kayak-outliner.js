@@ -379,17 +379,27 @@
 		//alert(mainOutline.body.concepts.length)		
 	}
 
+	function getConceptFromPositionList(index, concepts) {
+		var positionList = new Array();
+		getConceptPositions(positionList, index, { concepts: concepts });
+		positionObj = positionList[index];
+		return positionObj.concept;
+	}
+
 	function initializeBtnEmbeddedLink() {
 		$("#btnEmbeddedLink").attr("href", "#");
 		$("#btnEmbeddedLink").off("click"); // make sure we don't install multiple times
 		$("#btnEmbeddedLink").on("click", function (event) {
+
 			var index = $('.edit-state').index();
 			var fIsGhost = $('.edit-state').hasClass('ghost');
 			if (fIsGhost) {
 				convertGhostToReal($('.edit-state'));
 			}
+
 			var existingEmbeddedOutlineId = "";
-			var concept = mainOutline.body.concepts[index];
+			
+			var concept = getConceptFromPositionList(index, mainOutline.body.concepts);
 			if (concept.embeddedOutlineId) {
 				existingEmbeddedOutlineId = concept.embeddedOutlineId;
 			}
@@ -426,7 +436,7 @@
 							var dbId = getDbIdFromUrl(url);
 						}
 						var index = $(".edit-state").index();
-						var concept = mainOutline.body.concepts[index];
+						var concept = getConceptFromPositionList(index, mainOutline.body.concepts);
 						if (EmptyIfNull(dbId).length == 0) {
 							// remove the property if it exists.
 							if (concept.embeddedOutlineId) {
@@ -436,8 +446,10 @@
 							return false;
 						}
 						concept.embeddedOutlineId = dbId;
-						$(".edit-state .lnkToEmbeddedOutline").html("[" + createEmbedLink(dbId) + "]");
-						//$("<label class='lnkToEmbeddedOutline'>[<a href='#/"+ dbId + "'>+</a>] </label>").insertAfter(".edit-state textarea");
+						if ($(".edit-state .lnkToEmbeddedOutline")[0])
+							$(".edit-state .lnkToEmbeddedOutline").html(" [" + createEmbedLink(dbId) + "]"); // &nbsp;
+						else 
+							$("<label class='lnkToEmbeddedOutline'> [" + createEmbedLink(dbId) + "]</label>").insertAfter(".edit-state textarea");
 					},
 					Cancel: function () {
 						$(this).dialog("close");
@@ -665,9 +677,11 @@
 			if (concept)
 			{
 				var lnk = "";
-				if (concept.embeddedOutlineId)
+				if (concept.embeddedOutlineId) {
 					lnk = "[" + createEmbedLink(concept.embeddedOutlineId) + "]";
-				$(newOrderedList).append("<li><span class='conceptContent'>" + concept.content + "</span> <label><span class='lnkToEmbeddedOutline'>" + lnk + "</span></label></li>");
+					lnk = "<label><span class='lnkToEmbeddedOutline'> " + lnk + "</span></label>"
+				}
+				$(newOrderedList).append("<li><span class='conceptContent'>" + concept.content + "</span>"+lnk+"</li>");
 				var newListItem = $(newOrderedList).children(":last");
 				if (concept.concepts)
 				{
@@ -918,6 +932,8 @@
 	}
 
 	function initializeBtnEmbedModeBasic() {
+		if ($("#btnEmbedMode").get(0) == undefined)
+			return;
 		var index = $('.edit-state').index();
 		var fGhost = $('.edit-state').hasClass("ghost");
 		var existingGhost = $('.edit-state').data("ghostConcept");
@@ -929,6 +945,8 @@
 	}
 
 	function initializeBtnEmbedMode() {
+		if ($("#btnEmbedMode").get(0) == undefined)
+			return;
 		initializeBtnEmbedModeBasic();
 		$("#btnEmbedMode").attr("href", "#");
 		$("#btnEmbedMode").off("click"); // make sure we don't install multiple times
@@ -1044,6 +1062,7 @@
 			content = concept.content;
 			if (concept.embeddedOutlineId) {
 				lnk = "[" + createEmbedLink(concept.embeddedOutlineId) + "]";
+				lnk = '<label><span class="lnkToEmbeddedOutline"> ' + lnk + '</span></label>'
 			}
 		}
 		//alert("insertConceptInView" + indexInView + content);
@@ -1062,7 +1081,7 @@
 		}
 		else
 			$(nextRow).append('<textarea id="txtContent-' + numConceptCreated + '" cols="40" rows="1"></textarea>');
-		$(nextRow).append(' <label><span class="lnkToEmbeddedOutline">' + lnk + '</span></label>');
+		$(nextRow).append(lnk);
 		refreshAllLabels();
 		return nextRow;
 	}
