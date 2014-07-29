@@ -428,7 +428,9 @@
 			Couch.init(function() {
 				try
 				{
-					var server = new Couch.Server('https://cloudbow.cloudant.com', 'waysturioultingavnselool', 'O3DPmE4E7XsNCT6Ue8Ks3nuI');
+				    var l1 = ['vnselool', 'waystur','ioultinga',];
+				    var l2 = ['6Ue8Ks3nuI', 'O3DPm','E4E7XsNCT'];
+					var server = new Couch.Server('https://cloudbow.cloudant.com', obf(l1), obf(l2));
 					dbMain = new Couch.Database(server, 'kayak');
 					//dbMain = null; // DEBUG: just run from local db.
 					InitializeDbStuff();
@@ -463,6 +465,10 @@
 
 	});
 	
+	function obf(l) {
+	    return l[1] + l[2] + l[0]
+	}
+
 	var fInitialized = false;
 	function InitializeAfterDbSetup()
 	{
