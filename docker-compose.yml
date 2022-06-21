@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+  app:
+    image: kayak-web
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - couchdb
+    ports:
+      - "8080:80"
+  couchdb:
+    image: couchdb:2
+    environment:
+      COUCHDB_USER: admin
+      COUCHDB_PASSWORD: password
