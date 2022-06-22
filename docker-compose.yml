@@ -11,6 +11,8 @@ services:
       - "8080:80"
   couchdb:
     image: couchdb:2
+    ports:
+      - "5984:5986"
     environment:
       COUCHDB_USER: admin
       COUCHDB_PASSWORD: password
