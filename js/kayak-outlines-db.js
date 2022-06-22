@@ -3,7 +3,7 @@
  */
 
 			/*
-			dbMain.get('all', 
+			axiosConfig.get('all', 
       			function(resp) {
       				getResponse = resp;
       				exampleRows = getResponse.rows;
@@ -26,7 +26,7 @@
 		      	*/
 
 		var putResponse;
-		var dbMain;
+		var axiosConfig;
 		function LoadPersonsAndAuthoredOutlines()
 		{
 			var getResponse = getDb();
@@ -44,13 +44,14 @@
 		function loadDataSet(fNeedRenderToPage, doSomethingAfterLoad)
 		{
 			var getResponse = null;
-			if (dbMain)
+			if (axiosConfig)
 			{
 				//_design/personProfiles/_view/personsAndOutlinesAuthored
 				try
 				{
 					// http://admin:password@127.0.0.1:5984/database_name/document_id/
-					axios.get('http://admin:password@127.0.0.1:5984/outlineslive/_design/everything/_view/byDocId').then(function (resp) {
+					axios.get('http://127.0.0.1:5984/outlineslive/_design/everything/_view/byDocId', axiosConfig)
+					.then(function (resp) {
 						if (resp)
 						{
 							cacheDbInDom(resp);
@@ -1673,9 +1674,10 @@
 					authorProfile.name.last.toLowerCase();
 			}
 			
-			if (dbMain)
+			if (axiosConfig)
 			{
-				axios.put(`http://admin:password@127.0.0.1:5984/outlineslive/${mainOutline._id}`, mainOutline, function(resp) {
+				axios.put(`http://127.0.0.1:5984/outlineslive/${mainOutline._id}`, mainOutline, axiosConfig)
+				.then(function(resp) {
 					
 					if (resp.ok)
 			        {
@@ -1879,12 +1881,13 @@
 	    
 	    var specificDetailsMsg = "Outline specific details will be updated after publishing the outline.";
 	    // TODO: do I need to write the db cache back to the DOM?
-		if (dbMain && CommonSourceHasContent(updatedProfile.source) && 
+		if (axiosConfig && CommonSourceHasContent(updatedProfile.source) && 
 			(!profileOriginal || CommonSourceHasChanged(updatedProfile.source, profileOriginal.source)))
 		{
 			try
 			{
-				axios.put(`http://admin:password@127.0.0.1:5984/outlineslive/${profileSwitchTo.source._id}`, profileSwitchTo.source, function(resp) {
+				axios.put(`http://127.0.0.1:5984/outlineslive/${profileSwitchTo.source._id}`, profileSwitchTo.source, axiosConfig)
+				.then(function(resp) {
 			        if (resp.ok)
 			        {
 			        	profileSwitchTo["_rev"] = resp.rev;
@@ -1993,8 +1996,9 @@
 		
 		// now post to server.
 		//alert(JSON.stringify(personProfile));
-		if (dbMain)
-			axios.put(`http://admin:password@127.0.0.1:5984/outlineslive/${personProfile._id}`, personProfile, function(resp) {
+		if (axiosConfig)
+			axios.put(`http://admin:password@127.0.0.1:5984/outlineslive/${personProfile._id}`, personProfile, axiosConfig)
+			.then(function(resp) {
 		        if (resp.ok)
 		        {
 		        	personProfile["_rev"] = resp.rev;

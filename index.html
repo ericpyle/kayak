@@ -422,14 +422,19 @@
 		var fInitCouchDbBegun = false;
 		try
 		{
-			dbMain = 'canUseAxios'
-			//dbMain = null; // DEBUG: just run from local db.
+			axiosConfig = {
+				auth:  {
+					username: 'admin',
+					password: 'password'
+				}
+			};
+			//axiosConfig = null; // DEBUG: just run from local db.
 			InitializeDbStuff();
 			fInitCouchDbBegun = true;
 		}
 		catch(err)
 		{
-			dbMain = null;
+			axiosConfig = null;
 		}
 
 		mainOutline = createBlankOutline();
