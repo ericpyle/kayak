@@ -6,9 +6,9 @@
 			axiosConfig.get('all', 
       			function(resp) {
       				getResponse = resp;
-      				exampleRows = getResponse.rows;
+      				exampleRows = getResponse.data.rows;
 		        	// TODO: normalize '_id' vs 'id'
-		        	//alert("get: records" + resp.rows.length); // +  ", hello:" + resp.hello);		        	
+		        	//alert("get: records" + resp.data.rows.length); // +  ", hello:" + resp.hello);		        	
 		      	});
 
 			db.put('sample-record', { hello: 'world' }, 
@@ -33,7 +33,7 @@
 			var fNeedRenderToPage = true;
 			if (getResponse)
 			{
-				LoadExamplesToTableCallback(getResponse.rows);				
+				LoadExamplesToTableCallback(getResponse.data.rows);				
 	      		//LoadAuthorResultsCallback(getResponse);
 	      		fNeedRenderToPage = false;
 			}
@@ -60,7 +60,7 @@
 							
 							if (fNeedRenderToPage)
 							{
-								LoadExamplesToTableCallback(getResponse.rows);
+								LoadExamplesToTableCallback(getResponse.data.rows);
 								InitializeAfterDbSetup();
 								//LoadAuthorResultsCallback(getResponse);	
 							}
@@ -86,7 +86,7 @@
 				getResponse = getDb(true);				
 				if (fNeedRenderToPage)
 				{					
-					LoadExamplesToTableCallback(getResponse.rows);
+					LoadExamplesToTableCallback(getResponse.data.rows);
 	      			//LoadAuthorResultsCallback(getResponse);
 				}
 				if (doSomethingAfterLoad)
@@ -113,7 +113,7 @@
 		
 		function getDbRows()
 		{
-			return getDb().rows;
+			return getDb().data.rows;
 		}
 
 		function getUserFriendlyContentType(contentType) {
@@ -1704,10 +1704,10 @@
 		var rowId = outline._id;
     	var newRow = {"id" : rowId, "key" : [rowId, 1], "value" : outline};
     	var getResponse = getDb();
-    	if (!replaceRow(getResponse.rows, newRow.id, newRow))
+    	if (!replaceRow(getResponse.data.rows, newRow.id, newRow))
     	{
-    		getResponse.rows.push(newRow);
-    		getResponse.total_rows += 1;
+    		getResponse.data.rows.push(newRow);
+    		getResponse.data.total_rows += 1;
     	}			    	
     	cacheDbInDom(getResponse);
     	LoadPersonsAndAuthoredOutlines();
@@ -2025,10 +2025,10 @@
 		var newRow = {"id" : personProfile._id, "key" : [personProfile._id, 0], "value" : personProfile};
 		
 		var getResponse = getDb();
-		if (!replaceRow(getResponse.rows, newRow.id, newRow))
+		if (!replaceRow(getResponse.data.rows, newRow.id, newRow))
     	{
-    		getResponse.rows.push(newRow);
-    		getResponse.total_rows += 1;
+    		getResponse.data.rows.push(newRow);
+    		getResponse.data.total_rows += 1;
     	}
     	cacheDbInDom(getResponse);
 	    // TODO: lookup _rev version later
@@ -2232,7 +2232,7 @@
 	}		
 
 /**
- * JSON.stringify(getDb(), null, '\t')
+ * JSON.stringify(getDb().data, null, '\t')
  * Find \n Replace: \\\n
  * Or better: use Firefox->Console and expand the GET http://kayak.iriscouch.com/outlineslive/_design/everything/_view/byDocId	.
  * To import: curl -d @db_u.json -H “Content-type: application/json” -X POST http://127.0.0.1:59840/[mydatabase]/_bulk_docs
