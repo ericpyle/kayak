@@ -8,11 +8,16 @@ services:
     depends_on:
       - couchdb
     ports:
-      - "8080:80"
+      - "12321:80"
   couchdb:
     image: couchdb:2
     ports:
-      - "5984:5986"
+      - "59840:5984"
     environment:
       COUCHDB_USER: admin
       COUCHDB_PASSWORD: password
+    restart: always
+    volumes:
+      - ./data/couchdb_data:/opt/couchdb/data
+      - ./data/cdbdump-kayak.json:/tmp/backup.json
+      - ./data/init.sh:/init.sh

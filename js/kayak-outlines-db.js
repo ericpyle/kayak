@@ -49,8 +49,8 @@
 				//_design/personProfiles/_view/personsAndOutlinesAuthored
 				try
 				{
-					// http://admin:password@127.0.0.1:5984/database_name/document_id/
-					axios.get('http://127.0.0.1:5984/outlineslive/_design/everything/_view/byDocId', axiosConfig)
+					// http://admin:password@127.0.0.1:59840/database_name/document_id/
+					axios.get('http://127.0.0.1:59840/outlineslive/_design/everything/_view/byDocId', axiosConfig)
 					.then(function (resp) {
 						if (resp)
 						{
@@ -1676,7 +1676,7 @@
 			
 			if (axiosConfig)
 			{
-				axios.put(`http://127.0.0.1:5984/outlineslive/${mainOutline._id}`, mainOutline, axiosConfig)
+				axios.put(`http://127.0.0.1:59840/outlineslive/${mainOutline._id}`, mainOutline, axiosConfig)
 				.then(function(resp) {
 					
 					if (resp.ok)
@@ -1886,7 +1886,7 @@
 		{
 			try
 			{
-				axios.put(`http://127.0.0.1:5984/outlineslive/${profileSwitchTo.source._id}`, profileSwitchTo.source, axiosConfig)
+				axios.put(`http://127.0.0.1:59840/outlineslive/${profileSwitchTo.source._id}`, profileSwitchTo.source, axiosConfig)
 				.then(function(resp) {
 			        if (resp.ok)
 			        {
@@ -1997,7 +1997,7 @@
 		// now post to server.
 		//alert(JSON.stringify(personProfile));
 		if (axiosConfig)
-			axios.put(`http://admin:password@127.0.0.1:5984/outlineslive/${personProfile._id}`, personProfile, axiosConfig)
+			axios.put(`http://admin:password@127.0.0.1:59840/outlineslive/${personProfile._id}`, personProfile, axiosConfig)
 			.then(function(resp) {
 		        if (resp.ok)
 		        {
@@ -2235,7 +2235,7 @@
  * JSON.stringify(getDb(), null, '\t')
  * Find \n Replace: \\\n
  * Or better: use Firefox->Console and expand the GET http://kayak.iriscouch.com/outlineslive/_design/everything/_view/byDocId	.
- * To import: curl -d @db_u.json -H “Content-type: application/json” -X POST http://127.0.0.1:5984/[mydatabase]/_bulk_docs
+ * To import: curl -d @db_u.json -H “Content-type: application/json” -X POST http://127.0.0.1:59840/[mydatabase]/_bulk_docs
  */
 var authorsAndOutlinesResponse = {"total_rows":50,"offset":0,"rows":[
 {"id":"56e905abc996fa0a1b824d4118002410","key":["56e905abc996fa0a1b824d4118002410","source: Not yet referenced"],"value":{"_id":"56e905abc996fa0a1b824d4118002410","_rev":"1-bf320b4c33040147e4aded024bdefdbd","head":{"contentType":"sourceProfile"},"media":"book","details":"Not yet referenced","website":"","publisherDetails":""}},
