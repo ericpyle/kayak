@@ -9,6 +9,7 @@
 7. Click the setup gear icon ⚙️ in the middle left menu, and then click `CORS`, and `Enable Cors`, and tick the `All Domains` radio button (*).
 8. Open `kayak-master` folder in another Terminal
 9. Type `cd data` and then type `restore-data.bat` to create the `outlineslive` database and restore the `outlineslive.json`
+10. Open http://127.0.0.1:12321/ in browser to launch kayak
 
 ## To Backup:
 1. Open `kayak-master` folder in a Terminal
