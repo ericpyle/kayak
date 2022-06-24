@@ -21,6 +21,7 @@
     	<script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
 		<script type="text/javascript" src="js/fitToContent.js"></script>
 		<script type="text/javascript" src="js/jquery-extensions-utils.js"></script>
+		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 		<title>kayak - sharing outlines of scripture</title>
 </head>
 <body>
@@ -388,7 +389,6 @@
 	<script type="text/javascript" src="js/kayak-importView.js"></script>
 	<script type="text/javascript" src="js/kayak-main.js"></script>
 	<script type="text/javascript" src="js/kayak-outlines-db.js"></script>
-	<script type="text/javascript" src="http://kayak.iriscouch.com/couchdb-xd/_design/couchdb-xd/couchdb.js"></script>
 	<script type="text/javascript">
 
 	$(document).ready(function(){
@@ -419,28 +419,22 @@
 		initializeTable("submitterProfileResults", tableOptionsSortByFirstName, "btnSearchSubmitters", "Submitter keywords");
 		initializeTable("sourceSearchResults", tableOptionsSortBySource, "btnSearchSources", "Source keywords");
 
-		// not sure why typeof(Couch) doesn't work
 		var fInitCouchDbBegun = false;
 		try
 		{
-			Couch.init(function() {
-				try
-				{
-					var server = new Couch.Server('http://kayak.iriscouch.com', '', '');
-					dbMain = new Couch.Database(server, 'outlineslive');
-					//dbMain = null; // DEBUG: just run from local db.
-					InitializeDbStuff();
+			axiosConfig = {
+				auth:  {
+					username: 'admin',
+					password: 'password'
 				}
-				catch (err)
-				{
-					
-				}		
-			});
+			};
+			//axiosConfig = null; // DEBUG: just run from local db.
+			InitializeDbStuff();
 			fInitCouchDbBegun = true;
 		}
 		catch(err)
 		{
-			dbMain = null;
+			axiosConfig = null;
 		}
 
 		mainOutline = createBlankOutline();

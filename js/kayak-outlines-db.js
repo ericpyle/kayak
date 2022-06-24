@@ -3,12 +3,12 @@
  */
 
 			/*
-			dbMain.get('all', 
+			axiosConfig.get('all', 
       			function(resp) {
       				getResponse = resp;
-      				exampleRows = getResponse.rows;
+      				exampleRows = getResponse.data.rows;
 		        	// TODO: normalize '_id' vs 'id'
-		        	//alert("get: records" + resp.rows.length); // +  ", hello:" + resp.hello);		        	
+		        	//alert("get: records" + resp.data.rows.length); // +  ", hello:" + resp.hello);		        	
 		      	});
 
 			db.put('sample-record', { hello: 'world' }, 
@@ -26,14 +26,14 @@
 		      	*/
 
 		var putResponse;
-		var dbMain;
+		var axiosConfig;
 		function LoadPersonsAndAuthoredOutlines()
 		{
 			var getResponse = getDb();
 			var fNeedRenderToPage = true;
 			if (getResponse)
 			{
-				LoadExamplesToTableCallback(getResponse.rows);				
+				LoadExamplesToTableCallback(getResponse.data.rows);				
 	      		//LoadAuthorResultsCallback(getResponse);
 	      		fNeedRenderToPage = false;
 			}
@@ -44,34 +44,35 @@
 		function loadDataSet(fNeedRenderToPage, doSomethingAfterLoad)
 		{
 			var getResponse = null;
-			if (dbMain)
+			if (axiosConfig)
 			{
 				//_design/personProfiles/_view/personsAndOutlinesAuthored
 				try
 				{
-					dbMain.get('_design/everything/_view/byDocId', 
-		      			function(resp) {
-		      				if (resp)
-		      				{
-			      				cacheDbInDom(resp);
-			      				getResponse = resp;			      				
-			      				//$("body").data("personsAndOutlinesAuthored", getResponse);
-			      				
-			      				if (fNeedRenderToPage)
-			      				{
-				      				LoadExamplesToTableCallback(getResponse.rows);
-				      				InitializeAfterDbSetup();
-			      					//LoadAuthorResultsCallback(getResponse);	
-			      				}
-			      				if (doSomethingAfterLoad)
-			      					doSomethingAfterLoad();			      				
-			      			}
-			      			else
-			      			{			      				
-			      				alert("error: " + JSON.stringify(resp));
-			      			}
-			      			
-				      	});	
+					// http://admin:password@127.0.0.1:59840/database_name/document_id/
+					axios.get('http://127.0.0.1:59840/outlineslive/_design/everything/_view/byDocId', axiosConfig)
+					.then(function (resp) {
+						if (resp)
+						{
+							cacheDbInDom(resp);
+							getResponse = resp;			      				
+							//$("body").data("personsAndOutlinesAuthored", getResponse);
+							
+							if (fNeedRenderToPage)
+							{
+								LoadExamplesToTableCallback(getResponse.data.rows);
+								InitializeAfterDbSetup();
+								//LoadAuthorResultsCallback(getResponse);	
+							}
+							if (doSomethingAfterLoad)
+								doSomethingAfterLoad();			      				
+						}
+						else
+						{			      				
+							alert("error: " + JSON.stringify(resp));
+						}
+						// do whatever you want if console is [object object] then stringify the response
+					});	
 				}
 				catch(err)
 				{
@@ -85,7 +86,7 @@
 				getResponse = getDb(true);				
 				if (fNeedRenderToPage)
 				{					
-					LoadExamplesToTableCallback(getResponse.rows);
+					LoadExamplesToTableCallback(getResponse.data.rows);
 	      			//LoadAuthorResultsCallback(getResponse);
 				}
 				if (doSomethingAfterLoad)
@@ -112,7 +113,7 @@
 		
 		function getDbRows()
 		{
-			return getDb().rows;
+			return getDb().data.rows;
 		}
 
 		function getUserFriendlyContentType(contentType) {
@@ -1673,9 +1674,10 @@
 					authorProfile.name.last.toLowerCase();
 			}
 			
-			if (dbMain)
+			if (axiosConfig)
 			{
-				dbMain.put(mainOutline._id, mainOutline, function(resp) {
+				axios.put(`http://127.0.0.1:59840/outlineslive/${mainOutline._id}`, mainOutline, axiosConfig)
+				.then(function(resp) {
 					
 					if (resp.ok)
 			        {
@@ -1702,10 +1704,10 @@
 		var rowId = outline._id;
     	var newRow = {"id" : rowId, "key" : [rowId, 1], "value" : outline};
     	var getResponse = getDb();
-    	if (!replaceRow(getResponse.rows, newRow.id, newRow))
+    	if (!replaceRow(getResponse.data.rows, newRow.id, newRow))
     	{
-    		getResponse.rows.push(newRow);
-    		getResponse.total_rows += 1;
+    		getResponse.data.rows.push(newRow);
+    		getResponse.data.total_rows += 1;
     	}			    	
     	cacheDbInDom(getResponse);
     	LoadPersonsAndAuthoredOutlines();
@@ -1879,12 +1881,13 @@
 	    
 	    var specificDetailsMsg = "Outline specific details will be updated after publishing the outline.";
 	    // TODO: do I need to write the db cache back to the DOM?
-		if (dbMain && CommonSourceHasContent(updatedProfile.source) && 
+		if (axiosConfig && CommonSourceHasContent(updatedProfile.source) && 
 			(!profileOriginal || CommonSourceHasChanged(updatedProfile.source, profileOriginal.source)))
 		{
 			try
 			{
-				dbMain.put(profileSwitchTo.source._id, profileSwitchTo.source, function(resp) {
+				axios.put(`http://127.0.0.1:59840/outlineslive/${profileSwitchTo.source._id}`, profileSwitchTo.source, axiosConfig)
+				.then(function(resp) {
 			        if (resp.ok)
 			        {
 			        	profileSwitchTo["_rev"] = resp.rev;
@@ -1993,8 +1996,9 @@
 		
 		// now post to server.
 		//alert(JSON.stringify(personProfile));
-		if (dbMain)
-			dbMain.put(personProfile._id, personProfile, function(resp) {
+		if (axiosConfig)
+			axios.put(`http://admin:password@127.0.0.1:59840/outlineslive/${personProfile._id}`, personProfile, axiosConfig)
+			.then(function(resp) {
 		        if (resp.ok)
 		        {
 		        	personProfile["_rev"] = resp.rev;
@@ -2021,10 +2025,10 @@
 		var newRow = {"id" : personProfile._id, "key" : [personProfile._id, 0], "value" : personProfile};
 		
 		var getResponse = getDb();
-		if (!replaceRow(getResponse.rows, newRow.id, newRow))
+		if (!replaceRow(getResponse.data.rows, newRow.id, newRow))
     	{
-    		getResponse.rows.push(newRow);
-    		getResponse.total_rows += 1;
+    		getResponse.data.rows.push(newRow);
+    		getResponse.data.total_rows += 1;
     	}
     	cacheDbInDom(getResponse);
 	    // TODO: lookup _rev version later
@@ -2228,9 +2232,10 @@
 	}		
 
 /**
- * JSON.stringify(getDb(), null, '\t')
+ * JSON.stringify(getDb().data, null, '\t')
  * Find \n Replace: \\\n
  * Or better: use Firefox->Console and expand the GET http://kayak.iriscouch.com/outlineslive/_design/everything/_view/byDocId	.
+ * To import: curl -d @db_u.json -H “Content-type: application/json” -X POST http://127.0.0.1:59840/[mydatabase]/_bulk_docs
  */
 var authorsAndOutlinesResponse = {"total_rows":50,"offset":0,"rows":[
 {"id":"56e905abc996fa0a1b824d4118002410","key":["56e905abc996fa0a1b824d4118002410","source: Not yet referenced"],"value":{"_id":"56e905abc996fa0a1b824d4118002410","_rev":"1-bf320b4c33040147e4aded024bdefdbd","head":{"contentType":"sourceProfile"},"media":"book","details":"Not yet referenced","website":"","publisherDetails":""}},
