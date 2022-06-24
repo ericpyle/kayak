@@ -14,7 +14,7 @@
 ## To Backup:
 1. Open `kayak-master` folder in a Terminal
 2. Type `cd data`
-3. If you haven't already, download https://github.com/stedolan/jq/releases/download/jq-1.6/jq-win64.exe and copy it to `jq.exe` in the `kayak-master`/data directory 
+3. If you haven't already, download https://github.com/stedolan/jq/releases/download/jq-1.6/jq-win64.exe and copy it to `jq.exe` in the `kayak-master/data` directory 
 4. To backup, (!Warning! This will overwrite the previous backup of `outlineslive.json`, but it will first copy it to `outlineslive.json.bak` and prompt you if it's okay to overwrite that) Type `backup-data.bat` to copy the data to `outlineslive.json`
 
 ## To Restore
