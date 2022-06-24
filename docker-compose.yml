@@ -18,6 +18,6 @@ services:
       COUCHDB_PASSWORD: password
     restart: always
     volumes:
-      - ./data/couchdb_data:/opt/couchdb/data
-      - ./data/cdbdump-kayak.json:/tmp/backup.json
-      - ./data/init.sh:/init.sh
+      - couchdb_data:/opt/couchdb/data
+volumes:
+  couchdb_data:
