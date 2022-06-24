@@ -91,6 +91,25 @@ test("one matching outline - one verse slice - no overlap", function() {
   deepEqual(result, expected, "We expect result to be " + expected);
 });
 
+test("one matching outline - one verse slice - range", function () {
+    var allOutlinesKeyedByBCVRange = [
+  { "id": "974c87bd5ec2e4afb24a0ce0d1000c9f", "key": [["GEN", 1, 3, "GEN", 2, 3], "chiasm"], "value": { "_id": "974c87bd5ec2e4afb24a0ce0d1000c9f", "head": { "ScriptureRange": "Genesis 1:3-2:3", "contentType": "chiasm" } } }
+    ];
+    var result = getVerseSlice(allOutlinesKeyedByBCVRange, ["GEN", 2, 2]);
+    var expected = { "outlines": ["974c87bd5ec2e4afb24a0ce0d1000c9f"] };
+    deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("don't match matching outline - one verse slice - range", function () {
+    var allOutlinesKeyedByBCVRange = [
+  { "id": "974c87bd5ec2e4afb24a0ce0d1000c9f", "key": [["GEN", 1, 3, "GEN", 2, 3], "chiasm"], "value": { "_id": "974c87bd5ec2e4afb24a0ce0d1000c9f", "head": { "ScriptureRange": "Genesis 1:3-2:3", "contentType": "chiasm" } } }
+    ];
+    var result = getVerseSlice(allOutlinesKeyedByBCVRange, ["GEN", 1, 2]);
+    var expected = { "outlines": [] };
+    deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+
 test("two matching outlines - one verse slice - one verse overlap", function() {
   var allOutlinesKeyedByBCVRange = [
 {"id":"974c87bd5ec2e4afb24a0ce0d1000c9f","key":[["GEN",1,1],"chiasm"],"value":{"_id":"974c87bd5ec2e4afb24a0ce0d1000c9f","head":{"ScriptureRange":"Genesis 1:1","contentType":"chiasm"}}},
@@ -162,7 +181,7 @@ test("book longname + chapters and verses", function() {
 
 test("book longname + chapters", function() {
   var result = parseBCVRange("Genesis 2-4");
-  var expected = ["GEN",2,1,"GEN",4,-1];
+  var expected = ["GEN",2,-1,"GEN",4,-1];
   deepEqual(result, expected, "We expect result to be " + expected);
 });
 
@@ -185,6 +204,18 @@ test("book shortname + chapter verse", function() {
   deepEqual(result, expected, "We expect result to be " + expected);
 });
 
+test("book and chapter scripture", function () {
+    var result = parseBCVRange("Genesis 1");
+    var expected = ["GEN", 1, -1];
+    deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("book and chapter scripture range", function () {
+    var result = parseBCVRange("Genesis 1-2");
+    var expected = ["GEN", 1, -1, "GEN", 2, -1];
+    deepEqual(result, expected, "We expect result to be " + expected);
+});
+
 test("book only scripture range", function() {
   var result = parseBCVRange("Genesis");
   var expected = ["GEN"];
@@ -197,6 +228,36 @@ test("book only scripture range", function() {
   deepEqual(result, expected, "We expect result to be " + expected);
 });
 
+module("completeBCVRange");
+test("do nothing for specified book chapter verse", function () {
+    var result = completeBCVRange(["GEN", 1, 1]);
+    var expected = ["GEN", 1, 1];
+    deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("do nothing for specified book chapter verse range", function () {
+    var result = completeBCVRange(["GEN", 1, 1, "GEN", 2, 1]);
+    var expected = ["GEN", 1, 1, "GEN", 2, 1];
+    deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("fill chapter and verse range for book", function () {
+    var result = completeBCVRange(["GEN"]);
+    var expected = ["GEN", 1, 1, "GEN", 50, 31];
+    deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("fill verse for book chapter range", function () {
+    var result = completeBCVRange(["GEN", 1, 1, "GEN", 2, -1]);
+    var expected = ["GEN", 1, 1, "GEN", 2, 31];
+    deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("fill verse for book chapter range (both verses unspecified)", function () {
+    var result = completeBCVRange(["GEN", 1, -1, "GEN", 2, -1]);
+    var expected = ["GEN", 1, 1, "GEN", 2, 31];
+    deepEqual(result, expected, "We expect result to be " + expected);
+});
 
 module("kayak browse view - nearsighted sort");
 
