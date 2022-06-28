@@ -15,13 +15,13 @@
 				function(resp) {
 					putResponse = resp;
 	        		// TODO: normalize '_id' vs 'id'
-	        		alert("put: " + resp._id);
+	        		alert("put: " + resp.data.id);
       			});
       		db.get('sample-record', 
       			function(resp) {
       				getResponse = resp;
 		        	// TODO: normalize '_id' vs 'id'
-		        	alert("get: " + resp._id +  ", hello:" + resp.hello);		        	
+		        	alert("get: " + resp.data.id +  ", hello:" + resp.hello);		        	
 		      	});
 		      	*/
 
@@ -1110,7 +1110,7 @@
 			    }
 			    // TODO: add source rows not referenced in document, findOutlinesAndUnreferencedSources
 				
-			    // TODO: use "resp.rows" for sourceRows
+			    // TODO: use "resp.data.rows" for sourceRows
 			    //var sourceDoc = getCommonSourceProfile(doc, sourceRows);
 				
 			    // skip blank source
@@ -1679,9 +1679,9 @@
 				axios.put(`http://127.0.0.1:59840/outlineslive/${mainOutline._id}`, mainOutline, axiosConfig)
 				.then(function(resp) {
 					
-					if (resp.ok)
+					if (resp.data.ok)
 			        {
-			        	mainOutline["_rev"] = resp.rev;
+			        	mainOutline["_rev"] = resp.data.rev;
 			        	publishOutlineChangesToTableView(mainOutline);
 			        }
 			        //alert("Remember to check for ok: " + JSON.stringify(resp));
@@ -1888,9 +1888,9 @@
 			{
 				axios.put(`http://127.0.0.1:59840/outlineslive/${profileSwitchTo.source._id}`, profileSwitchTo.source, axiosConfig)
 				.then(function(resp) {
-			        if (resp.ok)
+			        if (resp.data.ok)
 			        {
-			        	profileSwitchTo["_rev"] = resp.rev;
+			        	profileSwitchTo["_rev"] = resp.data.rev;
 			        	alert("Common Source Profile Changes Published. (" + specificDetailsMsg + ")"); // Debug: " + JSON.stringify(resp));
 					    publishSourceProfileChangesToTableView(profileSwitchTo, profileOriginal, exampleRows);
 			        }
@@ -1999,9 +1999,9 @@
 		if (axiosConfig)
 			axios.put(`http://admin:password@127.0.0.1:59840/outlineslive/${personProfile._id}`, personProfile, axiosConfig)
 			.then(function(resp) {
-		        if (resp.ok)
+		        if (resp.data.ok)
 		        {
-		        	personProfile["_rev"] = resp.rev;
+		        	personProfile["_rev"] = resp.data.rev;
 		        	alert("Person Profile Published."); // Debug: " + JSON.stringify(resp));
 				    updateStagedProfilesIfNeeded(personProfile);
 				    publishPersonProfileChangesToTableView(personProfile);
