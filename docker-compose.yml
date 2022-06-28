@@ -9,6 +9,7 @@ services:
       - couchdb
     ports:
       - "12321:80"
+    restart: always
   couchdb:
     image: couchdb:2
     ports:
