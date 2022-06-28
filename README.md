@@ -22,3 +22,8 @@
 2. Type `cd data`
 3. (!Warning! This will delete the database called `outlineslive`, but not the `outlineslive.json` backup file) Type `delete-outlineslive-database.bat` and type `Y` to confirm.
 4. Type `restore-data.bat`
+
+## To Re-download and Rebuild Kayak webpage
+1. Download `kayak-master.zip` from https://github.com/ericpyle/kayak/archive/refs/heads/master.zip
+2. Unzip into `kayak-master` but you may answer `No` when asked to overwrite `data/outlineslive.json` (If you accidentally overwrite it, you may run `data/backup-data.bat` to save the latest version again.)
+3. cd `kayak-master` and run `rebuild-app-kayak-web.bat` to recreate the image using the latest web files in `kayak-master`
