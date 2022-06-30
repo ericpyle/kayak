@@ -24,6 +24,8 @@
 4. Type `restore-data.bat`
 
 ## To Re-download and Rebuild Kayak webpage
-1. Download `kayak-master.zip` from https://github.com/ericpyle/kayak/archive/refs/heads/master.zip
-2. Unzip into `kayak-master` but you may answer `No` when asked to overwrite `data/outlineslive.json` (If you accidentally overwrite it, you may run `data/backup-data.bat` to save the latest version again.)
-3. cd `kayak-master` and run `rebuild-app-kayak-web.bat` to recreate the image using the latest web files in `kayak-master`
+1. Rename current kayak-master folder to something like kayak-master.bak
+2. Download `kayak-master.zip` from https://github.com/ericpyle/kayak/archive/refs/heads/master.zip
+3. Unzip to make a new `kayak-master` folder in the same location as the original kayak-master folder
+4. Copy the original outlineslive.json from kayak-master.bak/data to new kayak-master/data 
+4. cd `kayak-master` and run `rebuild-app-kayak-web.bat` to recreate the image using the latest web files in `kayak-master`
