@@ -50,7 +50,7 @@
 				try
 				{
 					// http://admin:password@127.0.0.1:59840/database_name/document_id/
-					axios.get('http://127.0.0.1:59840/outlineslive/_design/everything/_view/byDocId', axiosConfig)
+					axios.get('https://b80b45cc-34a8-40fb-8c04-1c41e1f15bb1-bluemix.cloudantnosqldb.appdomain.cloud/outlineslive/_design/everything/_view/byDocId', axiosConfig)
 					.then(function (resp) {
 						if (resp)
 						{
@@ -1676,7 +1676,7 @@
 			
 			if (axiosConfig)
 			{
-				axios.put(`http://127.0.0.1:59840/outlineslive/${mainOutline._id}`, mainOutline, axiosConfig)
+				axios.put(`https://b80b45cc-34a8-40fb-8c04-1c41e1f15bb1-bluemix.cloudantnosqldb.appdomain.cloud/outlineslive/${mainOutline._id}`, mainOutline, axiosConfig)
 				.then(function(resp) {
 					
 					if (resp.data.ok)
@@ -1886,7 +1886,7 @@
 		{
 			try
 			{
-				axios.put(`http://127.0.0.1:59840/outlineslive/${profileSwitchTo.source._id}`, profileSwitchTo.source, axiosConfig)
+				axios.put(`https://b80b45cc-34a8-40fb-8c04-1c41e1f15bb1-bluemix.cloudantnosqldb.appdomain.cloud/outlineslive/${profileSwitchTo.source._id}`, profileSwitchTo.source, axiosConfig)
 				.then(function(resp) {
 			        if (resp.data.ok)
 			        {
