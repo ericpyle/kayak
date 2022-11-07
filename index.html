@@ -39,7 +39,12 @@
 	 	 <li><a href="#Cite"><span>Cite</span></a></li>
 	 </ul>
 	 <div id="kayak">
-	 	Welcome!
+    <form id="authForm" action="https://iam.cloud.ibm.com/identity/token" method="post">
+      <input type="hidden" name="grant_type" value="urn:ibm:params:oauth:grant-type:apikey">
+      <label for="apikey">apikey:</label>
+      <input type="text" name="apikey" value="9oWxdf1ziOemoExsoafWbgKwNu77NPy1N7Zcsg2mr6MW"><br><br>
+      <input type="submit" value="Submit">
+    </form>
 	 </div>
 	 <div id="BrowseByBook">
 	
@@ -420,22 +425,41 @@
 		initializeTable("sourceSearchResults", tableOptionsSortBySource, "btnSearchSources", "Source keywords");
 
 		var fInitCouchDbBegun = false;
-		try
-		{
-			axiosConfig = {
-				auth:  {
-					username: 'admin',
-					password: 'password'
-				}
-			};
-			//axiosConfig = null; // DEBUG: just run from local db.
-			InitializeDbStuff();
-			fInitCouchDbBegun = true;
-		}
-		catch(err)
-		{
-			axiosConfig = null;
-		}
+    var fInitCouchDbBegun = false;
+    // from https://stackoverflow.com/a/51730069
+    document.forms['authForm'].addEventListener('submit', (event) => {
+        event.preventDefault();
+        // TODO do something here to show user that form is being submitted
+        fetch(event.target.action, {
+            method: 'POST',
+            body: new URLSearchParams(new FormData(event.target)) // event.target is the form
+        }).then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json(); // or response.text() or whatever the server sends
+        }).then((body) => {
+          try
+          {
+            axiosConfig = {
+              headers: { Authorization: `Bearer ${body.access_token}` }
+            };
+            //axiosConfig = null; // DEBUG: just run from local db.
+            InitializeDbStuff();
+            fInitCouchDbBegun = true;
+          }
+          catch(err)
+          {
+            axiosConfig = null;
+          }
+        }).catch((error) => {
+          if (!fInitCouchDbBegun)
+          {
+            InitializeDbStuff();
+            InitializeAfterDbSetup();
+          }
+        });
+    });
 
 		mainOutline = createBlankOutline();
 		mainOutline.head.contentType = "chiasm";
@@ -445,13 +469,6 @@
 	    Logos.ReferenceTagging.lbsLogosLinkIcon = "dark";
 	    Logos.ReferenceTagging.lbsNoSearchTagNames = [  ];
 	    Logos.ReferenceTagging.lbsTargetSite = "biblia";
-
-		// DEBUG	    
-	    if (!fInitCouchDbBegun)
-	    {
-	    	InitializeDbStuff();
-	    	InitializeAfterDbSetup();
-	    }
 
 	});
 	
