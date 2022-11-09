@@ -3,12 +3,13 @@
 // Method: POST, PUT, GET etc
 // Data: array("param" => "value") ==> index.php?param=value
 
-$val = getopt("p:");
-if ($val !== false) {
-	echo var_export($val, true);
+if (isset($argc)) {
+	for ($i = 0; $i < $argc; $i++) {
+		echo "Argument #" . $i . " - " . $argv[$i] . "\n";
+	}
 }
 else {
-	echo "Could not get value of command line option\n";
+	echo "argc and argv disabled\n";
 }
 
 function CallAPI($method, $url, $data = false)
