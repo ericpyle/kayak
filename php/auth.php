@@ -3,10 +3,11 @@
 // Method: POST, PUT, GET etc
 // Data: array("param" => "value") ==> index.php?param=value
 
-$url =  "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
-$parts = parse_url($url);
+$parts = parse_url("//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}");
 parse_str($parts['query'], $query);
-echo $query;
+echo $parts['query'];
+
+CallAPI("GET", "https://jsonplaceholder.typicode.com/todos/1/{$parts['query']}");
 
 function CallAPI($method, $url, $data = false)
 {
