@@ -3,14 +3,10 @@
 // Method: POST, PUT, GET etc
 // Data: array("param" => "value") ==> index.php?param=value
 
-if (isset($argc)) {
-	for ($i = 0; $i < $argc; $i++) {
-		echo "Argument #" . $i . " - " . $argv[$i] . "\n";
-	}
-}
-else {
-	echo "argc and argv disabled\n";
-}
+$url =  "//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
+$parts = parse_url($url);
+parse_str($parts['query'], $query);
+echo $query;
 
 function CallAPI($method, $url, $data = false)
 {
