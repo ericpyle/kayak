@@ -8,7 +8,7 @@ parse_str($parts['query'], $query);
 echo json_encode($query);
 echo "<br>";
 
-$response = CallAPI("GET", "https://jsonplaceholder.typicode.com/todos/1/", $query);
+$response = CallAPI("POST", "https://iam.cloud.ibm.com/identity/token", $query);
 echo json_encode($response);
 
 function CallAPI($method, $url, $data = false)
