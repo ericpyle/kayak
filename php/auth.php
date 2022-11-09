@@ -7,7 +7,8 @@ $parts = parse_url("//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}");
 parse_str($parts['query'], $query);
 echo $parts['query'];
 
-CallAPI("GET", "https://jsonplaceholder.typicode.com/todos/1/{$parts['query']}");
+$response = CallAPI("GET", "https://jsonplaceholder.typicode.com/todos/1/{$parts['query']}");
+echo json_encode($response);
 
 function CallAPI($method, $url, $data = false)
 {
