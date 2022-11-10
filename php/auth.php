@@ -10,7 +10,7 @@
 // $apikey = urlencode($_POST["apikey"]); 
 // $query = "?grant_type={$grantType}&apikey={$apikey}";
 $response = CallAPI("POST", "https://iam.cloud.ibm.com/identity/token", $_POST);
-echo json_encode($response);
+echo $response;
 
 function CallAPI($method, $url, $data = false)
 {
