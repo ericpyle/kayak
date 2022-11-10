@@ -3,18 +3,13 @@
 // Method: POST, PUT, GET etc
 // Data: array("param" => "value") ==> index.php?param=value
 
-$data = [
-    "grant_type" => $_POST["grant_type"],
-    "apikey" => $_POST["apikey"],
-];
-echo json_encode($data);
-echo "<br>";
 echo json_encode($_POST);
+echo "<br>";
 
 // $grantType = urlencode($_POST["grant_type"]);
 // $apikey = urlencode($_POST["apikey"]); 
 // $query = "?grant_type={$grantType}&apikey={$apikey}";
-$response = CallAPI("POST", "https://iam.cloud.ibm.com/identity/token", $data);
+$response = CallAPI("POST", "https://iam.cloud.ibm.com/identity/token", $_POST);
 echo json_encode($response);
 
 function CallAPI($method, $url, $data = false)
@@ -27,7 +22,7 @@ function CallAPI($method, $url, $data = false)
             curl_setopt($curl, CURLOPT_POST, 1);
 
             if ($data)
-                curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+                curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data));
             break;
         case "PUT":
             curl_setopt($curl, CURLOPT_PUT, 1);
