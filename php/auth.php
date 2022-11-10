@@ -3,12 +3,12 @@
 // Method: POST, PUT, GET etc
 // Data: array("param" => "value") ==> index.php?param=value
 
-$parts = parse_url("//{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}");
-parse_str($parts['query'], $query);
-echo json_encode($parts['query']);
+echo json_encode($_POST);
 echo "<br>";
-
-$response = CallAPI("POST", "https://iam.cloud.ibm.com/identity/token", $parts['query']);
+// $grantType = urlencode($_POST["grant_type"]);
+// $apikey = urlencode($_POST["apikey"]); 
+// $query = "?grant_type={$grantType}&apikey={$apikey}";
+$response = CallAPI("POST", "https://iam.cloud.ibm.com/identity/token", $_POST);
 echo json_encode($response);
 
 function CallAPI($method, $url, $data = false)
