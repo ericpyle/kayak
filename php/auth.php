@@ -3,8 +3,8 @@
 // Method: POST, PUT, GET etc
 // Data: array("param" => "value") ==> index.php?param=value
 
-echo json_encode($_POST);
-echo "<br>";
+// echo json_encode($_POST);
+// echo "<br>";
 
 // $grantType = urlencode($_POST["grant_type"]);
 // $apikey = urlencode($_POST["apikey"]); 
