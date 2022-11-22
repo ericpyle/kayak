@@ -21,6 +21,7 @@
     	<script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
 		<script type="text/javascript" src="js/fitToContent.js"></script>
 		<script type="text/javascript" src="js/jquery-extensions-utils.js"></script>
+		<script type="text/javascript" src="js/axios.min.js"></script>
 		<title>kayak - sharing outlines of scripture</title>
 </head>
 <body>
@@ -37,8 +38,13 @@
 	 	 <li><a href="#EditView"><span>Edit</span></a></li>
 	 	 <li><a href="#Cite"><span>Cite</span></a></li>
 	 </ul>
-	 <div id="kayak" style="">
-	 	Welcome!
+	 <div id="kayak">
+    <form id="authForm" action="php/auth.php" method="post">
+      <input type="hidden" name="grant_type" value="urn:ibm:params:oauth:grant-type:apikey">
+      <label for="apikey">apikey:</label>
+      <input type="text" name="apikey" value="9oWxdf1ziOemoExsoafWbgKwNu77NPy1N7Zcsg2mr6MW"><br><br>
+      <input type="submit" value="Submit">
+    </form>
 	 </div>
 	 <div id="BrowseByBook">
 	
@@ -390,7 +396,6 @@
 	<script type="text/javascript" src="js/kayak-importView.js"></script>
 	<script type="text/javascript" src="js/kayak-main.js"></script>
 	<script type="text/javascript" src="js/kayak-outlines-db.js"></script>
-	<script type="text/javascript" src="https://cloudbow.cloudant.com/couchdb-xd/_design/couchdb-xd/couchdb.js"></script>
 	<script type="text/javascript">
 
 	$(document).ready(function(){
@@ -421,31 +426,42 @@
 		initializeTable("submitterProfileResults", tableOptionsSortByFirstName, "btnSearchSubmitters", "Submitter keywords");
 		initializeTable("sourceSearchResults", tableOptionsSortBySource, "btnSearchSources", "Source keywords");
 
-		// not sure why typeof(Couch) doesn't work
 		var fInitCouchDbBegun = false;
-		try
-		{
-			Couch.init(function() {
-				try
-				{
-				    var l1 = ['vnselool', 'waystur','ioultinga',];
-				    var l2 = ['6Ue8Ks3nuI', 'O3DPm','E4E7XsNCT'];
-					var server = new Couch.Server('https://cloudbow.cloudant.com', obf(l1), obf(l2));
-					dbMain = new Couch.Database(server, 'kayak');
-					//dbMain = null; // DEBUG: just run from local db.
-					InitializeDbStuff();
-				}
-				catch (err)
-				{
-					
-				}		
-			});
-			fInitCouchDbBegun = true;
-		}
-		catch(err)
-		{
-			dbMain = null;
-		}
+    var fInitCouchDbBegun = false;
+    // from https://stackoverflow.com/a/51730069
+    document.forms['authForm'].addEventListener('submit', (event) => {
+        event.preventDefault();
+        // TODO do something here to show user that form is being submitted
+        fetch(event.target.action, {
+            method: 'POST',
+            body: new URLSearchParams(new FormData(event.target)) // event.target is the form
+        }).then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json(); // or response.text() or whatever the server sends
+        }).then((body) => {
+          try
+          {
+            axiosConfig = {
+              headers: { Authorization: `Bearer ${body.access_token}` }
+            };
+            //axiosConfig = null; // DEBUG: just run from local db.
+            InitializeDbStuff();
+            fInitCouchDbBegun = true;
+          }
+          catch(err)
+          {
+            axiosConfig = null;
+          }
+        }).catch((error) => {
+          if (!fInitCouchDbBegun)
+          {
+            InitializeDbStuff();
+            InitializeAfterDbSetup();
+          }
+        });
+    });
 
 		mainOutline = createBlankOutline();
 		mainOutline.head.contentType = "chiasm";
@@ -455,13 +471,6 @@
 	    Logos.ReferenceTagging.lbsLogosLinkIcon = "dark";
 	    Logos.ReferenceTagging.lbsNoSearchTagNames = [  ];
 	    Logos.ReferenceTagging.lbsTargetSite = "biblia";
-
-		// DEBUG	    
-	    if (!fInitCouchDbBegun)
-	    {
-	    	InitializeDbStuff();
-	    	InitializeAfterDbSetup();
-	    }
 
 	});
 	
