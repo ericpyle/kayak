@@ -20839,6 +20839,164 @@
       }
     },
     {
+			"id": "kyk:2022-11-15T01:47:26.187Z:ol",
+			"key": "kyk:2022-11-15T01:47:26.187Z:ol",
+			"value": {
+				"rev": "3-d099893a72f308b90e202befe1bcdabe"
+			},
+			"doc": {
+				"_id": "kyk:2022-11-15T01:47:26.187Z:ol",
+				"head": {
+					"contentType": "chiasm",
+					"title": "Yahweh's amazing love",
+					"ScriptureRange": "Psalm 103:1-2",
+					"submissionTimestamp": [
+						2022,
+						11,
+						15,
+						"01:47:26.187Z"
+					],
+					"author": {
+						"guid": "kyk:2013-07-03T13:37:34.266Z:ps",
+						"authorShortname": "bneumann"
+					},
+					"submittedBy": {
+						"guid": "kyk:2013-07-03T13:37:34.266Z:ps"
+					},
+					"source": {
+						"details": "",
+						"website": "",
+						"guid": "kyk:1845-12-23T03:22:15.481Z:sr"
+					},
+					"modifiedTimestamp": [
+						2022,
+						11,
+						15,
+						"01:53:09.862Z"
+					]
+				},
+				"body": {
+					"concepts": [
+						{
+							"content": "Bless Yahweh, O my soul! (1a)"
+						},
+						{
+							"content": "And all that is within me, bless his holy name! (1b)"
+						},
+						{
+							"content": "Bless Yahweh, O my soul! (2a)"
+						}
+					]
+				}
+			}
+		},
+		{
+			"id": "kyk:2022-11-15T01:48:53.648Z:ol",
+			"key": "kyk:2022-11-15T01:48:53.648Z:ol",
+			"value": {
+				"rev": "1-7ad72924e4486fe0860dac0ea2963794"
+			},
+			"doc": {
+				"_id": "kyk:2022-11-15T01:48:53.648Z:ol",
+				"head": {
+					"contentType": "chiasm",
+					"title": "",
+					"ScriptureRange": "",
+					"author": {
+						"guid": "kyk:2013-07-03T13:37:34.266Z:ps",
+						"authorShortname": "bneumann"
+					},
+					"submittedBy": {
+						"guid": "kyk:2013-07-03T13:37:34.266Z:ps"
+					},
+					"source": {
+						"details": "",
+						"website": "",
+						"guid": "kyk:1845-12-23T03:22:15.481Z:sr"
+					},
+					"submissionTimestamp": [
+						2022,
+						11,
+						15,
+						"01:48:53.648Z"
+					],
+					"modifiedTimestamp": [
+						2022,
+						11,
+						15,
+						"01:48:53.651Z"
+					]
+				},
+				"body": {
+					"concepts": []
+				}
+			}
+		},
+		{
+			"id": "kyk:2022-11-15T01:58:40.225Z:ol",
+			"key": "kyk:2022-11-15T01:58:40.225Z:ol",
+			"value": {
+				"rev": "1-3faff17c476c9e1d7bac61903e417b76"
+			},
+			"doc": {
+				"_id": "kyk:2022-11-15T01:58:40.225Z:ol",
+				"head": {
+					"contentType": "chiasm",
+					"title": "Yahweh's amazing love",
+					"ScriptureRange": "Psalm 103:19-22",
+					"author": {
+						"guid": "kyk:2013-07-03T13:37:34.266Z:ps",
+						"authorShortname": "bneumann"
+					},
+					"submittedBy": {
+						"guid": "kyk:2013-07-03T13:37:34.266Z:ps"
+					},
+					"source": {
+						"details": "",
+						"website": "",
+						"guid": "kyk:1845-12-23T03:22:15.481Z:sr"
+					},
+					"submissionTimestamp": [
+						2022,
+						11,
+						15,
+						"01:58:40.225Z"
+					],
+					"modifiedTimestamp": [
+						2022,
+						11,
+						15,
+						"01:58:40.227Z"
+					]
+				},
+				"body": {
+					"concepts": [
+						{
+							"content": "Yahweh has established his throne in the heavens; his kingdom rules over everything. (19)"
+						},
+						{
+							"content": "Bless Yahweh, you angels of his, you powerful ones (20a)"
+						},
+						{
+							"content": "who carry out his word and obey his orders! (20b)"
+						},
+						{
+							"content": "Bless Yahweh, all you warriors of his, you servants of his (21a)"
+						},
+						{
+							"content": "who carry out his desires! (21b)"
+						},
+						{
+							"content": "Bless Yahweh, all that he has made, (22a)"
+						},
+						{
+							"content": "in each and every place of his kingdom! (22b)"
+						}
+					]
+				}
+			}
+		},
+    {
       "_id": "sample-record",
       "hello": "world"
     }
