@@ -20887,8 +20887,8 @@
       "_id": "kyk:2022-11-15T01:48:53.648Z:ol",
       "head": {
         "contentType": "chiasm",
-        "title": "",
-        "ScriptureRange": "",
+        "title": "Yahweh's Amazing Love",
+        "ScriptureRange": "Psalm 103:1-22",
         "author": {
           "guid": "kyk:2013-07-03T13:37:34.266Z:ps",
           "authorShortname": "bneumann"
@@ -20910,12 +20910,66 @@
         "modifiedTimestamp": [
           2022,
           11,
-          15,
-          "01:48:53.651Z"
+          24,
+          "07:07:55.420Z"
         ]
       },
       "body": {
-        "concepts": []
+        "concepts": [
+          {
+            "content": "And all that is within me, bless his holy name! [embedded] (1b)",
+            "embeddedOutlineId": "kyk:2022-11-15T01:47:26.187Z:ol"
+          },
+          {
+            "content": "Do not forget all his benefits (~rewards)! (2b)"
+          },
+          {
+            "content": "He is the one who forgives your(sg.) each and every iniquity, (3a)\nwho heals all your(sg.) diseases, (3b)\nwho redeems your(sg.) life from the Pit, (4a)\nwho crowns you(sg.) with his loyal love and compassions, (4b)\nwho fully satisfies you(sg.) with what is good, (5a)\n"
+          },
+          {
+            "content": "you’re(sg.) young and continually refresh yourself like an eagle with new feathers. (5b)"
+          },
+          {
+            "content": "Yahweh executes righteous acts,\nand accomplishes deeds of justice for all who are exploited. (6)"
+          },
+          {
+            "content": "He kept making known his ways to Moses,\nhis deeds to the people of Israel. (7)"
+          },
+          {
+            "content": "Yahweh is compassionate and gracious;\nhe is slow to anger and demonstrates great loyal love. (8)\nHe will not always accuse us,\nand will not hold a grudge forever. (9)\n"
+          },
+          {
+            "content": "He did not deal with us as our sins deserve;\nhe did not repay us as our iniquities deserve. (10)"
+          },
+          {
+            "content": "Because as the skies are high above the earth,\nso his loyal love towers over those who fear him. (11)"
+          },
+          {
+            "content": "As far as the sunrise is distant from the sunset,\nso he caused our transgressions to be distanced from us. (12)"
+          },
+          {
+            "content": "As a father has compassion on his children,\nso Yahweh has compassion on those who fear him. (13)"
+          },
+          {
+            "content": "Because he knows what we are made of; (14a)"
+          },
+          {
+            "content": "he remembers that we are made of dust. (14b)"
+          },
+          {
+            "content": "A person’s days are like grass. Like a flower in the field it flourishes, (15)\nWhen the wind has passed over it, it disappears,\nand one can no longer even spot the place where it once grew. (16)"
+          },
+          {
+            "content": "But Yahweh continually shows loyal love to those who fear him, and shows righteousness (~is faithful to his gracious promises) to their children’s children, (17)\nto those who keep his covenant, (18a)"
+          },
+          {
+            "content": "who remember his commands to do them (~be careful to obey them). (18b)"
+          },
+          {
+            "content": "Bless Yahweh, all you warriors of his, you servants of his (21a) Bless Yahweh, O my soul. (22c)",
+            "embeddedOutlineId": "kyk:2022-11-15T01:58:40.225Z:ol"
+          }
+        ]
       }
     },
     {
