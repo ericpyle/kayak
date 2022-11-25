@@ -1,0 +1,498 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" 
+                    "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <script type="text/javascript" src="../../js/jquery.js"></script>
+  <link rel="stylesheet" href="../css/qunit-git.css" type="text/css" media="screen" />
+<script type="text/javascript" src="../js/qunit-git.js"></script>
+<script type="text/javascript" src="../../js/jquery-extensions-utils.js"></script>
+<script type="text/javascript" src="../../js/cons.js"></script>
+<script type="text/javascript" src="../../js/kayak-outliner.js"></script>
+
+  <script type="text/javascript">
+  $(document).ready(function(){
+
+
+  	function getLabels(dto, istop) {
+  		var labels = cons.getLabels(dto, istop);
+  		var labelsToString = [];
+  		for (var i = 0; i < labels.length; i++) {
+  			labelsToString.push(labels[i].toString());
+  		}
+  		return labelsToString;
+  	}
+
+  	function getLabel(dto, i) {
+  		var labels = getLabels(dto, i);
+  		return labels[i];
+  	}
+
+
+  		module("cons.js - chiasm w/ embedded panels");
+  		test("convertLabelToLevel() simple - A", function () {
+  			var label = new NumLabel();
+  			label.num = "A";
+  			var level = cons.convertLabelToLevel(label);
+  			deepEqual(level, 0);
+  		});
+
+  		test("convertLabelToLevel() simple - B", function () {
+  			var label = new NumLabel();
+  			label.num = "B";
+  			var level = cons.convertLabelToLevel(label);
+  			deepEqual(level, 1);
+  		});
+
+  		test("convertLabelToLevel() embedded - A1", function () {
+  			var label = new NumLabel();
+  			label.num = "A1";
+  			var level = cons.convertLabelToLevel(label);
+  			deepEqual(level, 0);
+  		});
+
+  		test("convertLabelToLevel() embedded - B1", function () {
+  			var label = new NumLabel();
+  			label.num = "B1";
+  			var level = cons.convertLabelToLevel(label);
+  			deepEqual(level, 1);
+  		});
+
+  		test("createDtoFromOutline() simple - A, B, A'", function () {
+  			var outline = {
+  				"_id": "774c87bd5ec2e4afb24a0ce0d1000c9f", "_rev": "2-f594aedb0ddbc74513c80e90516f2244",
+  				"head": { "submissionTimestamp": [2011, 12, 28, "10:30:00.000Z"], "bcvRange": [], "title": "testing", "ScriptureRange": "", "contentType": "chiasm" },
+  				"body": { "concepts": [{ "content": "a" }, { "content": "b" }, { "content": "a'" }] }
+  			};
+  			var result1 = cons.createDtoFromOutline(outline);
+  			var dtoExpected = {
+  				type: "chiasm",
+  				concepts: [
+						{ content: "a" },
+						{ content: "b" },
+						{ content: "a'" }
+  				]
+  			};
+  			deepEqual(result1, dtoExpected, "We expect result to be " + dtoExpected);
+  		});
+
+  		test("createDtoFromConcepts() simple - A, B, A'", function () {
+  			var result1 = cons.createDtoFromConcepts("chiasm", [{ "content": "a" }, { "content": "b" }, { "content": "a'" }]);
+  			var dtoExpected = {
+  				type: "chiasm",
+  				concepts: [
+						{ content: "a" },
+						{ content: "b" },
+						{ content: "a'" }
+  				]
+  			};
+  			deepEqual(result1, dtoExpected, "We expect result to be " + dtoExpected);
+  		});
+
+		test("getLabels() simple - A, B, A'", function () {
+			var dto = {
+				type: "chiasm",
+				concepts: [
+						{ content: "a" },
+						{ content: "b" },
+						{ content: "a'"}
+				]
+			};
+			var result1 = getLabels(dto);
+			var expected1 = ["A.","B.", "A'"];
+			deepEqual(result1, expected1, "We expect result to be " + expected1);
+		});
+
+
+		test("getLabels() simple - A1, A2", function () {
+			var dto = {
+				type: "chiasm",
+				concepts: [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "a2", embeddedType: "panel" }
+				]
+			};
+			var result1 = getLabels(dto);
+			var expected1 = ["A1.", "A2."];
+			deepEqual(result1, expected1, "We expect result to be " + expected1);
+		});
+
+		test("getLabel() simple - A1, A2", function() {
+			var dto = {
+				type: "chiasm",
+				concepts: [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "a2", embeddedType: "panel" }
+					]
+			};
+			{
+				var result1 = getLabel(dto, 0);
+				var expected1 = "A1.";
+				deepEqual(result1, expected1, "We expect result to be " + expected1);
+			}
+			{
+				var result2 = getLabel(dto, 1);
+				var expected2 = "A2.";
+				deepEqual(result2, expected2, "We expect result to be " + expected2);
+			}
+		});
+
+		test("getLabels() - complete", function () {
+			var dto = {
+				type: "chiasm",
+				concepts: [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "a2", embeddedType: "panel" },
+						{ content: "b" },
+						{ content: "a1'", embeddedType: "panel", isHead: true },
+						{ content: "a2'", embeddedType: "panel" }
+				]
+			};
+
+			var result1 = getLabels(dto);
+			var expected1 = ["A1.", "A2.", "B.", "A1'", "A2'"];
+			deepEqual(result1, expected1, "We expect result to be " + expected1);
+		});
+
+		test("getLabel() - complete", function () {
+			var dto = {
+				type: "chiasm",
+				concepts: [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "a2", embeddedType: "panel" },
+						{ content: "b" },
+						{ content: "a1'", embeddedType: "panel", isHead: true },
+						{ content: "a2'", embeddedType: "panel" }
+				]
+			};
+
+			{
+				var result1 = getLabel(dto, 2);
+				var expected1 = "B.";
+				deepEqual(result1, expected1, "We expect result to be " + expected1);
+			}
+			{
+				var result2 = getLabel(dto, 3);
+				var expected2 = "A1'";
+				deepEqual(result2, expected2, "We expect result to be " + expected2);
+			}
+			{
+				var result3 = getLabel(dto, 4);
+				var expected3 = "A2'";
+				deepEqual(result3, expected3, "We expect result to be " + expected3);
+			}
+		});
+
+
+		test("getLabels() - limit complete", function () {
+			var dto = {
+				type: "chiasm",
+				concepts: [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "a2", embeddedType: "panel" },
+						{ content: "b" },
+						{ content: "a1'", embeddedType: "panel", isHead: true },
+						{ content: "a2'", embeddedType: "panel" }
+				]
+			};
+
+			var result1 = getLabels(dto, 2);
+			var expected1 = ["A1.", "A2.", "B."];
+			deepEqual(result1, expected1, "We expect result to be " + expected1);
+		});
+
+		test("getLabels() - transition ", function () {
+			var dto = {
+				type: "chiasm",
+				concepts: [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "b" },
+						{ content: "b'"},
+						{ content: "a'"}
+				]
+			};
+
+			var result1 = getLabels(dto);
+			var expected1 = ["A1.", "B.", "B'", "A'"];
+			deepEqual(result1, expected1, "We expect result to be " + expected1);
+		});
+
+		module("kayak-outliner.js - embedModes");
+		test("getOtherEmbedModes() simple - A. > A1.", function () {
+			var concepts = [
+						{ content: "a" },
+						{ content: "b" },
+						{ content: "a'" }
+			];
+			var embedModes = getOtherEmbedModes(concepts, 0);
+			var expectedLabel = new NumLabel({ before: "", num: "A1", after: "." });
+			var modesExpected = [{ concept: { content: "a", embeddedType: "panel", isHead: true }, label: expectedLabel }];
+			deepEqual(embedModes, modesExpected, "We expect result to be " + modesExpected);
+		});		
+
+		test("getOtherEmbedModes() simple - B > B1", function () {
+			var concepts = [
+						{ content: "a" },
+						{ content: "b" },
+						{ content: "a'" }
+			];
+			var embedModes = getOtherEmbedModes(concepts, 1);
+			var expectedLabel = new NumLabel({ before: "", num: "B1", after: "."});
+			var modesExpected = [{ concept: { content: "b", embeddedType: "panel", isHead: true }, label: expectedLabel }];
+			deepEqual(embedModes, modesExpected, "We expect result to be " + modesExpected);
+		});
+
+		test("getOtherEmbedModes() A1. > A.", function () {
+			var concepts = [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "b" },
+						{ content: "a'" }
+			];
+			var embedModes = getOtherEmbedModes(concepts, 0);
+			var expectedLabel = new NumLabel({before: "", num: "A", after: "."});
+			var expectedConcepts = [
+						{ content: "a1" },
+						{ content: "b" },
+						{ content: "a'" }
+			];
+			var modesExpected = [{ concept: { content: "a1" }, label: expectedLabel, concepts: expectedConcepts }];
+			deepEqual(embedModes, modesExpected, "We expect result to be " + modesExpected);
+		});
+
+
+		test("changeEmbedMode() A. > A1.", function () {
+			var concepts = [
+						{ content: "a" },
+						{ content: "b" },
+						{ content: "a'" }
+			];
+			var newConcepts = changeEmbedMode(concepts, 0);
+			var expectedConcepts = [
+						{ content: "a", embeddedType: "panel", isHead:true },
+						{ content: "b" },
+						{ content: "a'" }
+			];
+			deepEqual(newConcepts, expectedConcepts, "We expect result to be " + expectedConcepts);
+		});
+
+		test("changeEmbedMode() cleanup after removing head", function () {
+			var concepts = [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "a2", embeddedType: "panel" },
+						{ content: "a'" }
+			];
+			var newConcepts = changeEmbedMode(concepts, 0);
+			var expectedConcepts = [
+						{ content: "a1" },
+						{ content: "a2" },
+						{ content: "a'" }
+			];
+			deepEqual(newConcepts, expectedConcepts, "We expect result to be " + expectedConcepts);
+		});
+
+		test("changeEmbedMode() cleanup after embeddedType", function () {
+			var concepts = [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "a2", embeddedType: "panel" },
+						{ content: "a3", embeddedType: "panel" }
+			];
+			var newConcepts = changeEmbedMode(concepts, 1);
+			var expectedConcepts = [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "a2" },
+						{ content: "a3" }
+			];
+			deepEqual(newConcepts, expectedConcepts, "We expect result to be " + expectedConcepts);
+		});
+
+		test("changeEmbedMode() label a2 > b after embeddedType", function () {
+			var concepts = [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "a2", embeddedType: "panel" },
+						{ content: "a3", embeddedType: "panel" }
+			];
+			var modes = getOtherEmbedModes(concepts, 1);
+			var expectedLabel = new NumLabel({before:"", num:"B", after:"."});
+			var expectedConcepts = [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "a2" },
+						{ content: "a3"}
+			];
+			var modesExpected = [{ concept: { content: "a2" }, label: expectedLabel, concepts: expectedConcepts }];
+			deepEqual(modes, modesExpected, "We expect result to be " + modesExpected);
+			/*
+			var newConcepts = changeEmbedMode(concepts, 1);
+			var dto = cons.createDtoFromConcepts("chiasm", concepts);
+			var labelResult = getLabel(dto, 1);
+			var expected = "B.";
+			deepEqual(concepts, expectedConcepts, "We expect result to be " + expectedConcepts);
+			*/
+		});
+
+		test("changeEmbedMode() cleanup after removing head (second half)", function () {
+			var concepts = [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "a2", embeddedType: "panel" },
+						{ content: "b" },
+						{ content: "a1'", embeddedType: "panel", isHead: true },
+						{ content: "a2'", embeddedType: "panel" }
+
+			];
+			var newConcepts = changeEmbedMode(concepts, 0);
+			var expectedConcepts = [
+						{ content: "a1"},
+						{ content: "a2"},
+						{ content: "b" },
+						{ content: "a1'", embeddedType: "panel", isHead: true },
+						{ content: "a2'", embeddedType: "panel" }
+			];
+			deepEqual(newConcepts, expectedConcepts, "We expect result to be " + expectedConcepts);
+		});
+
+		test("collectGroupings() A1, A2", function () {
+			var concepts = [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "a2", embeddedType: "panel" },
+						{ content: "b" },
+						{ content: "b'" },
+						{ content: "a'" }
+			];
+			var embedModes = [];
+			var groupings = collectGroupings(concepts, 4);
+			var groupingsExpected = [{ indexHead: 0, groupCount: 2 }];
+			deepEqual(groupings, groupingsExpected, "We expect result to be " + groupingsExpected);
+		});
+
+		test("addEmbedModesForMatchingPairs() B' > A1'", function () {
+			var concepts = [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "a2", embeddedType: "panel" },
+						{ content: "b" },
+						{ content: "b'" },
+						{ content: "a'" }
+			];
+			var embedModes = [];
+			addEmbedModesForMatchingPairs(concepts, 3, embedModes);
+			var expectedLabel1 = new NumLabel({ before: "", num: "A1", after: "'" });
+			var expectedConcepts = [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "a2", embeddedType: "panel" },
+						{ content: "b" },
+						{ content: "b'", embeddedType: "panel", isHead: true },
+						{ content: "a'", embeddedType: "panel" }
+			];
+			var modesExpected = [{
+				concept: { content: "b'", embeddedType: "panel", isHead: true },
+				label: expectedLabel1,
+				concepts: expectedConcepts
+			}];
+			deepEqual(embedModes, modesExpected, "We expect result to be " + modesExpected);
+		});
+
+		test("getOtherEmbedModes() B' > A1' > B1' ", function () {
+			var concepts = [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "a2", embeddedType: "panel" },
+						{ content: "b" },
+						{ content: "b'"},
+						{ content: "a'"}
+			];
+			var embedModes = getOtherEmbedModes(concepts, 3);
+			var expectedLabel1 = new NumLabel({ before: "", num: "A1", after: "'" });
+			var expectedLabel2 = new NumLabel({ before: "", num: "B1", after: "'" });
+			var expectedConcepts = [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "a2", embeddedType: "panel" },
+						{ content: "b" },
+						{ content: "b'", embeddedType: "panel", isHead: true },
+						{ content: "a'", embeddedType: "panel" }
+			];
+			var modesExpected = [{ concept: { content: "b'", embeddedType: "panel", isHead: true }, label: expectedLabel1, concepts: expectedConcepts },
+								 { concept: { content: "b'", embeddedType: "panel", isHead: true }, label: expectedLabel2 }];
+			deepEqual(embedModes, modesExpected, "We expect result to be " + modesExpected);
+		});
+
+		test("addEmbedModesForMatchingPairs() A1, A2, (B) > A1'", function () {
+			var concepts = [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "a2", embeddedType: "panel" },
+						{ content: "b" },
+						{ content: "a'" }
+			];
+			var embedModes = [];
+			addEmbedModesForMatchingPairs(concepts, 2, embedModes);
+			var expectedLabel1 = new NumLabel({ before: "", num: "A1", after: "'" });
+			var expectedConcepts = [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "a2", embeddedType: "panel" },
+						{ content: "b",  embeddedType: "panel", isHead: true },
+						{ content: "a'", embeddedType: "panel" }
+			];
+			var modesExpected = [{ concept: { content: "b", embeddedType: "panel", isHead: true }, label: expectedLabel1, concepts: expectedConcepts }];
+			deepEqual(embedModes, modesExpected, "We expect result to be " + modesExpected);
+		});
+
+		test("getOtherEmbedModes() A1, A2, (B) > A1' > A3 > B1' ", function () {
+			var concepts = [
+						{ content: "a1", embeddedType: "panel", isHead: true },
+						{ content: "a2", embeddedType: "panel" },
+						{ content: "b" },
+						{ content: "a'" }
+			];
+			var embedModes = getOtherEmbedModes(concepts, 2);
+			var expectedLabel1 = new NumLabel({ before: "", num: "A1", after: "'" });
+			var expectedLabel2 = new NumLabel({ before: "", num: "A3", after: "." });
+			var expectedLabel3 = new NumLabel({ before: "", num: "B1", after: "." });
+			var expectedConcepts1 = [
+				{ content: "a1", embeddedType: "panel", isHead: true },
+				{ content: "a2", embeddedType: "panel" },
+				{ content: "b", embeddedType: "panel", isHead: true },
+				{ content: "a'", embeddedType: "panel" }];
+			var modesExpected = [{ concept: { content: "b", embeddedType: "panel", isHead: true }, label: expectedLabel1, concepts: expectedConcepts1 },
+								 { concept: { content: "b", embeddedType: "panel"}, label: expectedLabel2 },
+								 { concept: { content: "b", embeddedType: "panel", isHead: true }, label: expectedLabel3 }];
+			deepEqual(embedModes, modesExpected, "We expect result to be " + modesExpected);
+		});
+
+		test("getOtherEmbedModes() A, B1, B2, (C) > B1' > B3 > C1'", function () {
+			var concepts = [
+						{ content: "a"},
+						{ content: "b1", embeddedType: "panel", isHead: true},
+						{ content: "b2", embeddedType: "panel" },
+						{ content: "c" },
+						{ content: "b'" },
+						{ content: "a'" }
+			];
+			var embedModes = getOtherEmbedModes(concepts, 3);
+			var expectedLabel1 = new NumLabel({ before: "", num: "B1", after: "'" });
+			var expectedLabel2 = new NumLabel({ before: "", num: "B3", after: "." });
+			var expectedLabel3 = new NumLabel({ before: "", num: "C1", after: "." });
+			var expectedConcepts1 = [
+				{ content: "a" },
+				{ content: "b1", embeddedType: "panel", isHead: true },
+				{ content: "b2", embeddedType: "panel" },
+				{ content: "c",  embeddedType: "panel", isHead: true },
+				{ content: "b'", embeddedType: "panel" },
+				{ content: "a'" }
+			];
+			var modesExpected = [{ concept: { content: "c", embeddedType: "panel", isHead: true }, label: expectedLabel1, concepts: expectedConcepts1 },
+								 { concept: { content: "c", embeddedType: "panel" }, label: expectedLabel2 },
+								 { concept: { content: "c", embeddedType: "panel", isHead: true }, label: expectedLabel3 }];
+			deepEqual(embedModes, modesExpected, "We expect result to be " + modesExpected);
+		});
+
+
+
+  });
+
+  </script>
+  
+</head>
+<body>
+  <h1 id="qunit-header">QUnit example</h1>
+ <h2 id="qunit-banner"></h2>
+ <div id="qunit-testrunner-toolbar"></div>
+ <h2 id="qunit-userAgent"></h2>
+ <ol id="qunit-tests"></ol>
+ <div id="qunit-fixture">test markup, will be hidden</div>
+</body>
+</html>

@@ -2,14 +2,16 @@
                     "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-  <script src="../js/jquery.js"></script>
-  <link rel="stylesheet" href="css/qunit-git.css" type="text/css" media="screen" />
-<script type="text/javascript" src="js/qunit-git.js"></script>
-<script type="text/javascript" src="../js/jquery-extensions-utils.js"></script>
-<script type="text/javascript" src="../js/kayak-common.js"></script>
-<script type="text/javascript" src="../js/kayak-views.js"></script>
+	<title>Panel Outline Indent View Tests</title>
+  <script  type="text/javascript" src="../../js/jquery.js"></script>
+  <link rel="stylesheet" href="../css/qunit-git.css" type="text/css" media="screen" />
+<script type="text/javascript" src="../js/qunit-git.js"></script>
+<script type="text/javascript" src="../../js/jquery-extensions-utils.js"></script>
+	<script type="text/javascript" src="../../js/cons.js"></script>
+<script type="text/javascript" src="../../js/kayak-common.js"></script>
+<script type="text/javascript" src="../../js/kayak-views.js"></script>
 
-  <script>
+  <script type="text/javascript">
   $(document).ready(function(){
 
 
@@ -42,6 +44,45 @@ test("one line", function() {
   };
   
   deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("one line - options - leadSpaces", function () {
+	var outline = createBlankOutline("panel");
+	outline.head["contentParams"] = { "repeat": 0 };
+	outline.body.concepts.push({ "content": "one line" });
+	var result = generatePanelIndent(outline, { leadSpaces: "&nbsp;&nbsp;" });
+	var expected = {
+		"indentStyles": [".indent-panel-level-1"],
+		"html": "<div class='indent-panel-level-1'>&nbsp;&nbsp;<span class='itemMarker'>1. </span><span class='conceptContent'>one line</span></div>"
+	};
+
+	deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("one line - options - includeId: false", function () {
+	var outline = createBlankOutline("panel");
+	outline.head["contentParams"] = { "repeat": 0 };
+	outline.body.concepts.push({ "content": "one line" });
+	var result = generatePanelIndent(outline, { includeId: false });
+	var expected = {
+		"indentStyles": [".indent-panel-level-1"],
+		"html": "<div class='indent-panel-level-1'><span class='itemMarker'>1. </span><span class='conceptContent'>one line</span></div>"
+	};
+
+	deepEqual(result, expected, "We expect result to be " + expected);
+});
+
+test("one line - embedded link", function () {
+	var outline = createBlankOutline("panel");
+	outline.head["contentParams"] = { "repeat": 0 };
+	outline.body.concepts.push({ "content": "one line", embeddedOutlineId: "link" });
+	var result = generatePanelIndent(outline);
+	var expected = {
+		"indentStyles": [".indent-panel-level-1"],
+		"html": "<div id='indent-panel-concept-0' class='indent-panel-level-1'><span class='itemMarker'>1. </span><span class='conceptContent'>one line</span><label><span class='lnkToEmbeddedOutline'> [<a href='#/link' target='_blank'>+</a>]</span></label></div>"
+	};
+
+	deepEqual(result, expected, "We expect result to be " + expected);
 });
 
 test("two lines", function() {

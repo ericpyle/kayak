@@ -30,6 +30,18 @@
 	{
 		return s ? s : "";
 	}
+
+	function offsetFromClosestEnd(index, listcount) {
+		var halfway = listcount / 2;
+		if (index < halfway) {
+			return index;
+		}
+		else {
+			//0 1 2           3            4
+			// 0 1 2 1(5 - 3 - 1) 0(5 - 4 - 1)
+			return listcount - index - 1;
+		}
+	}
 	
 	function doTestAndDoSomething(sequence, doTest, doSomething)
 	{
@@ -50,6 +62,19 @@
 		return false;
 	}
 
+/*
+ * requires jquery.url.js ($.url())
+ */
+function getDbIdFromUrl(url) {
+	var dbId = url.fsegment(1);
+	if (dbId == "!")
+		dbId = url.fsegment(2);
+	return dbId;
+}
+
+function createEmbedLink(linkFrag) {
+	return "<a href='#/" + linkFrag + "' target='_blank'>+</a>";
+}
 	/*
 	 * http://sirdarckcat.blogspot.com/2007/07/passing-reference-to-javascript.html
 	 */

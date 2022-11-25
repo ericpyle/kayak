@@ -1,0 +1,187 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:msxsl="urn:schemas-microsoft-com:xslt" xmlns:user="urn:nowhere">
+<head>
+<meta http-equiv="Content-Script-Type" content="text/javascript"/>
+		<title>kayak - migration </title>
+	<script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+    <style type="text/css">
+        .outline { font-weight: bold; }
+        .fieldName { font-size:smaller; color: gray; background-color: lightgray; margin-bottom: 2px; margin-left: 10px; margin-right: 10px;}
+        .fieldContent {
+        }
+        .fieldGuid {
+            font-size: x-small;
+        }
+    </style>
+</head>
+<body>
+    <div>Migrate Sources to Outlines <button id="migrateSourcesToOutline">Review</button></div>
+    <div id="migrateSourcesOutlineMsg"></div>
+	<script type="text/javascript" src="https://cloudbow.cloudant.com/couchdb-xd/_design/couchdb-xd/couchdb.js"></script>
+    <script type="text/javascript">
+
+	$(document).ready(function(){
+	    $("#migrateSourcesToOutline").on("click", doMigrateSourcesToOutline);
+	    try {
+	        l1 = ['decimp', 'istind', ' effectlestor']
+	        l2 = ['7bNRMXFjAVe', 'd5np3d', 'UleHDml']
+	        Couch.init(function () {
+	            var server = new Couch.Server('http://127.0.0.1:5984', obf(l1), obf(l2));
+	            dbMain = new Couch.Database(server, 'kayak-migrate1');
+	        });
+	    }
+	    catch (err) {
+	        // DEBUG
+	        alert(err.message)
+	    }
+	});
+
+	function obf(l) {
+        return l[1] + l[2] + l[0]
+	}
+
+	function appendField(parent, fieldName, content, contentClass) {
+	    if (!contentClass)
+	        contentClass = 'fieldContent';
+	    $(parent).append("<div> <span class='fieldName'>" + fieldName + "</span> <span class='"+ contentClass + "'>" + content + "</span></div>")
+	}
+	
+	function doMigrateSourcesToOutline() {
+	    $("#migrateSourcesToOutline").off("click", doMigrateSourcesToOutline);
+	    $("#migrateSourcesToOutline").text('Fetching data...')
+	    loadDataSetAndDo(function (resp) {
+	        var rows = resp.rows
+	        var outlines = findOutlines(rows)
+	        var sources = indexSourcesByGuid(rows)
+            var people = indexPeopleByGuid(rows)
+	        $("#migrateSourcesOutlineMsg").append("<div> Total Outlines: " + outlines.length + "</div>")
+	        for (var i = 0; i < outlines.length; i++) {
+	            var outline = outlines[i];
+	            $("#migrateSourcesOutlineMsg").append("<div>"+(i+1)+". <span class='outline'>Outline</span> <span class='fieldName'>_id</span> <span class='fieldGuid'>" + outline._id + "</span></div>")
+	            var source = outline.head.source;
+	            if (source){
+	                var sourceCommonDetails = "";
+	                if (source.guid) {
+	                    appendField("#migrateSourcesOutlineMsg", "source guid", source.guid, 'fieldGuid')
+	                    if (sources[source.guid])
+	                        sourceCommonDetails = sources[source.guid].details;
+	                }
+	                sourceDetails = joinContent([sourceCommonDetails, source.details], ", ")
+	                if (sourceDetails)
+	                    appendField("#migrateSourcesOutlineMsg", "source details", sourceDetails)
+	                if (source.website)
+	                    appendField("#migrateSourcesOutlineMsg", "source website", "<a href=\"" + source.website + "\" target='_blank'>" + source.website + "</div>")
+	            }
+	            appendPersonInfo(people, outline.head.author, "author");
+	            appendPersonInfo(people, outline.head.submittedBy, "submittedBy");
+	        }
+	        $("#migrateSourcesToOutline").text('Migrate')
+	    });
+
+	}
+
+	function appendPersonInfo(people, person, agentType) {
+	    if (!person)
+	        return;
+	    if (person.guid && people[person.guid]) {
+	        var agent = people[person.guid];
+	        var personDetails = ""
+	        if (agent.name) {
+	            var name = agent.name
+	            personDetails = joinContent([name.title, name.first, name.middle, name.last], " ");
+	        }
+	        appendField("#migrateSourcesOutlineMsg", agentType + " details", personDetails)
+	        var org = agent.organization
+
+	        if (org && org.name) {
+	            appendField("#migrateSourcesOutlineMsg", agentType + " org", org.name)
+	        }
+	    }
+	}
+
+	function joinContent(list, sep) {
+	    var joined = "";
+	    for (var i = 0; i < list.length; i++) {
+	        var item = list[i]
+	        if (joined.length == 0 && item) {
+	            joined = item;
+	            continue;
+	        }
+	        joined += prependToStr(item, sep)
+	    }
+	    return joined;
+	}
+	
+	function prependToStr(str, prefix) {
+	    if (!str)
+	        str = "";
+	    if (str.length > 0)
+	        return prefix + str;
+	    else {
+	        return str;
+	    }
+	}
+
+	function loadDataSetAndDo(func) {
+	    var getResponse = null;
+	    if (dbMain) {
+	        try {
+	            dbMain.get('_design/everything/_view/byDocId',
+                    function (resp) {
+                        if (resp) {
+                            func(resp);
+                        }
+                        else {
+                            alert("error: " + JSON.stringify(resp));
+                        }
+                    });
+	        }
+	        catch (err) {
+	            alert("error loading database." + JSON.stringify(err));
+	        }
+	    }
+	}
+
+	//if (doc.head.source && doc.head.source.guid) {
+	 //   sourceGuids[doc.head.source.guid] = true;
+	//}
+
+	function findOutlines(rows) {
+	    var outlines = [];
+	    for (var i = 0; i < rows.length; ++i) {
+	        var doc = rows[i].value;
+	        if (!doc)
+	            continue;
+	        if (doc.head.contentType == "chiasm" ||
+                doc.head.contentType == "outline" ||
+                doc.head.contentType == "panel") {
+	            outlines.push(doc);
+	        }
+	    }
+	    return outlines;
+	}
+
+	function indexSourcesByGuid(rows) {
+	    return indexByGuid(rows, "sourceProfile");
+	}
+
+	function indexPeopleByGuid(rows) {
+	    return indexByGuid(rows, "personProfile");
+	}
+
+	function indexByGuid(rows, contentType) {
+	    var indexMap = {}
+	    for (var i = 0; i < rows.length; ++i) {
+	        var doc = rows[i].value;
+	        if (!doc)
+	            continue;
+	        if (doc.head.contentType == contentType) {
+	            indexMap[doc._id] = doc;
+	        }
+	    }
+	    return indexMap;
+	}
+
+</script>
+</body>
+</html>

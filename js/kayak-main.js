@@ -39,6 +39,9 @@
 	    	
 	    	if (mainOutline.head.contentType == "chiasm")
 	    	{
+	    		publishOutlineToReadOnlyViews();
+				// todo: reestablish the highlights.
+				/*
 		    	var positionList = new Array();
 				getConceptPositions(positionList, -1);
 				positionObj = positionList[iconceptChangedContent];
@@ -48,7 +51,7 @@
 		    	if (!fUpdated)
 		    	{
 		    		publishContentToChiasmView(positionObj.concepts, positionObj.index, positionObj.concept.content);
-		    	}
+		    	}*/
 	    	}
 	    	else if (mainOutline.head.contentType == "outline")
 	    	{
@@ -257,6 +260,7 @@
 		
 		function InitializeEditForm()
 		{
+			/*
 			$("#itemHighlighting").click(function() {
 	  			var fEnableHighlighting = $("#itemHighlighting").attr("checked");
 	  			if (!fEnableHighlighting)
@@ -264,6 +268,18 @@
 					RemoveAllHighlighting();
 	  			}
 	  			return true;
+			});*/
+
+			$("#showLinksToEmbeddedOutlines").click(function () {
+				var fIsChecked = $("#showLinksToEmbeddedOutlines").is(':checked');
+				var selector = "#bv-outline-selected,#chiasm-indent,#chiasm-flat,.tableViewAAB";
+				if (fIsChecked) {
+					$(selector).find(".lnkToEmbeddedOutline").show();
+				}
+				else {
+					$(selector).find(".lnkToEmbeddedOutline").hide();
+				}
+				return true;
 			});
 			
 			$("#btnCreateNewOutline, #btnNewOutline_Edit").click(function(event) {
@@ -271,7 +287,7 @@
 				removeAnyRowSelectionAndOptions("#exampleTable", "outlineRowSelected", "outlineSelectedOptions");
 				var	docToLoad = createBlankOutline("chiasm");
 				loadJSONToOutline(docToLoad);
-				$("#tabsMain").tabs('select',"#EditView");
+				$("#tabsMain").tabs("option", "active", getTabIndex("#EditView"));
 				
 				return false;
 			});
@@ -305,7 +321,7 @@
 			});
 			
 			$("#cbPanelHasHeaders").click(function() {
-	  			var fPanelHasHeaders = $("#cbPanelHasHeaders").attr("checked");
+				var fPanelHasHeaders = this.checked;
 	  			if (fPanelHasHeaders)
 	  				mainOutline.head.contentParams["header"] = true;
 				else
@@ -407,13 +423,14 @@
 		    	ConceptToChiasmViewItem(mainOutline.body.concepts, index, false);
 				UpdateTableFromConcept(mainOutline.body.concepts, index, "#tableViewAAB", count);
 			});
-			$("#chiasm-flat").addClass("chiasm");
 		}
 		else if (mainOutline.head.contentType == "outline")
 		{
 			PublishOutlineViewItems(mainOutline.body.concepts, "#chiasm-" + "indent");
+			$("#chiasm-indent").find(".lnkToEmbeddedOutline").click(embedOutlineHere);
 			var result = generateHierarchicalFlat(mainOutline);
-			$("#chiasm-flat").append(result.html);			
+			$("#chiasm-flat").append(result.html);
+			$("#chiasm-flat").find(".lnkToEmbeddedOutline").click(embedOutlineHere);
 		}
 		else if (mainOutline.head.contentType == "panel")
 		{
@@ -424,10 +441,15 @@
 			var result = generatePanelFlat(mainOutline);
 			$("#chiasm-flat").append(result.html);
 			$("#chiasm-flat div").click(highlightItem);
-			$("#chiasm-flat").addClass("chiasm");
 			
 			var result = generatePanelTable(mainOutline);
 			$("#outline-table").append(result.html);
+		}
+		if (mainOutline.head.contentType == "chiasm" ||
+			mainOutline.head.contentType == "panel") {
+			$("#chiasm-flat").addClass("chiasm");
+			$("#chiasm-indent div").find(".lnkToEmbeddedOutline").click(embedOutlineHere);
+			$("#chiasm-flat div").find(".lnkToEmbeddedOutline").click(embedOutlineHere);
 		}
 	}
 	
@@ -457,10 +479,10 @@
 	
 	function importFromTextBoxToCurrentChiasm(textBoxId)
 	{
-		var fStripCounting = $("#stripCounting").attr("checked");
+		var fStripCounting = $("#stripCounting").is(":checked");
 		var abaArray = trimChiasm(textBoxId, fStripCounting);
 		loadABAListToCurrentChiasm(abaArray);
 		//alert("import" + mainOutline.body.concepts.length);
-		LoadAllViewsFromCurrentObj(createdEditBoxesForConcepts);
+		LoadAllViewsFromCurrentObj(createEditBoxesForOutline);
 	}
 	

@@ -40,13 +40,13 @@
 	  			getConceptPositions(positionList, indexOldEditBox);
 	  			var positionObj = positionList[indexOldEditBox];
 	  			var oldContent = positionObj.concept.content;
-	  			if (oldContent != textareaContent)
-	  			{
+	  			//if (oldContent != textareaContent) // embedMode labels may need to change as well.
+	  			//{
 	  				// update mainOutline
 	  				positionObj.concept.content = textareaContent;
 	  				publishContentChangesElsewhere(positionObj.concepts, indexOldEditBox, mainOutline.head)
 	  				//alert(textareaContent)
-	  			}			 
+	  			//}			 
 	  		}
 			convertTextarea();
 		}
@@ -83,7 +83,7 @@
 			label = "("+ label +") ";
 		else
 			label = label + " ";
-		$(element).find("label").text(label);
+		$(element).find("label").first().text(label);
 		adjustAutoLabeling();
 	}
 	
@@ -100,6 +100,8 @@
 				  	positionObj = createPositionObj(null, 0);
 				else
 					positionObj = createGhostPositionAfter(positionList[irealConcept]);
+				positionObj.concept = createConcept("");
+				transferEmbedModeProperties(element, positionObj.concept);
 			}
 			else
 			{
@@ -117,7 +119,7 @@
 					};
 				}
 			}
-			var label = formatPositionIntoLabel(positionObj, ghostExists(positionList));
+			var label = formatPositionIntoLabel(positionObj, ghostExists());
 			applyLabelToConceptNode(element, label);
 		});
 	}
@@ -141,28 +143,6 @@
 		return label;
 	}
 	
-	var AsciiA = 65;
-	/*
-	 * Move to common library (from kayak.js)
-	 */
-	function IndexToAsciiMarkerABA(index, numChiasmItems)
-	{
-		var isEven = numChiasmItems%2 == 0;
-	    var halfway = numChiasmItems/2;
-	    var asciiMarker;
-		if (index < halfway)
-	    {
-	       asciiMarker = String.fromCharCode(AsciiA + index);	     
-	    }
-	    else
-	    {
-	    	//0 1 2           3            4
-	       // 0 1 2 1(5 - 3 - 1) 0(5 - 4 - 1)
-	       asciiMarker = String.fromCharCode(AsciiA + (numChiasmItems - index - 1));
-	    }
-		return asciiMarker;		
-	}
-			
 	function switchOutlineMode(mode)
 	{
 		outlineMode = mode;
@@ -194,20 +174,6 @@
 		return getLabelForPanelIndex(mainOutline, positionObj.position[0] - 1) + ".";
 	}
 	
-	/*
-	 * Move to common library (from kayak.js)
-	 */
-	function GetEndMarkerABA(index, count)
-	{
-		var halfway = Math.round(count/2);
-		var endchar;
-		if (index < halfway)
-			endchar = ". ";
-		else
-			endchar = "' ";
-		return endchar;
-	}
-	
 	function formatPositionIntoLabel_ABA(positionObj, ghostExists)
 	{
 		if (!positionObj)
@@ -218,12 +184,27 @@
 		var index = positionObj.position[0] - 1;
 		if (positionObj.position.length > 1)
 			alert("what's up?" + positionObj.concept.content + positionObj.position.length);
-		var label = IndexToAsciiMarkerABA(index, 
-			positionObj.concepts != null ? positionObj.concepts.length + (ghostExists ? 1 : 0) : 2);
-		var count = $(".concept").length;
+		/* var count = positionObj.concepts != null ? positionObj.concepts.length + (ghostExists ? 1 : 0) : 2; */
+		var adjustedConcepts = positionObj.concepts ? clone(positionObj.concepts) : [];
+		if (ghostExists) {
+			if (index == adjustedConcepts.length)
+				adjustedConcepts.push(positionObj.concept); // this is the ghost item. preserve the concept as it was passed in.
+			else
+				adjustedConcepts.push(createConcept("ghost"));
+		}
+		var dto = cons.createDtoFromConcepts("chiasm", adjustedConcepts);
+		/*
+		if (ghostExists) {
+			if (positionObj.concepts == null)
+				positionObj.concepts = [];
+			var newConcept = positionObj.concept ? positionObj.concept : createConcept("");
+			if (index >= positionObj.concepts.length || positionObj.concepts[index] != newConcept)
+				dto.concepts.splice(index, 0, newConcept);
+		}*/
+		
+		var label = cons.getLabel(dto, index);
 		//alert(index + "/" + count);
-		var endMarker = GetEndMarkerABA(index, count);
-		return label + endMarker;
+		return label;
 	}
 	
 	function createEditBoxesForOutline(concepts)
@@ -238,7 +219,7 @@
 		var concept = concepts[iconcept];
 		//var newConcept = createConcept(concept.content)
 		//mainOutline.body.concepts.splice(iconcept, 0, concept);
-		insertConceptInView($('#outline div').length, "", true, concept.content);
+		insertConceptInView($('#outline div').length, "", true, concept);
 		if (outlineMode == "123")		
 			if (concept.concepts)
 			{
@@ -258,7 +239,7 @@
 		};
 	}
 	
-	function ghostExists(positionList)
+	function ghostExists()
 	{
 		return $('.concept').hasClass("ghost");
 	}
@@ -271,7 +252,7 @@
 		if (positionObj == undefined || positionObj.position == undefined)
 			return "(?.)";
 		//format position backwards
-		var label = formatPositionIntoLabel(positionObj, ghostExists(positionList));
+		var label = formatPositionIntoLabel(positionObj, ghostExists());
 		return label;
 	}
 	
@@ -397,13 +378,118 @@
 		refreshAllLabels();
 		//alert(mainOutline.body.concepts.length)		
 	}
+
+	function getConceptFromPositionList(index, concepts) {
+		var positionList = new Array();
+		getConceptPositions(positionList, index, { concepts: concepts });
+		positionObj = positionList[index];
+		return positionObj.concept;
+	}
+
+	function initializeBtnEmbeddedLink() {
+		$("#btnEmbeddedLink").attr("href", "#");
+		$("#btnEmbeddedLink").off("click"); // make sure we don't install multiple times
+		$("#btnEmbeddedLink").on("click", function (event) {
+
+			var index = $('.edit-state').index();
+			var fIsGhost = $('.edit-state').hasClass('ghost');
+			if (fIsGhost) {
+				convertGhostToReal($('.edit-state'));
+			}
+
+			var existingEmbeddedOutlineId = "";
+			
+			var concept = getConceptFromPositionList(index, mainOutline.body.concepts);
+			if (concept.embeddedOutlineId) {
+				existingEmbeddedOutlineId = concept.embeddedOutlineId;
+			}
+
+			// insert text box...replace buttons...?
+			var content = $('.edit-state textarea').val();
+			if (content == null)
+				content = "";
+			$(".edit-state").append('<div id="dialog" title="Embed an outline..."></div>');
+			$("#dialog").append('<div>Link to an existing outline with the same range.</div>');
+			$("#dialog").append('<div style="background-color:#E2E4FF;">' + content + '</div>');
+			
+			$("#dialog").append('<label for="lnkEmbedded">http://</label>');
+			$("#dialog").append('<textarea id="lnkEmbedded" cols="40" rows="1"></textarea>');
+			$("#dialog").append('<div>Later, click on the [<a href="#" onclick="return false;">+</a>] link to see that outline.</div>');
+			
+			$("#dialog").dialog({
+				autoOpen: false,
+				modal: true,
+				position: { my: "center", at: "center", of: "#btnEmbeddedLink" },
+				width: 500,
+				buttons: {
+					"OK": function () {
+						$(this).dialog("close");
+						var urlLnkEmbedded = $(jq("lnkEmbedded")).val();
+						var dbId = "";
+						if (EmptyIfNull(urlLnkEmbedded).length == 0) {
+							// remove the property below.
+						}
+						else if (isDbId(urlLnkEmbedded)) {
+							dbId = urlLnkEmbedded;
+						} else {
+							var url = $.url(urlLnkEmbedded);
+							var dbId = getDbIdFromUrl(url);
+						}
+						var index = $(".edit-state").index();
+						var concept = getConceptFromPositionList(index, mainOutline.body.concepts);
+						if (EmptyIfNull(dbId).length == 0) {
+							// remove the property if it exists.
+							if (concept.embeddedOutlineId) {
+								delete concept.embeddedOutlineId;
+							}
+							$(".edit-state .lnkToEmbeddedOutline").html("");
+							return false;
+						}
+						concept.embeddedOutlineId = dbId;
+						if ($(".edit-state .lnkToEmbeddedOutline")[0])
+							$(".edit-state .lnkToEmbeddedOutline").html(" [" + createEmbedLink(dbId) + "]"); // &nbsp;
+						else 
+							$("<label class='lnkToEmbeddedOutline'> [" + createEmbedLink(dbId) + "]</label>").insertAfter(".edit-state textarea");
+					},
+					Cancel: function () {
+						$(this).dialog("close");
+					}
+				}
+			});
+			$("#dialog").dialog("open");
+			$(jq("lnkEmbedded")).val(existingEmbeddedOutlineId);
+			FitToContent("lnkEmbedded", '', '100');
+			$(jq("lnkEmbedded"))
+				.keyup(function (event) {
+					// update content of chiasm
+					var textAreaId = event.target.id;
+					FitToContent(this, '', '100');
+					return false;
+				});
+			/*
+			// validate?
+			// copy url to concept.
+			if ($('.edit-state').hasClass("ghost")) {
+				// convert to real
+				convertGhostToReal($('.edit-state'));
+				//getConceptPositions(positionList, index);
+			}
+			convertTextarea();
+			$("#lnkEmbedded").first().putCursorAtEnd();
+			$("#head-editBoxControls").remove();
+			$("#tail-editBoxControls").remove();
+			$('.edit-state').removeClass('edit-state');
+			*/
+			false;
+		});
+	}
 	
 	function initializeBtnDelete()
 	{
 		if (mainOutline.body.concepts.length == 0)
 		{
 			$("#btnDelete").removeAttr("href");
--			$("#btnDelete").unbind("click");
+			$("#btnDelete").unbind("click");
 			return false;
 		}
 		$("#btnDelete").attr("href","#");
@@ -429,7 +515,7 @@
 		$("#btnSetPanelCycle").removeAttr("checked");
 		$("#btnSetPanelCycle").click(function(event)
 		{
-			var fIsPanelHead = $("#btnSetPanelCycle").attr("checked");
+			var fIsPanelHead = $("#btnSetPanelCycle").is(":checked");
 			var index = $('.edit-state').index();
 			var positionList = new Array();
 			getConceptPositions(positionList, index);
@@ -590,7 +676,12 @@
 			var concept = concepts[i];
 			if (concept)
 			{
-				$(newOrderedList).append("<li><span class='conceptContent'>" + concept.content + "</span></li>");
+				var lnk = "";
+				if (concept.embeddedOutlineId) {
+					lnk = "[" + createEmbedLink(concept.embeddedOutlineId) + "]";
+					lnk = "<label><span class='lnkToEmbeddedOutline'> " + lnk + "</span></label>"
+				}
+				$(newOrderedList).append("<li><span class='conceptContent'>" + concept.content + "</span>"+lnk+"</li>");
 				var newListItem = $(newOrderedList).children(":last");
 				if (concept.concepts)
 				{
@@ -645,13 +736,16 @@
 		    	.attr("id", "tail-editBoxControls");
 		    var btnOptionalHtml = "";
 		    if (outlineMode == "123")
-		    	btnOptionalHtml = '<button id="btnSubpoint"> &gt; subpoint </button> | ';
-		    
+		    	btnOptionalHtml = '<button id="btnSubpoint"> &gt; subpoint </button> ';
+		    else if (outlineMode == "Chiasm") {
+		    	btnOptionalHtml = '<button id="btnEmbedMode" style="margin-right:0px;padding-right:0px;"></button><button id="btnEmbedModeOptions" style="margin-left: 0px;padding-left:0px"></button> ';
+		    }
 			$("#tail-editBoxControls")
 				.append('<button id="btnAddPointBelow"> + point </button>')
 				.append('<button id="btnUpdateContent" type="button" value="'+ txtContentId +'">Enter</button>') 
 				.append(btnOptionalHtml)
-				.append('<button id="btnDelete"> x delete </button> | ');
+				.append('<button id="btnEmbeddedLink"> embed... </button> ')
+				.append('<button id="btnDelete"> x delete </button> ');
 			$("#btnUpdateContent").click(updateContent);
 		}
 		else
@@ -660,11 +754,241 @@
 		}
 		initializeCbIsPanelHead();
 		initializeBtnDelete();
+		initializeBtnEmbeddedLink();
+		initializeBtnEmbedMode();
 		initializeBtnSubpoint();
 		initializeBtnAddPoint(0);
 		initializeBtnAddPoint(1);
 		var idTextarea = $(".edit-state").find("textarea").attr("id");
 		$("#btnUpdateContent").attr("value", idTextarea);
+	}
+
+	function changeEmbedMode(concepts, index) {
+		var embedModes = getOtherEmbedModes(concepts, index);
+		if (embedModes[0].concepts) {
+			concepts = embedModes[0].concepts;
+		}
+		else
+			concepts[index] = embedModes[0].concept;
+		return concepts;
+	}
+
+	function cleanupEmbeddedDependents(concepts, index) {
+		var embeddedTypeOrig = concepts[index].embeddedType;
+		var fCleanup = embeddedTypeOrig != null;
+		if (!fCleanup)
+			return;
+		for (var i = index + 1; i < concepts.length; ++i) {
+			var nextConcept = concepts[i];
+			if (nextConcept.isHead)
+				break;
+			if (nextConcept.embeddedType == embeddedTypeOrig)
+				delete nextConcept.embeddedType;
+		}
+	}
+
+	function collectGroupings(concepts, imax) {
+		var groupings = [];
+		for (var i = 0; i < imax; i++) {
+			var nextConcept = concepts[i];
+			if (!nextConcept.embeddedType || !nextConcept.isHead || nextConcept.embeddedType != "panel")
+				continue;
+			// look ahead to see if we have a group.
+			var grouping = { indexHead : null, groupCount: 0};
+			var j = (i + 1);
+			for (; j < imax; j++) {
+				var groupConcept = concepts[j];
+				if (!groupConcept.embeddedType || groupConcept.isHead || groupConcept.embeddedType != "panel") {
+					break;
+				}
+			}
+			if (j > (i + 1)) {
+				var groupCount = j - i;
+				grouping.indexHead = i;
+				grouping.groupCount = groupCount;
+				groupings.push(grouping);
+			}
+		}
+		return groupings;
+	}
+
+	function addEmbedModesForMatchingPairs(conceptsPure, indexTarget, otherEmbedModes) {
+		var halfway = Math.round(conceptsPure.length / 2);
+		var fFirstConceptInPair = (indexTarget < halfway);
+		if (!fFirstConceptInPair) {
+			// look back at first half, and
+			// find the groupings that we might be able to create our own grouping to match with.
+			var groupings = collectGroupings(conceptsPure, halfway);
+			// for each grouping, see if we can create a matching grouping on the other half of the chiasm
+			for (var i = 0; i < groupings.length; i++) {
+				var grouping = groupings[i];
+				var matchingIndex = conceptsPure.length - grouping.indexHead - 1; // same distance from each end.
+				var indexHeadMatch = matchingIndex + 1 - grouping.groupCount;
+				if (indexHeadMatch < halfway)
+					continue;
+				if (indexHeadMatch != indexTarget)
+					continue;
+				/* a1, a2, b | b', a  => a1, a2, b | a1', a2' */
+				// now scan through the matching range and see if we can form a matching group
+				var fReadyForMatch = true;
+				for (var j = 0; j < grouping.groupCount ; j++) {
+					var indexMatching = indexHeadMatch + j;
+					var conceptMatching = conceptsPure[indexMatching];
+					if (conceptMatching.isHead || conceptMatching.embeddedType != null) {
+						fReadyForMatch = false;
+						break;
+					}
+				}
+				if (fReadyForMatch) {
+					var tryConcepts = clone(conceptsPure);
+					tryConcepts[indexTarget].isHead = true;
+					tryConcepts[indexTarget].embeddedType = "panel";
+					for (var j = 1; j < grouping.groupCount ; j++) {
+						var indexMatching = indexHeadMatch + j;
+						var conceptMatching = tryConcepts[indexMatching];
+						conceptMatching.embeddedType = "panel";
+					}
+					pushToEmbedModes(tryConcepts, indexTarget, otherEmbedModes);
+					// add concepts, since this mode affects other concepts
+					otherEmbedModes[otherEmbedModes.length - 1].concepts = tryConcepts;
+				}
+			}
+		}
+	}
+
+	function pushToEmbedModes(tryConcepts, index, embedModes) {
+		var dto = cons.createDtoFromConcepts("chiasm", tryConcepts);
+		label = cons.getLabel(dto, index);
+		embedModes.push({ concept: tryConcepts[index], label: label });
+	}
+
+	/* given the current embedMode (if any), return the most relavent other embedModes which the user could choose.
+	*/
+	function getOtherEmbedModes(concepts, index) {
+		var otherEmbedModes = [];
+		var concept = concepts[index];
+//		var positionList = new Array();
+//		getConceptPositions(positionList, -1, { concepts: clonedConcepts });
+		// look at current state and display the next logical option
+		if (!concept.embeddedType) {
+			addEmbedModesForMatchingPairs(concepts, index, otherEmbedModes);
+			
+			if (index != 0 && concepts[index - 1].embeddedType) {
+				// this is continuation, not a head
+				var tryConcepts = clone(concepts);
+				tryConcepts[index].embeddedType = "panel";
+				pushToEmbedModes(tryConcepts, index, otherEmbedModes);
+			}
+			// in any case, add head as an option (A1, B1, C1, etc...)
+			var tryConcepts2 = clone(concepts);
+			tryConcepts2[index].isHead = true;
+			tryConcepts2[index].embeddedType = "panel";
+			pushToEmbedModes(tryConcepts2, index, otherEmbedModes);			
+		}
+		else if (concept.embeddedType == "panel") {
+			var tryConcepts = clone(concepts);
+			cleanupEmbeddedDependents(tryConcepts, index);
+			delete tryConcepts[index].embeddedType;
+			delete tryConcepts[index].isHead;
+			pushToEmbedModes(tryConcepts, index, otherEmbedModes);
+			otherEmbedModes[otherEmbedModes.length - 1].concepts = tryConcepts; // other concepts affected
+		}
+		//if (fGhost) {
+		//	label.before = "(" + label.before;
+		//	label.after += ")";
+		//}		
+		return otherEmbedModes;
+	}
+
+	function initializeBtnEmbedModeOptions(embedModes) {
+		if (embedModes.length > 1) {
+			$("#btnEmbedModeOptions").text("(1/" + embedModes.length + ")");
+			$("#btnEmbedModeOptions").data("modes", embedModes);
+			$("#btnEmbedModeOptions").data("nextModeIndex", 0);
+			$("#btnEmbedModeOptions").attr("href", "#");
+			$("#btnEmbedModeOptions").off("click"); // make sure we don't install multiple times
+			$("#btnEmbedModeOptions").on("click", function (event) {
+				advanceEmbedModeOption();
+				false;
+			});
+			$("#btnEmbedModeOptions").show();
+		} else {
+			$("#btnEmbedModeOptions").hide();
+		}
+	}
+
+	function advanceEmbedModeOption() {
+		var modes = $("#btnEmbedModeOptions").data("modes");
+		if (modes == null)
+			return;
+		var indexMode = $("#btnEmbedModeOptions").data("nextModeIndex");
+		var indexNextMode = (indexMode + 1) < modes.length ? (indexMode + 1) : 0;
+		$("#btnEmbedModeOptions").text("(" + (indexNextMode + 1) + "/" + modes.length + ")");
+		$("#btnEmbedModeOptions").data("nextModeIndex", indexNextMode);
+		var nextMode = modes[indexNextMode];
+		$("#btnEmbedMode").text(nextMode.label.toString());
+		$("#btnEmbedMode").data("mode", nextMode);
+
+	}
+
+	function initializeBtnEmbedModeBasic() {
+		if ($("#btnEmbedMode").get(0) == undefined)
+			return;
+		var index = $('.edit-state').index();
+		var fGhost = $('.edit-state').hasClass("ghost");
+		var existingGhost = $('.edit-state').data("ghostConcept");
+		var clonedConcepts = cloneAndInsertGhostConcept(mainOutline.body.concepts, fGhost, index, existingGhost);
+		var embedModes = getOtherEmbedModes(clonedConcepts, index);
+		initializeBtnEmbedModeOptions(embedModes);
+		$("#btnEmbedMode").text(embedModes[0].label.toString());
+		$("#btnEmbedMode").data("mode", embedModes[0]);
+	}
+
+	function initializeBtnEmbedMode() {
+		if ($("#btnEmbedMode").get(0) == undefined)
+			return;
+		initializeBtnEmbedModeBasic();
+		$("#btnEmbedMode").attr("href", "#");
+		$("#btnEmbedMode").off("click"); // make sure we don't install multiple times
+		$("#btnEmbedMode").on("click", function (event) {
+			var index = $('.edit-state').index();
+			var selectedMode = $("#btnEmbedMode").data("mode"); // todo
+			var newConcepts = null;
+			var fGhost = $('.edit-state').hasClass("ghost");
+			if (!fGhost && selectedMode.concepts)
+				newConcepts = selectedMode.concepts;
+			else {
+				var existingGhost = $('.edit-state').data("ghostConcept");
+				var clonedConcepts = cloneAndInsertGhostConcept(mainOutline.body.concepts, fGhost, index, existingGhost);
+				clonedConcepts[index] = selectedMode.concept;
+				if (fGhost) {
+					$('.edit-state').data("ghostConcept", clonedConcepts[index]);
+					newConcepts = cloneAndRemoveGhostConcept(clonedConcepts, index);
+				}
+				else {
+					newConcepts = clonedConcepts;
+				}
+			}
+			mainOutline.body.concepts = newConcepts;
+			refreshAllLabels();
+			initializeBtnEmbedModeBasic();
+			return false;
+		});
+	}
+
+	function cloneAndInsertGhostConcept(concepts, fGhost, indexToIns, existingGhost) {
+		var clonedConcepts = clone(concepts);
+		if (fGhost) {
+			var newConcept = existingGhost ? existingGhost : { content: "" };
+			clonedConcepts.splice(indexToIns, 0, newConcept);
+		}
+		return clonedConcepts;
+	}
+
+	function cloneAndRemoveGhostConcept(concepts, indexToDel) {
+		var clonedConcepts = clone(concepts);
+		clonedConcepts.splice(indexToDel, 1);
+		return clonedConcepts;
 	}
 	
 	function createConcept(content)
@@ -673,6 +997,15 @@
 		var newConcept = jQuery.parseJSON( emptyConceptText );
 		newConcept.content = content;
 		return newConcept;
+	}
+
+	function transferEmbedModeProperties(ghostNode, concept) {
+		var ghostConcept = $(ghostNode).data("ghostConcept");
+		if (ghostConcept) {
+			concept.embeddedType = ghostConcept.embeddedType;
+			if (ghostConcept.isHead)
+				concept.isHead = true;
+		}
 	}
 	
 	function convertGhostToReal(ghostNode)
@@ -697,9 +1030,10 @@
 		}
 		conceptPosition.concepts.splice(indexRowEdit, 0, concept);
 		conceptPosition.concept = concept;
+		transferEmbedModeProperties(ghostNode, concept);		
 		//mainOutline.body.concepts[indexRowEdit].content = newContent;
 		$(ghostNode).removeClass('ghost');
-		var label = formatPositionIntoLabel(conceptPosition, ghostExists(positionList));
+		var label = formatPositionIntoLabel(conceptPosition, ghostExists());
 		applyLabelToConceptNode($(ghostNode), label);
 		publishConceptInsertionElsewhere(conceptPosition.concepts, indexRowEdit, mainOutline.head);
 	}
@@ -715,12 +1049,22 @@
 		++numConceptCreated;
 		$(nextRow).append('<label class="markerEditLabel" for="txtContent-' + numConceptCreated + '"></label>');
 		$(nextRow).append('<textarea id="txtContent-' + numConceptCreated + '" cols="40" rows="1"></textarea>');
+		$(nextRow).append(' <label><span class="lnkToEmbeddedOutline"></span></label>');
 		refreshAllLabels();
 		return nextRow;
 	}
 	
-	function insertConceptInView(indexInView, classesToAdd, fAsReadOnlyContent, content)
+	function insertConceptInView(indexInView, classesToAdd, fAsReadOnlyContent, concept)
 	{
+		var content = null;
+		var lnk = "";
+		if (concept) {
+			content = concept.content;
+			if (concept.embeddedOutlineId) {
+				lnk = "[" + createEmbedLink(concept.embeddedOutlineId) + "]";
+				lnk = '<label><span class="lnkToEmbeddedOutline"> ' + lnk + '</span></label>'
+			}
+		}
 		//alert("insertConceptInView" + indexInView + content);
 		$('#outline').insertAt(indexInView, "<div></div>");
 		var nextRow = $('#outline').children("div:eq(" + indexInView + ")");
@@ -737,15 +1081,16 @@
 		}
 		else
 			$(nextRow).append('<textarea id="txtContent-' + numConceptCreated + '" cols="40" rows="1"></textarea>');
+		$(nextRow).append(lnk);
 		refreshAllLabels();
 		return nextRow;
 	}
 	
 	function convertTextarea()
 	{
-		var idTextareaOld = $('.edit-state textarea').attr("id");
+		var idTextareaOld = $('.edit-state textarea').first().attr("id");
 		var content = $('#' + idTextareaOld).val();
-		$('.edit-state textarea').replaceWith('<span id="' + idTextareaOld + '">' + content + '</span>');
+		$('.edit-state textarea').first().replaceWith('<span id="' + idTextareaOld + '">' + content + '</span>');
 	}
 	
 	function convertIntoTextarea()

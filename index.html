@@ -7,7 +7,7 @@
 <META name="description" content="build your own chiasm with ease">
 <style type="text/css" title="currentStyle">
 			@import "css/dataTables_jui.css";
-			@import "css/smoothness/jquery-ui-1.8.4.custom.css";
+			@import "css/smoothness/jquery-ui-1.10.3.custom.min.css";
 </style>
 <link rel="stylesheet" href="css/chiasms.css" type="text/css"/>
 <link type="text/css" href="css/1.2.3.outliner.css" rel="stylesheet" />
@@ -15,9 +15,9 @@
 <meta name="keywords" content="chiasm, outline" />
 <meta http-equiv="Content-Script-Type" content="text/javascript"/>  				 
     	
-    	<script type="text/javascript" src="js/jquery.js"></script> 
+    	<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script> 
     	<script type="text/javascript" src="js/jquery.url.js"></script> 
-    	<script type="text/javascript" src="js/jquery-ui-1.8.1.custom.min.js"></script>
+    	<script type="text/javascript" src="js/jquery-ui-1.10.3.custom.min.js"></script>
     	<script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
 		<script type="text/javascript" src="js/fitToContent.js"></script>
 		<script type="text/javascript" src="js/jquery-extensions-utils.js"></script>
@@ -39,7 +39,12 @@
 	 	 <li><a href="#Cite"><span>Cite</span></a></li>
 	 </ul>
 	 <div id="kayak">
-	 	Welcome!
+    <form id="authForm" action="php/auth.php" method="post">
+      <input type="hidden" name="grant_type" value="urn:ibm:params:oauth:grant-type:apikey">
+      <label for="apikey">apikey:</label>
+      <input type="text" name="apikey" value="9oWxdf1ziOemoExsoafWbgKwNu77NPy1N7Zcsg2mr6MW"><br><br>
+      <input type="submit" value="Submit">
+    </form>
 	 </div>
 	 <div id="BrowseByBook">
 	
@@ -110,13 +115,13 @@
 						<td>
 							<select id="edit-outline-editControl">
 								<option value="chiasmABBA">A > B > A'</option>
-								<option value="chiasmAABB">A > A'> B</option>								
+								<!-- <option value="chiasmAABB">A > A'> B</option> -->
 								<option value="chiasmBulk">Bulk ABA'</option>
 							</select>
 						</td>
 					</tr>
 					<tr id="edit-outline-panelOptions-row" style="display:none;">
-						<td><input id="cbPanelHasHeaders" type="checkbox">Panel has headers (A. 1.)</input></td>
+						<td><input id="cbPanelHasHeaders" type="checkbox"/>Panel has headers (A. 1.)</td>
 					</tr>
 				</tbody>
 			</table>
@@ -139,7 +144,7 @@
 				<button id="btnBulkCancel" type="button">
 					Back to line editing
 				</button>
-				<input type="checkbox" id="stripCounting" checked="yes">Strip counting (A.B.C. or 1.2.3.)</input>
+				<input type="checkbox" id="stripCounting" checked="checked" />Strip counting (A.B.C. or 1.2.3.)
 				</div>
 				<div id="editChiasmBody">
 					<div class="chiasmEditItem">
@@ -373,15 +378,17 @@
 		<table id="outline-table" class="outline-table">
 		</table>
 	</div>
-	<input type="checkbox" id="itemHighlighting" checked="yes">Highlight matching parallel</input>
+	<!--	<input type="checkbox" id="itemHighlighting" checked="checked">Highlight matching parallel</input> -->
+	<input type="checkbox" id="showLinksToEmbeddedOutlines" checked="checked"/>Show [<a href="#" onclick="return false;">+</a>] links to embedded outlines
 </div>
 
 
-<!-- input type="checkbox" id="cbScriptureLinking" checked="yes">Scripture Linking</input -->
-<p style="font-size: medium;">Find an issue with kayak? Create a new issue <a href="https://github.com/ericpyle/kayak/issues">here</a> so it can get fixed.</p>
+<!-- input type="checkbox" id="cbScriptureLinking" checked="checked">Scripture Linking</input -->
+<p style="font-size: medium;">Find an issue with kayak? Click "Create issue" <a href="https://bitbucket.org/ericpyle/kayak/issues">here</a> so it can get fixed.</p>
 <!-- RefTagger from Logos. Visit http://www.logos.com/reftagger. This code should appear directly before the </body> tag. -->
 	<script type="text/javascript" src="js/jsonform.js"></script>
 	<script type="text/javascript" src="js/referencetagging.js"></script>
+	<script type="text/javascript" src="js/cons.js"></script>
 	<script type="text/javascript" src="js/kayak-common.js"></script>
 	<script type="text/javascript" src="js/kayak-views.js"></script>
 	<script type="text/javascript" src="js/kayak-outliner.js"></script>
@@ -420,22 +427,41 @@
 		initializeTable("sourceSearchResults", tableOptionsSortBySource, "btnSearchSources", "Source keywords");
 
 		var fInitCouchDbBegun = false;
-		try
-		{
-			axiosConfig = {
-				auth:  {
-					username: 'admin',
-					password: 'password'
-				}
-			};
-			//axiosConfig = null; // DEBUG: just run from local db.
-			InitializeDbStuff();
-			fInitCouchDbBegun = true;
-		}
-		catch(err)
-		{
-			axiosConfig = null;
-		}
+    var fInitCouchDbBegun = false;
+    // from https://stackoverflow.com/a/51730069
+    document.forms['authForm'].addEventListener('submit', (event) => {
+        event.preventDefault();
+        // TODO do something here to show user that form is being submitted
+        fetch(event.target.action, {
+            method: 'POST',
+            body: new URLSearchParams(new FormData(event.target)) // event.target is the form
+        }).then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json(); // or response.text() or whatever the server sends
+        }).then((body) => {
+          try
+          {
+            axiosConfig = {
+              headers: { Authorization: `Bearer ${body.access_token}` }
+            };
+            //axiosConfig = null; // DEBUG: just run from local db.
+            InitializeDbStuff();
+            fInitCouchDbBegun = true;
+          }
+          catch(err)
+          {
+            axiosConfig = null;
+          }
+        }).catch((error) => {
+          if (!fInitCouchDbBegun)
+          {
+            InitializeDbStuff();
+            InitializeAfterDbSetup();
+          }
+        });
+    });
 
 		mainOutline = createBlankOutline();
 		mainOutline.head.contentType = "chiasm";
@@ -446,15 +472,12 @@
 	    Logos.ReferenceTagging.lbsNoSearchTagNames = [  ];
 	    Logos.ReferenceTagging.lbsTargetSite = "biblia";
 
-		// DEBUG	    
-	    if (!fInitCouchDbBegun)
-	    {
-	    	InitializeDbStuff();
-	    	InitializeAfterDbSetup();
-	    }
-
 	});
 	
+	function obf(l) {
+	    return l[1] + l[2] + l[0]
+	}
+
 	var fInitialized = false;
 	function InitializeAfterDbSetup()
 	{

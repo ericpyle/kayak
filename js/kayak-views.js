@@ -2,6 +2,8 @@
  * @author Pyle
  */
 
+var c = cons; /* global import */
+
 function CombineTitleAuthorAndSource(outline)
 {
 	var combinedSource = fetchSourceProfile(outline._id + "_source");
@@ -23,18 +25,22 @@ function wrapInHyperlink(stuff, combinedSource) {
         return stuff;
     }
     var href = EmptyIfNull(combinedSource.outline.source.website).length > 0 ? combinedSource.outline.source.website : combinedSource.source.website;
-    href = encodeURI(href);
-    try
-    {
-        var url = $.url(href);
-        var protocol = EmptyIfNull(url.attr('protocol'));
-        if (protocol.length == 0)
-            protocol = "http://";
-        href = protocol + url.attr('host') + url.attr('path');
-    }
-    catch (err) {
-    }
+    href = buildFullHref(href);
     return "<a href='"+ href + "'>" + stuff + "</a>";
+}
+
+function buildFullHref(href) {
+	href = encodeURI(href);
+	try {
+		var url = $.url(href);
+		var protocol = EmptyIfNull(url.attr('protocol'));
+		if (protocol.length == 0)
+			protocol = "http://";
+		href = protocol + url.attr('host') + url.attr('path');
+	}
+	catch (err) {
+	}
+	return href;
 }
 
 function publishContentToSequentialPreviewTabs(conceptsNotUsed, iconcept, newContent, view, containerSelector)
@@ -55,27 +61,95 @@ function publishContentToPanelTablePreviewTab(conceptsNotUsed, iconcept, newCont
 
 function publishContentToChiasmTablePreviewTab(concepts, iconcept, newContent)
 {
-	publishContentToId(newContent, getViewConceptId("tableAAB", iconcept, concepts.length));
+	publishContentToId(newContent, getChiasmViewLevelId("tableAAB", iconcept, concepts));
 }
 
-/*
- * NOTE: For Chiasm only. TODO: Rename.
- * preceded with "-level-A-[1/2]"
- */
-function getBasicViewConceptId(indexABA, count)
-{
-	var conceptMarker = IndexToAsciiMarkerABA(indexABA, count);
-	var halfway = Math.round(count/2);
-	var basicViewConceptId = "-level-" + conceptMarker + "-" + (indexABA < halfway ? 1 : 2);
+
+function getChiasmLevelFrag(indexABA, concepts) {
+	var dto = cons.createDtoFromConcepts("chiasm", concepts);
+	var conceptMarker = cons.getLabel(dto, indexABA).num;
+	//var isHalfway = Math.round(indexABA/2);
+	var basicViewConceptId = "-level-" + conceptMarker;
 	return basicViewConceptId;
 }
 
 /*
- * NOTE: For Chiasm only. TODO: Rename.
+ * preceded with "-level-A-[1/2]"
  */
-function getViewConceptId(view, indexABA, count)
+function getChiasmIdLevelFrag(indexABA, concepts)
 {
-	return view + getBasicViewConceptId(indexABA, count);
+	var halfway = Math.round(concepts.length/2);
+	var basicViewConceptId = getChiasmLevelFrag(indexABA, concepts) + "-" + (indexABA < halfway ? 1 : 2);
+	return basicViewConceptId;
+}
+
+/*
+ */
+function getChiasmViewLevelId(view, indexABA, concepts)
+{
+	return view + getChiasmIdLevelFrag(indexABA, concepts);
+}
+
+
+function generateChiasmlIndent(concepts) {
+
+}
+
+function generateChiasmConceptHtml(concepts, newIndex, view, options) {
+	var result = {};
+	if (concepts == null || concepts.length == 0)
+		return result;
+	// 0 -> 0
+	// 1 -> 1
+	// 2 -> 1
+	// 3 -> 2
+	// 4 -> 2
+	// 5 -> 3
+	// 6 -> 3
+	var conceptsCount = concepts.length;
+	var newConcept = concepts[newIndex];
+
+	var dto = cons.createDtoFromConcepts("chiasm", concepts);
+	var label = cons.getLabel(dto, newIndex);
+	var halfway = Math.round(conceptsCount / 2)
+	var fIndentMode = (options ? options.layoutMode == "indent": false);
+
+	result["conceptStyle"] = "." + view + getChiasmLevelFrag(newIndex, concepts);
+	result["conceptStyleDefinition"] = "<style type='text/css'> " + result.conceptStyle + " {} </style>";
+
+	var conceptClass = view + getChiasmLevelFrag(newIndex, concepts);
+	var conceptId = getChiasmViewLevelId(view, newIndex, concepts);
+	var conceptMarker = "<span class='itemMarker'>" + label + "</span>";
+	var embeddedOutlineLink = "";
+	if (newConcept.embeddedOutlineId) {
+		var dbId = newConcept.embeddedOutlineId;
+		embeddedOutlineLink = "<label><span class='lnkToEmbeddedOutline'> [<a href='#/" + dbId + "' target='_blank'>+</a>]</span></label>";
+	}
+	else {
+		embeddedOutlineLink = "";
+	}
+
+	var spaces = "";
+	if (options && options.leadSpaces && options.leadSpaces.length > 0)
+		spaces += options.leadSpaces;
+	if (/*CompatibilityMode && */ fIndentMode)
+		spaces += convertLabelToSpaces(label);
+	idAttribute = "";
+	if (!options || options.includeId)
+		idAttribute = " id='" + conceptId + "'";
+	var conceptHtml = "<div class='" + conceptClass + "'" + idAttribute + ">" +
+		spaces + conceptMarker + "<span class='conceptContent'>" + newConcept.content + "</span>" + embeddedOutlineLink + "</div>";
+	result["conceptHtml"] = conceptHtml;
+	return result;
+}
+
+function convertLabelToSpaces(label) {
+	var level = cons.convertLabelToLevel(label);
+	var spaces = "";
+	for (var i = 0; i < level; i++) {
+		spaces += "&nbsp;&nbsp;&nbsp;&nbsp;"
+	};
+	return spaces;
 }
 
 function publishContentToId(newContent, id)
@@ -131,17 +205,17 @@ function getLabelForPanelIndex(outline, iconcept)
 	return indexForLabel;
 }
 
-function generatePanelIndent(outline)
+function generatePanelIndent(outline, options)
 {
-	return generatePanelVertical(outline, "&nbsp;&nbsp;&nbsp;&nbsp;", "indent");
+	return generatePanelVertical(outline, "&nbsp;&nbsp;&nbsp;&nbsp;", "indent", options);
 }
 
-function generatePanelFlat(outline)
+function generatePanelFlat(outline, options)
 {
-	return generatePanelVertical(outline, "", "flat");
+	return generatePanelVertical(outline, "", "flat", options);
 }
 
-function generatePanelVertical(outline, spacing, view)
+function generatePanelVertical(outline, spacing, view, options)
 {
 	var panelOutput = {};
 	if (outline.head.contentType != "panel" || outline.body.concepts.length == 0)
@@ -151,13 +225,17 @@ function generatePanelVertical(outline, spacing, view)
 	var repeated = 0;
 	var indentStyles = [];
 	var html = "";
-	var indentSpacing = "";
-	for (var i=0; i < concepts.length; i++) {
+	var leadSpaces = "";
+	if (options && options.leadSpaces && options.leadSpaces.length > 0)
+		leadSpaces += options.leadSpaces;
+	var indentSpacing = leadSpaces;
+	for (var i = 0; i < concepts.length; i++) {
+		var concept = concepts[i];
 		var indentStyleNum = getIndentStyleNum(outline, i);
 		if (indentStyleNum > 1)
 			indentSpacing += spacing;
 		else if (indentStyleNum == 1)
-			indentSpacing = "";
+			indentSpacing = leadSpaces;
 		var indexForLabel = getLabelForPanelIndex(outline, i);
 		var classIndent = view + "-panel-level-" + indentStyleNum;
 		// lookup to see if we've already added this
@@ -165,10 +243,19 @@ function generatePanelVertical(outline, spacing, view)
 		if(!doTestAndDoSomething(indentStyles, function (item) { return item == ("." + classIndent); }))
 		{
 			indentStyles.push("." + classIndent);
-		}		
-		var id = view + "-panel-concept-" + i;
-		html += "<div id='"+ id +"' class='"+ classIndent + (contentParams.header && indentStyleNum == 1 ? " panel-header" : "") + "'>" + 
-			indentSpacing + "<span class='itemMarker'>"+ indexForLabel +". </span><span class='conceptContent'>"+ concepts[i].content +"</span></div>";
+		}
+		var lnk = "";
+		if (concept.embeddedOutlineId) {
+			lnk = "[" + createEmbedLink(concept.embeddedOutlineId) + "]";
+			lnk = "<label><span class='lnkToEmbeddedOutline'> "+ lnk +"</span></label>"
+		}
+		idAttribute = "";
+		if (!options || options.includeId) {
+			var id = view + "-panel-concept-" + i;
+			idAttribute = " id='" + id + "'";
+		}
+		html += "<div" + idAttribute + " class='" + classIndent + (contentParams.header && indentStyleNum == 1 ? " panel-header" : "") + "'>" +
+			indentSpacing + "<span class='itemMarker'>" + indexForLabel + ". </span><span class='conceptContent'>" + concepts[i].content + "</span>"+ lnk +"</div>";
 	};
 	panelOutput["indentStyles"] = indentStyles;
 	panelOutput["html"] = html;
@@ -176,7 +263,7 @@ function generatePanelVertical(outline, spacing, view)
 	 *   
 	 var expected = {
 		  	"indentStyles": [".panel-indent-level-1"],
-		  	"html" :   "<div class='panel-indent-level-1'><span class='itemMarker'>1</span><span class='conceptContent'>one line</span></div>"
+		  	"html" :   "<div class='panel-indent-level-1'><span class='itemMarker'>1</span><span class='conceptContent'>one line</span> <label><span class='lnkToEmbeddedOutline'></span></label></div>"
 		  };
 	 */
 	return panelOutput;
@@ -269,7 +356,7 @@ function generatePanelTable(outline, view)
 }
 
 
-function generateHierarchicalFlat(outline)
+function generateHierarchicalFlat(outline, options)
 {
 	var response = {};
 	if (outline.head.contentType != "outline" || outline.body.concepts.length == 0)
@@ -282,7 +369,13 @@ function generateHierarchicalFlat(outline)
 		var positionObj = positionList[i];
 		var label = formatPositionIntoLabel_123(positionObj); //, ghostExists(positionList));
 		
-		html += "<div><span class='itemMarker'>"+ label +" </span><span class='conceptContent'>"+ positionObj.concept.content +"</span></div>";
+		var lnk = "";
+		if (positionObj.concept.embeddedOutlineId) {
+			lnk = "[" + createEmbedLink(positionObj.concept.embeddedOutlineId) + "]";
+			lnk = "<label><span class='lnkToEmbeddedOutline'> "+lnk+"</span></label>"
+		}
+		var leadSpaces = options ? EmptyIfNull(options.leadSpaces) : "";
+		html += "<div>"+ leadSpaces +"<span class='itemMarker'>"+ label +" </span><span class='conceptContent'>"+ positionObj.concept.content +"</span>"+ lnk +"</div>";
 	}
 	response["html"] = html;
 	return response;
