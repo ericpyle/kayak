@@ -20839,51 +20839,51 @@
       }
     },
     {
-			"_id": "kyk:2022-11-15T01:47:26.187Z:ol",
-				"head": {
-					"contentType": "chiasm",
-					"title": "Yahweh's amazing love",
-					"ScriptureRange": "Psalm 103:1-2",
-					"submissionTimestamp": [
-						2022,
-						11,
-						15,
-						"01:47:26.187Z"
-					],
-					"author": {
-						"guid": "kyk:2013-07-03T13:37:34.266Z:ps",
-						"authorShortname": "bneumann"
-					},
-					"submittedBy": {
-						"guid": "kyk:2013-07-03T13:37:34.266Z:ps"
-					},
-					"source": {
-						"details": "",
-						"website": "",
-						"guid": "kyk:1845-12-23T03:22:15.481Z:sr"
-					},
-					"modifiedTimestamp": [
-						2022,
-						11,
-						15,
-						"01:53:09.862Z"
-					]
-				},
-				"body": {
-					"concepts": [
-						{
-							"content": "Bless Yahweh, O my soul! (1a)"
-						},
-						{
-							"content": "And all that is within me, bless his holy name! (1b)"
-						},
-						{
-							"content": "Bless Yahweh, O my soul! (2a)"
-						}
-					]
-				}
-		},
-		{
+      "_id": "kyk:2022-11-15T01:47:26.187Z:ol",
+      "head": {
+        "contentType": "chiasm",
+        "title": "Yahweh's amazing love",
+        "ScriptureRange": "Psalm 103:1-2",
+        "submissionTimestamp": [
+          2022,
+          11,
+          15,
+          "01:47:26.187Z"
+        ],
+        "author": {
+          "guid": "kyk:2013-07-03T13:37:34.266Z:ps",
+          "authorShortname": "bneumann"
+        },
+        "submittedBy": {
+          "guid": "kyk:2013-07-03T13:37:34.266Z:ps"
+        },
+        "source": {
+          "details": "",
+          "website": "",
+          "guid": "kyk:1845-12-23T03:22:15.481Z:sr"
+        },
+        "modifiedTimestamp": [
+          2022,
+          11,
+          15,
+          "01:53:09.862Z"
+        ]
+      },
+      "body": {
+        "concepts": [
+          {
+            "content": "Bless Yahweh, O my soul! (1a)"
+          },
+          {
+            "content": "And all that is within me, bless his holy name! (1b)"
+          },
+          {
+            "content": "Bless Yahweh, O my soul! (2a)"
+          }
+        ]
+      }
+    },
+    {
       "_id": "kyk:2022-11-15T01:48:53.648Z:ol",
       "head": {
         "contentType": "chiasm",
@@ -20917,8 +20917,8 @@
       "body": {
         "concepts": []
       }
-		},
-		{
+    },
+    {
       "_id": "kyk:2022-11-15T01:58:40.225Z:ol",
       "head": {
         "contentType": "chiasm",
@@ -20974,7 +20974,7 @@
           }
         ]
       }
-		},
+    },
     {
       "_id": "sample-record",
       "hello": "world"
