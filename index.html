@@ -6,23 +6,23 @@
 <META name="author" content="Eric Pyle">
 <META name="description" content="build your own chiasm with ease">
 <style type="text/css" title="currentStyle">
-			@import "css/dataTables_jui.css";
-			@import "css/smoothness/jquery-ui-1.10.3.custom.min.css";
+            @import "css/dataTables_jui.css";
+            @import "css/smoothness/jquery-ui-1.10.3.custom.min.css";
 </style>
 <link rel="stylesheet" href="css/chiasms.css" type="text/css"/>
 <link type="text/css" href="css/1.2.3.outliner.css" rel="stylesheet" />
 <link type="text/css" href="css/ReferenceTagging.css" rel="stylesheet" />
 <meta name="keywords" content="chiasm, outline" />
 <meta http-equiv="Content-Script-Type" content="text/javascript"/>  				 
-    	
-    	<script type="text/javascript" src="js/jquery-1.10.2.min.js"></script> 
-    	<script type="text/javascript" src="js/jquery.url.js"></script> 
-    	<script type="text/javascript" src="js/jquery-ui-1.10.3.custom.min.js"></script>
-    	<script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
-		<script type="text/javascript" src="js/fitToContent.js"></script>
-		<script type="text/javascript" src="js/jquery-extensions-utils.js"></script>
-		<script type="text/javascript" src="js/axios.min.js"></script>
-		<title>kayak - sharing outlines of scripture</title>
+        
+        <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script> 
+        <script type="text/javascript" src="js/jquery.url.js"></script> 
+        <script type="text/javascript" src="js/jquery-ui-1.10.3.custom.min.js"></script>
+        <script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="js/fitToContent.js"></script>
+        <script type="text/javascript" src="js/jquery-extensions-utils.js"></script>
+        <script type="text/javascript" src="js/axios.min.js"></script>
+        <title>kayak - sharing outlines of scripture</title>
 </head>
 <body>
 <b id="tmpKayak" class="loading" style="font-family: Verdana,Arial,sans-serif; font-size: 1.1em;">kayak</b>
@@ -30,466 +30,506 @@
 <!-- <asp:TextBox ID="TextBox1" runat="server" onkeyup="FitToContent('TextBox1','','100')"
             Height="100" Width="400" TextMode="MultiLine" style="overflow: hidden"></asp:TextBox> -->
 <div id="tabsMain" class="tabs" style="display:none;">
-	 <ul>	 	 
-	 	 <li><a href="#kayak"><span><b>kayak</b></span></a></li>
-	 	 <li><a href="#BrowseByBook"><span>Browse</span></a></li>
-		 <li><a href="#Examples"><span>Search</span></a></li>
-		 <li><a href="#View"><span>View</span></a></li>
-	 	 <li><a href="#EditView"><span>Edit</span></a></li>
-	 	 <li><a href="#Cite"><span>Cite</span></a></li>
-	 </ul>
-	 <div id="kayak">
+     <ul>	 	 
+          <li><a href="#kayak"><span><b>kayak</b></span></a></li>
+          <li><a href="#BrowseByBook"><span>Browse</span></a></li>
+         <li><a href="#Examples"><span>Search</span></a></li>
+         <li><a href="#View"><span>View</span></a></li>
+          <li><a href="#EditView"><span>Edit</span></a></li>
+          <li><a href="#Cite"><span>Cite</span></a></li>
+     </ul>
+     <div id="kayak">
     <form id="authForm" action="php/auth.php" method="post">
       <input type="hidden" name="grant_type" value="urn:ibm:params:oauth:grant-type:apikey">
       <label for="apikey">apikey:</label>
       <input type="text" name="apikey" value="9oWxdf1ziOemoExsoafWbgKwNu77NPy1N7Zcsg2mr6MW"><br><br>
       <input type="submit" value="Submit">
     </form>
-	 </div>
-	 <div id="BrowseByBook">
-	
-	<script type="text/javascript" src="js/BibleBookInfo.js"></script>
-	<script type="text/javascript" src="js/kayak-browseView.js"></script>
-		
-	 </div>
-	 <div id="Examples">
-		<table id="exampleTable" cols="6" width="100%">
-		<thead>
-			<tr><th>Range/Type</th><th>Title</th><th>Author</th>
-				<th>Source</th><th>Submitted</th><th>Submitted By</th></tr>				
-		</thead>
+     </div>
+     <div id="BrowseByBook">
+    
+    <script type="text/javascript" src="js/BibleBookInfo.js"></script>
+    <script type="text/javascript" src="js/kayak-browseView.js"></script>
+        
+     </div>
+     <div id="Examples">
+        <table id="exampleTable" cols="6" width="100%">
+        <thead>
+            <tr><th>Range/Type</th><th>Title</th><th>Author</th>
+                <th>Source</th><th>Submitted</th><th>Submitted By</th></tr>				
+        </thead>
 
-		<tbody id="exampleTableBody">
-			<!-- Load from Couchdb
-			<tr id="example-Mat-JBJ" class="exampleRow">
-				<td>chiasm</td>
-				<td>Matthew 1:1-28:20</td>
-				<td>James B. Jordan</td>
-				<td><a href="http://www.biblicalhorizons.com/biblical-horizons/no-94-toward-a-chiastic-understanding-of-the-gospel-according-to-matthew-part-1/">Biblical Horizons #94, Apr 2007</a></td>
-				<td>6-6-2011</td>
-				<td>Eric Pyle</td>
-			</tr> -->
-		</tbody>
-		<tfoot>
-			<tr><td colspan="6"><a id="btnCreateNewOutline" href="#"><b>Create new outline</b></a></td></tr>
-		</tfoot>
-		</table>
-	</div>
-	<div id="View" style="padding: 0em 0em;"> <!-- padding: 1em 1.4em; -->
-	</div>					 
-	<div id="EditView">
-		<div id="editChiasm" action="">
-			<table id="" cols="2">
-				<thead></thead>
-				<tbody id="editChiasmHead">
-					<tr>
-						<td><span class="markerEditLabel">Scripture Range</span></td>
-						<td><textarea id="edit-chiasm-scriptureRange" cols="40" rows="1"></textarea></td>						
-					</tr>
-					<tr>
-						<td><span class="markerEditLabel">Title</span></td>
-						<td><textarea id="edit-title-chiasm" cols="60" rows="1"></textarea></td>						
-					</tr>
-					<tr>
-						<td><label for="edit-outline-contentType" class="markerEditLabel">Outline Type</label></td>
-						<td>
-							<select id="edit-outline-contentType" size="3">
-								<option value="modeChiasm">chiasm</option>
-								<option value="modePanel">panel</option>
-							    <option value="modeHierarchical">hierarchical</option>
-							</select>
-						</td>
-					</tr>					
-				</tbody>
-				<tfoot>
-					<tr><td colspan="2"><button id="btnApplyHead_Edit" type="button">Enter</button> 
-						<a id="btnNewOutline_Edit" href="#">Create new outline</a> |
-						<a id="btnBulkEditOutline" href="#">Bulk Edit</a> 			
-						(Auto labeling: <a id="chiasmAutoLabelingOn" class="autoLabelingState" href="#">on</a> | <a id="chiasmAutoLabelingOff" href="#">off</a>)</td></tr>
-				</tfoot>
-			</table>
-			<table>
-				<tbody>
-					<tr id="edit-outline-editControl-row">
-						<td><label for="edit-outline-editControl" class="markerEditLabel">Edit Style</label></td>
-						<td>
-							<select id="edit-outline-editControl">
-								<option value="chiasmABBA">A > B > A'</option>
-								<!-- <option value="chiasmAABB">A > A'> B</option> -->
-								<option value="chiasmBulk">Bulk ABA'</option>
-							</select>
-						</td>
-					</tr>
-					<tr id="edit-outline-panelOptions-row" style="display:none;">
-						<td><input id="cbPanelHasHeaders" type="checkbox"/>Panel has headers (A. 1.)</td>
-					</tr>
-				</tbody>
-			</table>
-			<div id="outlineContainer">
-				<div id="outline">
-				</div>
-			</div>
-			<div id="controlCollection" style="display:none;">
-				<div id="bulkEditABA">
-				<b>Type</b>, or Copy and Paste chiasm below
-				<!-- <button id="btnLoadFromEditView" type="button" onclick="loadCurrentChiasmIntoTextBox('tbImport')">
-					Current Chiasm
-				</button> -->
-				<br/>
-				<textarea id="tbImport" rows="10" Cols="60"></textarea>
-				<br/>
-				<button id="btnSplit" type="button" onclick="importFromTextBoxToCurrentChiasm('tbImport')">
-					Enter
-				</button>
-				<button id="btnBulkCancel" type="button">
-					Back to line editing
-				</button>
-				<input type="checkbox" id="stripCounting" checked="checked" />Strip counting (A.B.C. or 1.2.3.)
-				</div>
-				<div id="editChiasmBody">
-					<div class="chiasmEditItem">
-					<label for="edit-level-A-1" class="markerEditLabel">A. </label>
-					<textarea id="edit-level-A-1" cols="40" rows="1"></textarea>
-					</div>
-				</div>
-				<!--
-				<div id="outline">
-				</div>
-				-->
-			</div>
-			<button id="btnPublishOutline_Edit" type="button">Publish Outline</button>
-		</div>	
-	</div>
-	<div id="Cite">
-			<table id="" cols="2">
-			<thead></thead>
-			<tbody>
-				<tr>
-					<td><span class="markerEditLabel">Scripture Range</span></td>
-					<td><span id="save-outline-scriptureRange"></span></td>
-				</tr>
-				<tr>
-					<td><span class="markerEditLabel">Title</span></td>
-					<td><span id="save-outline-title"></span></td>						
-				</tr>
-			</tbody>
-			</table>
-		<table id="save-outline-credits" style="background:#B9C9FE; padding: 8px;" cols="2">
-				<thead>
-					<tr><td colspan="3" style="background:#AABCFE;"><i>Citation Information</i></td></tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td><b>Author</b></td>
-						<td><a href='#'><span id="save-outline-author">Click to search/specify</span></a></td>
-					</tr>
-					<tr>
-						<td><b>Source</b></td>
-						<td><a href='#'><span id="save-outline-source">Click to search/specify</span></a></td>
-					</tr>
-					<tr>
-						<td><b>Submitter</b></td>
-						<td><a href='#'><span id="save-outline-submitter">Click to search/specify</span></a></td>
-					</tr>
-					<tr><td></td><td><input id="submitterIsAuthor" type="checkbox"/><label>I am the author</label>	</td></tr>
-				</tbody>
-				<tfoot>
-					<!-- <tr><td colspan="2" style="color: darkred;">NOTE: For evaluation purposes only. <br/>(Saves will be lost when page is reloaded.)</td></tr>
-					--> <tr><td><button id="btnApplyCitation_Cite" type="button">Enter</button></td><td><button id="btnPublishOutline" type="button">Publish to Outline</button></td></tr>
-							<!-- <button type="button">Save As Draft</button> -->
-				</tfoot>
-		</table>
-				
+        <tbody id="exampleTableBody">
+            <!-- Load from Couchdb
+            <tr id="example-Mat-JBJ" class="exampleRow">
+                <td>chiasm</td>
+                <td>Matthew 1:1-28:20</td>
+                <td>James B. Jordan</td>
+                <td><a href="http://www.biblicalhorizons.com/biblical-horizons/no-94-toward-a-chiastic-understanding-of-the-gospel-according-to-matthew-part-1/">Biblical Horizons #94, Apr 2007</a></td>
+                <td>6-6-2011</td>
+                <td>Eric Pyle</td>
+            </tr> -->
+        </tbody>
+        <tfoot>
+            <tr><td colspan="6"><a id="btnCreateNewOutline" href="#"><b>Create new outline</b></a></td></tr>
+        </tfoot>
+        </table>
+    </div>
+    <div id="View" style="padding: 0em 0em;"> <!-- padding: 1em 1.4em; -->
+    </div>					 
+    <div id="EditView">
+        <div id="editChiasm" action="">
+            <table id="" cols="2">
+                <thead></thead>
+                <tbody id="editChiasmHead">
+                    <tr>
+                        <td><span class="markerEditLabel">Scripture Range</span></td>
+                        <td><textarea id="edit-chiasm-scriptureRange" cols="40" rows="1"></textarea></td>						
+                    </tr>
+                    <tr>
+                        <td><span class="markerEditLabel">Title</span></td>
+                        <td><textarea id="edit-title-chiasm" cols="60" rows="1"></textarea></td>						
+                    </tr>
+                    <tr>
+                        <td><label for="edit-outline-contentType" class="markerEditLabel">Outline Type</label></td>
+                        <td>
+                            <select id="edit-outline-contentType" size="3">
+                                <option value="modeChiasm">chiasm</option>
+                                <option value="modePanel">panel</option>
+                                <option value="modeHierarchical">hierarchical</option>
+                            </select>
+                        </td>
+                    </tr>					
+                </tbody>
+                <tfoot>
+                    <tr><td colspan="2"><button id="btnApplyHead_Edit" type="button">Enter</button> 
+                        <a id="btnNewOutline_Edit" href="#">Create new outline</a> |
+                        <a id="btnBulkEditOutline" href="#">Bulk Edit</a> 			
+                        (Auto labeling: <a id="chiasmAutoLabelingOn" class="autoLabelingState" href="#">on</a> | <a id="chiasmAutoLabelingOff" href="#">off</a>)</td></tr>
+                </tfoot>
+            </table>
+            <table>
+                <tbody>
+                    <tr id="edit-outline-editControl-row">
+                        <td><label for="edit-outline-editControl" class="markerEditLabel">Edit Style</label></td>
+                        <td>
+                            <select id="edit-outline-editControl">
+                                <option value="chiasmABBA">A > B > A'</option>
+                                <!-- <option value="chiasmAABB">A > A'> B</option> -->
+                                <option value="chiasmBulk">Bulk ABA'</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr id="edit-outline-panelOptions-row" style="display:none;">
+                        <td><input id="cbPanelHasHeaders" type="checkbox"/>Panel has headers (A. 1.)</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div id="outlineContainer">
+                <div id="outline">
+                </div>
+            </div>
+            <div id="controlCollection" style="display:none;">
+                <div id="bulkEditABA">
+                <b>Type</b>, or Copy and Paste chiasm below
+                <!-- <button id="btnLoadFromEditView" type="button" onclick="loadCurrentChiasmIntoTextBox('tbImport')">
+                    Current Chiasm
+                </button> -->
+                <br/>
+                <textarea id="tbImport" rows="10" Cols="60"></textarea>
+                <br/>
+                <button id="btnSplit" type="button" onclick="importFromTextBoxToCurrentChiasm('tbImport')">
+                    Enter
+                </button>
+                <button id="btnBulkCancel" type="button">
+                    Back to line editing
+                </button>
+                <input type="checkbox" id="stripCounting" checked="checked" />Strip counting (A.B.C. or 1.2.3.)
+                </div>
+                <div id="editChiasmBody">
+                    <div class="chiasmEditItem">
+                    <label for="edit-level-A-1" class="markerEditLabel">A. </label>
+                    <textarea id="edit-level-A-1" cols="40" rows="1"></textarea>
+                    </div>
+                </div>
+                <!--
+                <div id="outline">
+                </div>
+                -->
+            </div>
+            <button id="btnPublishOutline_Edit" type="button">Publish Outline</button>
+        </div>	
+    </div>
+    <div id="Cite">
+            <table id="" cols="2">
+            <thead></thead>
+            <tbody>
+                <tr>
+                    <td><span class="markerEditLabel">Scripture Range</span></td>
+                    <td><span id="save-outline-scriptureRange"></span></td>
+                </tr>
+                <tr>
+                    <td><span class="markerEditLabel">Title</span></td>
+                    <td><span id="save-outline-title"></span></td>						
+                </tr>
+            </tbody>
+            </table>
+        <table id="save-outline-credits" style="background:#B9C9FE; padding: 8px;" cols="2">
+                <thead>
+                    <tr><td colspan="3" style="background:#AABCFE;"><i>Citation Information</i></td></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><b>Author</b></td>
+                        <td><a href='#'><span id="save-outline-author">Click to search/specify</span></a></td>
+                    </tr>
+                    <tr>
+                        <td><b>Source</b></td>
+                        <td><a href='#'><span id="save-outline-source">Click to search/specify</span></a></td>
+                    </tr>
+                    <tr>
+                        <td><b>Submitter</b></td>
+                        <td><a href='#'><span id="save-outline-submitter">Click to search/specify</span></a></td>
+                    </tr>
+                    <tr><td></td><td><input id="submitterIsAuthor" type="checkbox"/><label>I am the author</label>	</td></tr>
+                </tbody>
+                <tfoot>
+                    <!-- <tr><td colspan="2" style="color: darkred;">NOTE: For evaluation purposes only. <br/>(Saves will be lost when page is reloaded.)</td></tr>
+                    --> <tr><td><button id="btnApplyCitation_Cite" type="button">Enter</button></td><td><button id="btnPublishOutline" type="button">Publish to Outline</button></td></tr>
+                            <!-- <button type="button">Save As Draft</button> -->
+                </tfoot>
+        </table>
+                
 
-		<div id="authorSpecification" style="display: none;">
-			<b>Author</b>
-			<p>
-				<table id="authorResults" class="personSearchResults" width="100%">
-					<thead><tr><td colspan="5" class="personName">Name</td><td colspan="2">Most Associated With</td></tr>
-						<tr>
-							<td class="personName">Title</td>
-							<td class="personName">First</td>
-							<td class="personName">MI</td>
-							<td class="personName">Last</td>
-							<td class="personName">Suffix</td>
-							
-							<td>Name/Website</td>
-							<td>Credits</td></tr>
-					</thead>
-					<tbody></tbody>				
-					<tfoot><tr><td colspan="7"><a id="btnCreateNewAuthor" href="#"><b>Specify author</b></a></td></tr>
-						<tr><td colspan="7"><button id="btnAuthorOk" type="button">OK</button> <button id="btnAuthorCancel" type="button">Cancel</button></td></tr>
-					</tfoot>
-				</table>
-			</p>
-		</div>
-		<div id="submitterSpecification" style="display: none;">
-			<b>Submitter</b>
-			<p>
-				<table id="submitterProfileResults" class="personSearchResults" width="100%">
-					<thead><tr><td colspan="5" class="personName">Name</td><td colspan="2">Most Associated With</td></tr>
-						<tr>
-							<td class="personName">Title</td>
-							<td class="personName">First</td>
-							<td class="personName">MI</td>
-							<td class="personName">Last</td>
-							<td class="personName">Suffix</td>
-							
-							<td>Name/Website</td>
-							<td>Submissions</td>
-							</tr>
-					</thead>
-					<tbody></tbody>				
-					<tfoot><tr><td colspan="7"><a id="btnCreateNewSubmitter" href="#"><b>Specify submitter</b></a></td></tr>
-						<tr><td colspan="7"><button id="btnSubmitterOk" type="button">OK</button> <button id="btnSubmitterCancel" type="button">Cancel</button></td></tr>
-					</tfoot>
-				</table>
-			</p>
-		</div>
-		<form action="#" onsubmit="return false;" name="updatePersonProfile" style="display:none;">
-		<div id="personDetailBlock" style="display:none;">
-			<h4>Person Name</h4>
-			<label>Title</label>
-			<select name="name.title">
-				<option>(Title)</option>
-				<option>Dr.</option>
-				<option>Prof.</option>
-				<option>Rev.</option>
-				<option>Pastor</option>
-			</select><br/>
-			<input type="hidden" name="_id"></input>
-			<input type="hidden" name="_rev"></input>
-			<label>*First*</label>
-			<input type="text" name="name.first" placeholder="First name" ></input><br/>
-			<label>Middle</label>
-			<input type="text" name="name.middle" placeholder="Middle name or initial"></input><br/>
-			<label>*Last*</label>
-			<input type="text" name="name.last"  placeholder="Last name"></input><br/>
-			<label>Suffix</label>
-			<input type="text" name="name.suffix" placeholder="Suffix (Jr, II, etc.)"></input><br/>
-			<h4>Most Associated With</h4>
-			<label>Name</label>
-			<input type="text" name="organization.name" placeholder="Publication/church..."></input><br/>
-			<label>http://</label>
-			<input type="text" name="organization.website" placeholder="Website url"></input>
-			<p>
-			<button id="btnSubmitPersonProfile" type="submit">Update Profile</button>
-			<button id="btnCancelSubmitAuthor" type="reset">Cancel</button>
-			</p>
-		</div>
-		</form>
+        <div id="authorSpecification" style="display: none;">
+            <b>Author</b>
+            <p>
+                <table id="authorResults" class="personSearchResults" width="100%">
+                    <thead><tr><td colspan="5" class="personName">Name</td><td colspan="2">Most Associated With</td></tr>
+                        <tr>
+                            <td class="personName">Title</td>
+                            <td class="personName">First</td>
+                            <td class="personName">MI</td>
+                            <td class="personName">Last</td>
+                            <td class="personName">Suffix</td>
+                            
+                            <td>Name/Website</td>
+                            <td>Credits</td></tr>
+                    </thead>
+                    <tbody></tbody>				
+                    <tfoot><tr><td colspan="7"><a id="btnCreateNewAuthor" href="#"><b>Specify author</b></a></td></tr>
+                        <tr><td colspan="7"><button id="btnAuthorOk" type="button">OK</button> <button id="btnAuthorCancel" type="button">Cancel</button></td></tr>
+                    </tfoot>
+                </table>
+            </p>
+        </div>
+        <div id="submitterSpecification" style="display: none;">
+            <b>Submitter</b>
+            <p>
+                <table id="submitterProfileResults" class="personSearchResults" width="100%">
+                    <thead><tr><td colspan="5" class="personName">Name</td><td colspan="2">Most Associated With</td></tr>
+                        <tr>
+                            <td class="personName">Title</td>
+                            <td class="personName">First</td>
+                            <td class="personName">MI</td>
+                            <td class="personName">Last</td>
+                            <td class="personName">Suffix</td>
+                            
+                            <td>Name/Website</td>
+                            <td>Submissions</td>
+                            </tr>
+                    </thead>
+                    <tbody></tbody>				
+                    <tfoot><tr><td colspan="7"><a id="btnCreateNewSubmitter" href="#"><b>Specify submitter</b></a></td></tr>
+                        <tr><td colspan="7"><button id="btnSubmitterOk" type="button">OK</button> <button id="btnSubmitterCancel" type="button">Cancel</button></td></tr>
+                    </tfoot>
+                </table>
+            </p>
+        </div>
+        <form action="#" onsubmit="return false;" name="updatePersonProfile" style="display:none;">
+        <div id="personDetailBlock" style="display:none;">
+            <h4>Person Name</h4>
+            <label>Title</label>
+            <select name="name.title">
+                <option>(Title)</option>
+                <option>Dr.</option>
+                <option>Prof.</option>
+                <option>Rev.</option>
+                <option>Pastor</option>
+            </select><br/>
+            <input type="hidden" name="_id"></input>
+            <input type="hidden" name="_rev"></input>
+            <label>*First*</label>
+            <input type="text" name="name.first" placeholder="First name" ></input><br/>
+            <label>Middle</label>
+            <input type="text" name="name.middle" placeholder="Middle name or initial"></input><br/>
+            <label>*Last*</label>
+            <input type="text" name="name.last"  placeholder="Last name"></input><br/>
+            <label>Suffix</label>
+            <input type="text" name="name.suffix" placeholder="Suffix (Jr, II, etc.)"></input><br/>
+            <h4>Most Associated With</h4>
+            <label>Name</label>
+            <input type="text" name="organization.name" placeholder="Publication/church..."></input><br/>
+            <label>http://</label>
+            <input type="text" name="organization.website" placeholder="Website url"></input>
+            <p>
+            <button id="btnSubmitPersonProfile" type="submit">Update Profile</button>
+            <button id="btnCancelSubmitAuthor" type="reset">Cancel</button>
+            </p>
+        </div>
+        </form>
 
-		<div id="sourceSpecification" style="display:none;"> <!-- style="display:none;" -->
-			<b>Source</b>
-			<p></p>
-			<table id="sourceSearchResults" class="sourceSearchResults" width="100%">
-				<thead><tr><td class="sourceDetails" colspan="2">Source Details</td><td></td></tr>
-					<tr>
-						<th class="sourceDetails">Common</th>
-						<th class="sourceDetails">Specific</th>
-						<th>Author</th>
-					</tr>
-				</thead>
-				<tbody></tbody>
-				<tfoot><tr><td colspan="3"><a id="btnCreateNewSource" href="#"><b>Specify source</b></a></td></tr>
-					<tr><td colspan="3"><a id="btnAuthoredWithKayak" href="#"><b>I authored this outline with <em>kayak</em></b></a></td></tr>
-					<tr><td colspan="3"><button id="btnSourceOk" type="button">OK</button> <button id="btnSourceCancel" type="button">Cancel</button></td></tr>						
-				</tfoot>
-			</table>
-			
-			<form id="sourceDetailBlock" action="#" onsubmit="return false;" name="updateSourceDetails" style="display: none;"> <!-- -->
-				<input type="hidden" name="_id"></input>
-				<div style="background-color:#AABCFE;">
-					<h4>Common : Source Info across Outlines</h4>
-					<input type="hidden" name="source._id"></input>
-					<label>Media</label>						
-					<select name="source.media">
-						<option></option>
-						<option>website</option>
-						<option>book</option>
-						<option>article</option>
-						<option>class</option>			
-						<option>sermon</option>
-						<option>email</option>
-						<option>other</option>
-					</select><br/>
-					<label>Details common across outlines, from more specific to general</label><br/>
-					<textarea type="text" name="source.details" cols="40" rows="1"></textarea><br/>
-					<label>http://</label>
-					<textarea type="text" name="source.website" cols="40" rows="1"></textarea><br/>
-					<label>Publisher Details</label>
-					<textarea type="text" name="source.publisherDetails" cols="40" rows="1"></textarea><br/>					
-				</div>
-				<div id="sourceOutlineDetails" style="background-color:#AA99FE;">
-					<h4>Specific : Source Info for this Outline</h4>
-					<label>Key details pertaining to this outline only (p. 59)</label><br/>
-					<input type="hidden" name="outline._id"></input>
-					<textarea name="outline.source.details" cols="40" rows="1"></textarea><br/>
-					<label>http://</label>
-					<textarea name="outline.source.website" cols="40" rows="1"></textarea><br/>
-					<p>
-						<button id="btnClearSourceOutlineDetails" type="reset">Clear</button>
-					</p>	
-				</div>
-				<p>
-					<button id="btnSubmitSource" type="submit">Update</button>
-					<button id="btnCancelSubmitSource" type="reset">Cancel</button>
-				</p>
-			</form>
-		</div>
-	</div>
+        <div id="sourceSpecification" style="display:none;"> <!-- style="display:none;" -->
+            <b>Source</b>
+            <p></p>
+            <table id="sourceSearchResults" class="sourceSearchResults" width="100%">
+                <thead><tr><td class="sourceDetails" colspan="2">Source Details</td><td></td></tr>
+                    <tr>
+                        <th class="sourceDetails">Common</th>
+                        <th class="sourceDetails">Specific</th>
+                        <th>Author</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+                <tfoot><tr><td colspan="3"><a id="btnCreateNewSource" href="#"><b>Specify source</b></a></td></tr>
+                    <tr><td colspan="3"><a id="btnAuthoredWithKayak" href="#"><b>I authored this outline with <em>kayak</em></b></a></td></tr>
+                    <tr><td colspan="3"><button id="btnSourceOk" type="button">OK</button> <button id="btnSourceCancel" type="button">Cancel</button></td></tr>						
+                </tfoot>
+            </table>
+            
+            <form id="sourceDetailBlock" action="#" onsubmit="return false;" name="updateSourceDetails" style="display: none;"> <!-- -->
+                <input type="hidden" name="_id"></input>
+                <div style="background-color:#AABCFE;">
+                    <h4>Common : Source Info across Outlines</h4>
+                    <input type="hidden" name="source._id"></input>
+                    <label>Media</label>						
+                    <select name="source.media">
+                        <option></option>
+                        <option>website</option>
+                        <option>book</option>
+                        <option>article</option>
+                        <option>class</option>			
+                        <option>sermon</option>
+                        <option>email</option>
+                        <option>other</option>
+                    </select><br/>
+                    <label>Details common across outlines, from more specific to general</label><br/>
+                    <textarea type="text" name="source.details" cols="40" rows="1"></textarea><br/>
+                    <label>http://</label>
+                    <textarea type="text" name="source.website" cols="40" rows="1"></textarea><br/>
+                    <label>Publisher Details</label>
+                    <textarea type="text" name="source.publisherDetails" cols="40" rows="1"></textarea><br/>					
+                </div>
+                <div id="sourceOutlineDetails" style="background-color:#AA99FE;">
+                    <h4>Specific : Source Info for this Outline</h4>
+                    <label>Key details pertaining to this outline only (p. 59)</label><br/>
+                    <input type="hidden" name="outline._id"></input>
+                    <textarea name="outline.source.details" cols="40" rows="1"></textarea><br/>
+                    <label>http://</label>
+                    <textarea name="outline.source.website" cols="40" rows="1"></textarea><br/>
+                    <p>
+                        <button id="btnClearSourceOutlineDetails" type="reset">Clear</button>
+                    </p>	
+                </div>
+                <p>
+                    <button id="btnSubmitSource" type="submit">Update</button>
+                    <button id="btnCancelSubmitSource" type="reset">Cancel</button>
+                </p>
+            </form>
+        </div>
+    </div>
 </div>
 <div id="tabsPreview" class="tabs" style="display:none;">
-	 <ul>
-	 	 <li><a href="#Indent"><span>Indent ( &gt; )</span></a></li>
-		 <li><a href="#Flat"><span>Flat ( | )</span></a></li>
-		 <li><a href="#Table"><span>Table ( U )</span></a></li> <!-- &#8746; -->
-	 </ul>
-						 
-	<div id="Indent">
-		<div id="indent-chiasm-scriptureRange"></div>
-		<div id="indent-title-chiasm"></div>
-		<div style="float:none;">&nbsp;</div>
-		<div id="chiasm-indent" class="chiasm" style="overflow:auto; width:100%;"><!-- chiasm built by kayak (http://www.ericlovesallison.org/BibleTools/kayak) -->
-			<div></div>
-		</div>
-	</div>
-	<div id="Flat">
-		<div id="flat-chiasm-scriptureRange"></div>
-		<div id="flat-title-chiasm"></div>
-		<div style="float:none;">&nbsp;</div>
-		<div id="chiasm-flat" class="chiasm" style="overflow:auto; width:100%;"><!-- chiasm built by kayak (http://www.ericlovesallison.org/BibleTools/kayak) -->
-			<div></div>
-		</div>
-	</div>
-	<div id="Table">
-		<table class="tableViewAAB" width="100%">
-			<thead id="outlineHead-table">
-				<tr><td><span id="tableAAB-chiasm-scriptureRange">ScriptureRange</span></td></tr>
-				<tr><td id="tableAAB-title-chiasm">Title</td></tr>				
-			</thead>
-		</table>
-		<table cols="4" class="tableViewAAB">
-			<tbody id="tableViewAAB">
-				<tr><td>A.</td><td>This is a test</td><td>A'</td><td>a parallel</td></tr>
-				<tr><td>B.</td><td>last element</td></tr>
-			</tbody>
-		</table>
-		<table id="outline-table" class="outline-table">
-		</table>
-	</div>
-	<!--	<input type="checkbox" id="itemHighlighting" checked="checked">Highlight matching parallel</input> -->
-	<input type="checkbox" id="showLinksToEmbeddedOutlines" checked="checked"/>Show [<a href="#" onclick="return false;">+</a>] links to embedded outlines
+     <ul>
+          <li><a href="#Indent"><span>Indent ( &gt; )</span></a></li>
+         <li><a href="#Flat"><span>Flat ( | )</span></a></li>
+         <li><a href="#Table"><span>Table ( U )</span></a></li> <!-- &#8746; -->
+     </ul>
+                         
+    <div id="Indent">
+        <div id="indent-chiasm-scriptureRange"></div>
+        <div id="indent-title-chiasm"></div>
+        <div style="float:none;">&nbsp;</div>
+        <div id="chiasm-indent" class="chiasm" style="overflow:auto; width:100%;"><!-- chiasm built by kayak (http://www.ericlovesallison.org/BibleTools/kayak) -->
+            <div></div>
+        </div>
+    </div>
+    <div id="Flat">
+        <div id="flat-chiasm-scriptureRange"></div>
+        <div id="flat-title-chiasm"></div>
+        <div style="float:none;">&nbsp;</div>
+        <div id="chiasm-flat" class="chiasm" style="overflow:auto; width:100%;"><!-- chiasm built by kayak (http://www.ericlovesallison.org/BibleTools/kayak) -->
+            <div></div>
+        </div>
+    </div>
+    <div id="Table">
+        <table class="tableViewAAB" width="100%">
+            <thead id="outlineHead-table">
+                <tr><td><span id="tableAAB-chiasm-scriptureRange">ScriptureRange</span></td></tr>
+                <tr><td id="tableAAB-title-chiasm">Title</td></tr>				
+            </thead>
+        </table>
+        <table cols="4" class="tableViewAAB">
+            <tbody id="tableViewAAB">
+                <tr><td>A.</td><td>This is a test</td><td>A'</td><td>a parallel</td></tr>
+                <tr><td>B.</td><td>last element</td></tr>
+            </tbody>
+        </table>
+        <table id="outline-table" class="outline-table">
+        </table>
+    </div>
+    <!--	<input type="checkbox" id="itemHighlighting" checked="checked">Highlight matching parallel</input> -->
+    <input type="checkbox" id="showLinksToEmbeddedOutlines" checked="checked"/>Show [<a href="#" onclick="return false;">+</a>] links to embedded outlines
 </div>
 
 
 <!-- input type="checkbox" id="cbScriptureLinking" checked="checked">Scripture Linking</input -->
 <p style="font-size: medium;">Find an issue with kayak? Click "Create issue" <a href="https://bitbucket.org/ericpyle/kayak/issues">here</a> so it can get fixed.</p>
 <!-- RefTagger from Logos. Visit http://www.logos.com/reftagger. This code should appear directly before the </body> tag. -->
-	<script type="text/javascript" src="js/jsonform.js"></script>
-	<script type="text/javascript" src="js/referencetagging.js"></script>
-	<script type="text/javascript" src="js/cons.js"></script>
-	<script type="text/javascript" src="js/kayak-common.js"></script>
-	<script type="text/javascript" src="js/kayak-views.js"></script>
-	<script type="text/javascript" src="js/kayak-outliner.js"></script>
-	<script type="text/javascript" src="js/kayak.js"></script>
-	<script type="text/javascript" src="js/kayak-importView.js"></script>
-	<script type="text/javascript" src="js/kayak-main.js"></script>
-	<script type="text/javascript" src="js/kayak-outlines-db.js"></script>
-	<script type="text/javascript">
+    <script type="text/javascript" src="js/jsonform.js"></script>
+    <script type="text/javascript" src="js/referencetagging.js"></script>
+    <script type="text/javascript" src="js/cons.js"></script>
+    <script type="text/javascript" src="js/kayak-common.js"></script>
+    <script type="text/javascript" src="js/kayak-views.js"></script>
+    <script type="text/javascript" src="js/kayak-outliner.js"></script>
+    <script type="text/javascript" src="js/kayak.js"></script>
+    <script type="text/javascript" src="js/kayak-importView.js"></script>
+    <script type="text/javascript" src="js/kayak-main.js"></script>
+    <script type="text/javascript" src="js/kayak-outlines-db.js"></script>
+    <script type="text/javascript">
 
-	$(document).ready(function(){
-		// Tabs
-		$('#tabsMain').tabs(
-		{
-   			show: function(event, ui) { showTab(event, ui); }
-		});
-		$('#tabsPreview').tabs();
-		$(".loading").hide();
-		$(".tabs").show();
-
-
-		var tableOptions1 = {
-	        "bJQueryUI": true,
-	        "sPaginationType": "full_numbers",
-	        "aLengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
-	        "iDisplayLength": 5
-	    };
-	    var tableOptionsSortByDate = clone(tableOptions1);
-	    tableOptionsSortByDate["aaSorting"] = [[ 4, "desc" ]];
-	    var tableOptionsSortByFirstName = clone(tableOptions1);
-	    tableOptionsSortByFirstName["aaSorting"] = [[ 1, "asc" ]];
-	    var tableOptionsSortBySource = clone(tableOptions1);
-	    tableOptionsSortBySource["aaSorting"] = [[ 0, "asc" ], [1, "asc"]];  
-		initializeTable("exampleTable", tableOptionsSortByDate, "btnSearchOutlines", "Outline keywords");
-		initializeTable("authorResults", tableOptionsSortByFirstName, "btnSearchAuthors", "Author keywords");
-		initializeTable("submitterProfileResults", tableOptionsSortByFirstName, "btnSearchSubmitters", "Submitter keywords");
-		initializeTable("sourceSearchResults", tableOptionsSortBySource, "btnSearchSources", "Source keywords");
-
-		var fInitCouchDbBegun = false;
-    var fInitCouchDbBegun = false;
-    // from https://stackoverflow.com/a/51730069
-    document.forms['authForm'].addEventListener('submit', (event) => {
-        event.preventDefault();
-        // TODO do something here to show user that form is being submitted
-        fetch(event.target.action, {
-            method: 'POST',
-            body: new URLSearchParams(new FormData(event.target)) // event.target is the form
-        }).then((response) => {
-            if (!response.ok) {
-              throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            return response.json(); // or response.text() or whatever the server sends
-        }).then((body) => {
-          try
-          {
-            axiosConfig = {
-              headers: { Authorization: `Bearer ${body.access_token}` }
-            };
-            //axiosConfig = null; // DEBUG: just run from local db.
-            InitializeDbStuff();
-            fInitCouchDbBegun = true;
-          }
-          catch(err)
-          {
-            axiosConfig = null;
-          }
-        }).catch((error) => {
-          if (!fInitCouchDbBegun)
-          {
-            InitializeDbStuff();
-            InitializeAfterDbSetup();
-          }
+    $(document).ready(function(){
+        // Tabs
+        $('#tabsMain').tabs(
+        {
+               show: function(event, ui) { showTab(event, ui); }
         });
+        $('#tabsPreview').tabs();
+        $(".loading").hide();
+        $(".tabs").show();
+
+
+        var tableOptions1 = {
+            "bJQueryUI": true,
+            "sPaginationType": "full_numbers",
+            "aLengthMenu": [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+            "iDisplayLength": 5
+        };
+        var tableOptionsSortByDate = clone(tableOptions1);
+        tableOptionsSortByDate["aaSorting"] = [[ 4, "desc" ]];
+        var tableOptionsSortByFirstName = clone(tableOptions1);
+        tableOptionsSortByFirstName["aaSorting"] = [[ 1, "asc" ]];
+        var tableOptionsSortBySource = clone(tableOptions1);
+        tableOptionsSortBySource["aaSorting"] = [[ 0, "asc" ], [1, "asc"]];  
+        initializeTable("exampleTable", tableOptionsSortByDate, "btnSearchOutlines", "Outline keywords");
+        initializeTable("authorResults", tableOptionsSortByFirstName, "btnSearchAuthors", "Author keywords");
+        initializeTable("submitterProfileResults", tableOptionsSortByFirstName, "btnSearchSubmitters", "Submitter keywords");
+        initializeTable("sourceSearchResults", tableOptionsSortBySource, "btnSearchSources", "Source keywords");
+
+    var fInitCouchDbBegun = false;
+    var fInitCouchDbBegun = false;
+    
+    function submitForm() {
+        var url = $('#authForm').attr("action");
+        var data = $('#authForm').serialize();
+        // console.log({url, data})
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: data,
+            dataType: "json",
+            async: false,
+            success: function(body) {
+                // handle successful response
+                // console.log(body)
+                try
+                {
+                    axiosConfig = {
+                        headers: { Authorization: `Bearer ${body.access_token}` }
+                    };
+                    // console.log({axiosConfig})
+                    //axiosConfig = null; // DEBUG: just run from local db.
+                    InitializeDbStuff();
+                    fInitCouchDbBegun = true;
+                }
+                catch(err)
+                {
+                    axiosConfig = null;
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // handle error response
+            }
+        });
+    }
+    // from https://stackoverflow.com/a/51730069
+    $("#authForm").submit(function(event) {
+        event.preventDefault();
+        submitForm();
     });
+    submitForm(); // do now to load
+    
+    // $['#authForm'].on('submit', (event) => {
+    //     event.preventDefault();
+    //     // TODO do something here to show user that form is being submitted
+    //     fetch(event.target.action, {
+    //         method: 'POST',
+    //         body: new URLSearchParams(new FormData(event.target)) // event.target is the form
+    //     }).then((response) => {
+    //         if (!response.ok) {
+    //           throw new Error(`HTTP error! Status: ${response.status}`);
+    //         }
+    //         return response.json(); // or response.text() or whatever the server sends
+    //     }).then((body) => {
+    //       try
+    //       {
+    //         axiosConfig = {
+    //           headers: { Authorization: `Bearer ${body.access_token}` }
+    //         };
+    //         //axiosConfig = null; // DEBUG: just run from local db.
+    //         InitializeDbStuff();
+    //         fInitCouchDbBegun = true;
+    //       }
+    //       catch(err)
+    //       {
+    //         axiosConfig = null;
+    //       }
+    //     }).catch((error) => {
+    //       if (!fInitCouchDbBegun)
+    //       {
+    //         InitializeDbStuff();
+    //         InitializeAfterDbSetup();
+    //       }
+    //     });
+    // });
 
-		mainOutline = createBlankOutline();
-		mainOutline.head.contentType = "chiasm";
-		
-		Logos.ReferenceTagging.lbsBibleVersion = "ESV";
-	    Logos.ReferenceTagging.lbsLinksOpenNewWindow = true;
-	    Logos.ReferenceTagging.lbsLogosLinkIcon = "dark";
-	    Logos.ReferenceTagging.lbsNoSearchTagNames = [  ];
-	    Logos.ReferenceTagging.lbsTargetSite = "biblia";
+        mainOutline = createBlankOutline();
+        mainOutline.head.contentType = "chiasm";
+        
+        Logos.ReferenceTagging.lbsBibleVersion = "ESV";
+        Logos.ReferenceTagging.lbsLinksOpenNewWindow = true;
+        Logos.ReferenceTagging.lbsLogosLinkIcon = "dark";
+        Logos.ReferenceTagging.lbsNoSearchTagNames = [  ];
+        Logos.ReferenceTagging.lbsTargetSite = "biblia";
 
-	});
-	
-	function obf(l) {
-	    return l[1] + l[2] + l[0]
-	}
+    });
+    
+    function obf(l) {
+        return l[1] + l[2] + l[0]
+    }
 
-	var fInitialized = false;
-	function InitializeAfterDbSetup()
-	{
-		if (fInitialized)
-			return;
-		DisplayBooksAndChapters();
-		SelectUrlSpecifiedDb();
-		$("#edit-outline-contentType").val("modeChiasm");
-		LoadOutlineFromCurrentState();
-		InitializeEditForm();
-		fInitialized = true;
-	}
+    var fInitialized = false;
+    function InitializeAfterDbSetup()
+    {
+        if (fInitialized)
+            return;
+        DisplayBooksAndChapters();
+        SelectUrlSpecifiedDb();
+        $("#edit-outline-contentType").val("modeChiasm");
+        LoadOutlineFromCurrentState();
+        InitializeEditForm();
+        fInitialized = true;
+    }
 
 </script>
 </body>
